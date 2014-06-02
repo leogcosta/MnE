@@ -14,6 +14,8 @@ Cash flow control made easy
 - [Pace](http://github.hubspot.com/pace/)
 - [Offline](http://github.hubspot.com/offline/)
 - [ionicons](http://ionicons.com)
+- [Medoo](http://medoo.in)
+- [Flight](http://flightphp.com)
 
 ###Aboot MnE
 the app is going to be optimized for iPhone, it'll make use of HTML5's manifest and WebSQL capabilities to allow the app to work offline and sync once it's online

@@ -1,0 +1,220 @@
+/* font: START ---------------------------------------------------------------*/
+@font-face {
+  font-family: 'ClearSans-Thin';
+  src: url(../font/clearsans/WOFF/ClearSans-Thin.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'ClearSans-Light';
+  src: url(../font/clearsans/WOFF/ClearSans-Light.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'ClearSans-Regular';
+  src: url(../font/clearsans/WOFF/ClearSans-Regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'ClearSans-Medium';
+  src: url(../font/clearsans/WOFF/ClearSans-Medium.woff) format('woff');
+}
+
+.ClearSans-Thin {
+  font-family: 'ClearSans-Thin';
+}
+
+.ClearSans-Light {
+  font-family: 'ClearSans-Light';
+}
+
+.ClearSans-Regular {
+  font-family: 'ClearSans-Regular';
+}
+
+.ClearSans-Medium {
+  font-family: 'ClearSans-Medium';
+}
+/* font: END -----------------------------------------------------------------*/
+
+
+
+/* BS3: START ----------------------------------------------------------------*/
+.form-control {
+  border-radius: 0;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0) inset;
+  padding: 0px 8px;
+  display: block;
+  -webkit-appearance: none;
+}
+
+.btn {
+  border-radius: 0;
+  font-weight: normal;
+  -moz-transition: all linear 0.3s;
+  -webkit-transition: all linear 0.3s;
+  -o-transition: all linear 0.3s;
+  -ms-transition: all linear 0.3s;
+  transition: all linear 0.3s;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: normal;
+}
+/* BS3: END ------------------------------------------------------------------*/
+
+
+
+/* notification-bar: START ---------------------------------------------------*/
+.notification-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 999999999;
+  color: #fcfcfc;
+  background-color: rgba(243, 156, 18, 0.95);
+  box-shadow: 0 0 12px 0 rgba(51, 51, 51, 0.5);
+  overflow: hidden;
+  text-align: center;
+}
+
+.notification-bar > p {
+  padding: 2px 6px;
+  margin: 0;
+}
+/* notification-bar: END -----------------------------------------------------*/
+
+
+
+/* HTML5: START --------------------------------------------------------------*/
+body {
+  font-family: 'ClearSans-Light';
+  font-weight: normal;
+  padding-top: 4px;
+  padding-bottom: 46px;
+}
+
+.pl4 {
+  padding-left: 4px;
+}
+
+.pr4 {
+  padding-right: 4px;
+}
+
+nav.menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(51, 51, 51, 0.125);
+}
+
+nav.menu > a {
+  color: #999999;
+}
+
+nav.menu i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  font-size: 40px;
+  -moz-transition: all linear 0.3s;
+  -webkit-transition: all linear 0.3s;
+  -o-transition: all linear 0.3s;
+  -ms-transition: all linear 0.3s;
+  transition: all linear 0.3s;
+}
+
+nav.menu small {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -40px;
+  font-size: 10px;
+}
+
+nav.menu > a.active {
+  color: rgba(0, 122, 255, 0.8);
+}
+
+.search-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
+  z-index: 999999;
+}
+
+.search-nav input.search {
+  position: absolute;
+  height: 28px;
+  top: 2px;
+  bottom: 2px;
+  border: 0;
+  padding: 0;
+  padding-left: 32px;
+  color: #666666;
+  font-size: 14px;
+}
+
+.search-nav input.search:focus {
+  box-shadow: none;
+}
+
+.search-nav .search-icon {
+  position: absolute;
+  top: 6px;
+  left: 24px;
+  font-size: 20px;
+  color: #999999;
+}
+
+.search-nav .new-entity {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  padding: 0;
+  border: 0;
+}
+
+.search-nav .new-entity i {
+  position: absolute;
+  top: 0;
+  right: 24px;
+  font-size: 24px;
+  color: rgba(0, 122, 255, 0.8);
+}
+
+.bottom-of-search-nav {
+  padding-top: 36px;
+}
+
+.nav-tip {
+  color: #999999;
+  text-align: center;
+}
+
+.nav-tip i {
+  margin-top: 24px;
+  font-size: 72px;
+}
+
+.nav-tip h1 {
+  font-size: 32px;
+  line-height: 32px;
+  margin: 0;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+/* HTML5: END ----------------------------------------------------------------*/

@@ -69,7 +69,7 @@
     <script src="assets/js/dbEngine.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/controllers/login.js"></script>
-    <script src="assets/js/controllers/customer.js"></script>
+    <script src="assets/js/controllers/customers.js"></script>
     <script src="assets/js/controllers/customerNew.js"></script>
     <script src="assets/js/script.js"></script>
 

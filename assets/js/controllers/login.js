@@ -16,7 +16,7 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
 
   // checking for `session`...
   if (localStorage.user_username !== undefined) {
-    $location.path('/customer');
+    $location.path('/customers');
   }
 
   // this action REQUIRES connection with the server
@@ -27,7 +27,7 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
       }
 
       // dbEngine.bootWebSQL();
-      $location.path('/customer');
+      $location.path('/customers');
     }).error(function (data, status, headers, config) {
       console.log(data);
       notify(data);

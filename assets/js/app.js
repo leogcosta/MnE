@@ -17,7 +17,7 @@ app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootSco
     switch(target.controller) {
       case 'customerCtrl':
       case 'customerNewCtrl':
-        $('a[href="#/customer"]').addClass('active');
+        $('a[href="#/customers"]').addClass('active');
       break;
     }
   });
@@ -42,10 +42,10 @@ app.config(function ($routeProvider) {
   $routeProvider.when('/login', {
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl'
-  }).when('/customer', {
-    templateUrl: 'templates/customer.html',
-    controller: 'customerCtrl'
-  }).when('/customer/new', {
+  }).when('/customers', {
+    templateUrl: 'templates/customers.html',
+    controller: 'customersCtrl'
+  }).when('/customers/new', {
     templateUrl: 'templates/customerNew.html',
     controller: 'customerNewCtrl'
   }).otherwise({

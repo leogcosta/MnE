@@ -21,10 +21,10 @@
   Flight::route('DELETE /login', 'login_DELETE');
 
   // Customers
-  Flight::route('GET /customer(/@id)', 'customer_GET');
-  Flight::route('POST /customer', 'customer_POST');
-  Flight::route('PUT /customer/@id', 'customer_PUT');
-  Flight::route('DELETE /customer/@id', 'customer_DELETE');
+  Flight::route('GET /customers(/@id)', 'customer_GET');
+  Flight::route('POST /customers', 'customer_POST');
+  Flight::route('PUT /customers/@id', 'customer_PUT');
+  Flight::route('DELETE /customers/@id', 'customer_DELETE');
 
   Flight::start();
 ?>

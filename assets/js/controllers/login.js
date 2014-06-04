@@ -15,8 +15,23 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
   // at the server side so #BOOM
 
   // checking for `session`...
-  if (localStorage.user_username !== undefined) {
-    $location.path('/customers');
+  // checking for online `status`
+  // if the app is online we're going to be checking for session
+  // if all is good we'll change the path to /customers
+  // else --- you don't wanna know!
+  if ($scope.online) {
+    $http.get('api/login').success(function (data, status, headers, config) {
+      console.log(data);
+      $location.path('/customers');
+    }).error(function (data, status, headers, config) {
+      console.log(data);
+    });
+  } else {
+    // we're going to be checking the localStorage for `credentials`
+    if (localStorage.user_username !== undefined) {
+      notify({message: 'welcome back ('+ localStorage.user_username +')'});
+      $location.path('/customers');
+    }
   }
 
   // this action REQUIRES connection with the server
@@ -26,7 +41,6 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
         localStorage[key] = data[key];
       }
 
-      // dbEngine.bootWebSQL();
       $location.path('/customers');
     }).error(function (data, status, headers, config) {
       console.log(data);

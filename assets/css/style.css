@@ -181,17 +181,18 @@ nav.menu > a.active {
 
 .search-nav .new-entity {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 0;
   right: 0;
+  height: 32px;
   padding: 0;
   border: 0;
 }
 
 .search-nav .new-entity i {
   position: absolute;
-  top: 0;
-  right: 24px;
+  top: 4px;
+  right: 26px;
   font-size: 24px;
   color: rgba(0, 122, 255, 0.8);
 }

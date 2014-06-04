@@ -13,6 +13,10 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
     }
   };
 
+  that.getWebSQLdb = function () {
+    return openDatabase('mne', '1.0', 'MnE Database', (5*1024*1024));
+  }
+
   // boot all necessary table creation on WebSQL in initial connection
   that.bootWebSQL = function () {
     that.WebSQL.db = openDatabase('mne', '1.0', 'MnE Database', (5*1024*1024));
@@ -97,10 +101,93 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
     */
   };
 
-  that.save = function (tableName, saveInstance, callback) {
-    // we're going to be saving on the server too...
+  that.get = function (tableName, id, callback) {
     if ($rootScope.online) {
-      $http.post('api/'+ apiUrlSuffix, saveInstance, function (data, status, headers, config) {
+      var SQL = {
+        selectKey: '',
+        primaryKey: '',
+        value: [],
+        wild: []
+      };
+
+      $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
+        SQL.selectKey = Object.keys(data).join(', ');
+        SQL.primaryKey = Object.keys(data)[0];
+        for (key in data) {
+          SQL.value.push(data[key]);
+          SQL.wild.push('?');
+        }
+
+        SQL.wild = SQL.wild.join(', ');
+
+        that.getWebSQLdb().transaction(function (SQLTransaction) {
+          SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
+            if (SQLResultSet.rows.length === 0) {
+              SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
+              }, function (SQLTransaction, error) {
+                console.error(error);
+              });
+            }
+          }, function (SQLTransaction, error) {
+            console.error(error);
+          });
+        });
+
+        callback(data, status, headers, config);
+      }).error(function (data, status, headers, config) {
+        notify(data);
+        console.log(data);
+      });
+    } else {
+    }
+  };
+
+
+
+  that.query = function (tableName, callback) {
+    if ($rootScope.online) {
+      $http.get('api/'+ tableName).success(function (data, status, headers, config) {
+        callback(data, status, headers, config);
+      }).error(function (data, status, headers, config) {
+        notify(data);
+        console.log(data);
+      });
+    }
+  };
+
+
+
+  that.save = function (tableName, saveInstance, callback) {
+    switch(tableName) {
+      case 'customers':
+        saveInstance['customer_user_user_id'] = localStorage.user_id;
+      break;
+
+      default:
+      break;
+    }
+
+    if ($rootScope.online) {
+      $http.post('api/'+ tableName, saveInstance).success(function (data, status, headers, config) {
+        notify(data);
+        callback(data, status, headers, config);
+      }).error(function (data, status, headers, config) {
+        switch(status) {
+          case 412:
+            notify(data);
+            setTimeout(function () {
+              document.location.href = window.location.origin + window.location.pathname;
+            }, 3000);
+          break;
+
+          // conflict on constraints
+          case 409:
+            notify(data);
+          break;
+
+          default:
+          break
+        }
       });
     }
   };

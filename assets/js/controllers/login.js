@@ -31,6 +31,8 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
     if (localStorage.user_username !== undefined) {
       notify({message: 'welcome back ('+ localStorage.user_username +')'});
       $location.path('/customers');
+    } else {
+      console.log('am confused!');
     }
   }
 

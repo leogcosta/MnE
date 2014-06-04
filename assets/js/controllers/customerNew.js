@@ -6,10 +6,14 @@ var customerNewCtrl = app.controller('customerNewCtrl', ['$scope', '$location', 
   };
 
   this.save = function () {
-    dbEngine.save('customers', $scope.newCustomer, function (data) {
-      console.log(data);
+    dbEngine.save('customers', $scope.newCustomer, function (data, status, headers, config) {
+      $location.path('/customers');
     });
   };
+
+  dbEngine.get('customers', 7, function(data, status, headers, config) {
+    //console.log(data);
+  });
 
   $scope.customerNewCtrl = this;
 }]);

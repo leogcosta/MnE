@@ -5,7 +5,7 @@
   require_once('flight/Flight.php'); // and finally Flight (used for `routing`)
 
   require_once('../lib/REST/login.php');
-  require_once('../lib/REST/customer.php');
+  require_once('../lib/REST/customers.php');
   start_session();
   verify_xsrf();
 
@@ -17,6 +17,7 @@
   });
 
   // Login
+  Flight::route('GET /login', 'login_GET');
   Flight::route('POST /login', 'login_POST');
   Flight::route('DELETE /login', 'login_DELETE');
 

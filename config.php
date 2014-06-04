@@ -23,4 +23,5 @@
 
   // tables
   define('USERS', 'users');
+  define('CUSTOMERS', 'customers');
 ?>

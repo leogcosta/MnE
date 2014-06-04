@@ -57,6 +57,7 @@
     </div>
 
     <script src="assets/jquery/jquery-1.11.0.min.js"></script>
+    <script src="assets/fastclick/fastclick.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/offline/offline.min.js"></script>
     <script src="assets/moment/moment.min.js"></script>

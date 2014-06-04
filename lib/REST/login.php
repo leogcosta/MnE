@@ -1,4 +1,11 @@
 <?php
+  function login_GET () {
+    user_login('', '', TRUE);
+    Flight::json(['message' => 'you are logged in, that you are'], 200);
+  }
+
+
+
   /**
    * given the credentials it'll create the session for the user
    *

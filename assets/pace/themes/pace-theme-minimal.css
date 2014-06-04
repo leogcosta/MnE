@@ -3,9 +3,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  background: #2ecc71;
-  z-index: 2000;
-  height: 2px;
+  background: rgba(0, 122, 255, 0.8);
+  z-index: 9999999999;
+  height: 3px;
   -webkit-transition: width 1s;
   -moz-transition: width 1s;
   -o-transition: width 1s;

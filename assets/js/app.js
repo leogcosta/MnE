@@ -15,7 +15,7 @@ app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootSco
     $('.menu > a').removeClass('active');
 
     switch(target.controller) {
-      case 'customerCtrl':
+      case 'customersCtrl':
       case 'customerNewCtrl':
         $('a[href="#/customers"]').addClass('active');
       break;

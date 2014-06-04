@@ -33,17 +33,17 @@
       <div class="row" ng-view></div>
 
       <nav class="row menu hide">
-        <a href="#/customer" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+        <a href="#/customers" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
           <i class="ion-ios7-people-outline"></i>
           <small>Customers</small>
         </a>
 
-        <a href="#/item" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+        <a href="#/items" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
           <i class="ion-ios7-filing-outline"></i>
           <small>Items</small>
         </a>
 
-        <a href="#/account" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+        <a href="#/accounts" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
           <i class="ion-ios7-cloud-outline"></i>
           <small>Accounts</small>
         </a>

@@ -43,7 +43,7 @@
               placeholder="Phone Number *"
               required
               ng-model="newCustomer.customer_phone_number"
-              ng-pattern="/((\+251)|0)[0-9]{9}/"
+              ng-pattern="/^((\+251)|0)[0-9]{9}$/"
               ng-maxlength="13"
               required
             >

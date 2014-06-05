@@ -6,7 +6,7 @@
       $row ? Flight::json($row, 200) : Flight::json(['message' => "customer id {$id} does not exist"], 404);
     } else {
       $result = getDB() -> select(CUSTOMERS, ['customer_id', 'customer_full_name', 'customer_phone_number', 'customer_email', 'customer_user_user_id']);
-      Flight::json($result);
+      Flight::json($result, 200);
     }
   }
 
@@ -31,10 +31,22 @@
 
 
   function customer_PUT ($id) {
+    user_login('', '', TRUE);
+    $request = json_decode(Flight::request() -> body, TRUE);
+    $result = getDB() -> update(CUSTOMERS, $request, ['customer_id' => $id]);
+    if ($result) {
+      Flight::json($request, 202);
+    } else {
+      $request['message'] = 'Customer update rejected';
+      Flight::json($request, 406);
+    }
   }
 
 
 
   function customer_DELETE ($id) {
+    user_login('', '', TRUE);
+    $result = getDB() -> delete(CUSTOMERS, ['customer_id' => $id]);
+    $result ? Flight::json(['message' => 'Customer deleted'], 200) : Flight::json(['message' => 'Customer already deleted'], 404);
   }
 ?>

@@ -35,7 +35,7 @@ app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootSco
     $rootScope.$apply();
   });
 
-  $rootScope.message = '';
+  dbEngine.bootWebSQL();
 }]);
 
 app.config(function ($routeProvider) {

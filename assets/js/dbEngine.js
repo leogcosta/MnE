@@ -6,6 +6,37 @@
 // to handle errors without intercepting or something (without INTERCEPTION)
 var dbEngine = angular.module('dbEngine', []);
 dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($rootScope, $http, $location) {
+  var errorHandler = function (data, status, headers, config) {
+    notify(data);
+    console.error(data);
+
+    switch (status) {
+      // conflict on constraints
+      // POST
+      case 409:
+      break;
+
+      // conflict on constraints
+      // PUT
+      case 406:
+      break;
+
+      // precondition failed
+      case 412:
+        setTimeout(function () {
+          // redirecting to the login page in 3 - 2 - 1...
+          document.location.href = window.location.origin + window.location.pathname;
+        }, 3000);
+      break;
+
+      default:
+      break
+    }
+  }
+
+
+
+  // wrapping it in to a neat `single variable`
   var that = {
     WebSQL: {
       db: null,
@@ -64,41 +95,6 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
         console.log(e);
       });
     });
-
-    /*
-    that.WebSQL.db.transaction(function (SQLTransaction) {
-      SQLTransaction.executeSql('INSERT INTO customers (customer_full_name, customer_phone_number, customer_email, customer_user_user_id) VALUES (?, ?, ?, ?)', ['Moe Szyslak', '0912444676', 'moe.duffdude@gmail.com', localStorage.user_id], function (SQLTransaction, SQLResultSet) {
-        console.log(SQLTransaction);
-        console.log(SQLResultSet);
-      }, function (SQLTransaction, error) {
-        console.log(error);
-      });
-    });
-    */
-
-    /*
-    that.WebSQL.db.transaction(function (SQLTransaction) {
-      SQLTransaction.executeSql('SELECT customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id FROM customers', [], function (SQLTransaction, SQLResultSet) {
-        console.log(SQLTransaction);
-        console.log(SQLResultSet);
-
-        // fetching...
-        for (var i = 0; i < SQLResultSet.rows.length; i++) {
-          console.log(SQLResultSet.rows.item(i));
-        }
-      });
-    });
-    */
-
-    /*
-    that.WebSQL.db.transaction(function (SQLTransaction) {
-      SQLTransaction.executeSql('DROP TABLE customers', [], function (SQLTransaction, SQLResultSet) {
-        console.log('DELETE');
-        console.log(SQLTransaction);
-        console.log(SQLResultSet);
-      }, that.WebSQL.onError());
-    });
-    */
   };
 
   that.get = function (tableName, id, callback) {
@@ -134,11 +130,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
         });
 
         callback(data, status, headers, config);
-      }).error(function (data, status, headers, config) {
-        notify(data);
-        console.log(data);
-      });
-    } else {
+      }).error(errorHandler);
     }
   };
 
@@ -148,10 +140,41 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
     if ($rootScope.online) {
       $http.get('api/'+ tableName).success(function (data, status, headers, config) {
         callback(data, status, headers, config);
-      }).error(function (data, status, headers, config) {
-        notify(data);
-        console.log(data);
-      });
+      }).error(errorHandler);
+    }
+  };
+
+
+
+  that.update = function (tableName, updateInstance, callback) {
+    if ($rootScope.online) {
+      var SQL = {
+        setKey: [],
+        value: []
+      };
+      var dataCopy = {};
+
+      $http.put('api/'+ tableName +'/'+ updateInstance[Object.keys(updateInstance)[0]], updateInstance).success(function (data, status, headers, config) {
+        dataCopy = angular.copy(data);
+        delete dataCopy['message'];
+        var keys = Object.keys(dataCopy).splice(1);
+
+        for (key in keys) {
+          SQL.setKey.push(keys[key] + '=?');
+          SQL.value.push(dataCopy[keys[key]]);
+        }
+
+        SQL.setKey = SQL.setKey.join(', ');
+        SQL.setKey += ' WHERE '+ Object.keys(dataCopy)[0] +'=?';
+        SQL.value.push(dataCopy[Object.keys(dataCopy)[0]]);
+
+        that.getWebSQLdb().transaction(function (SQLTransaction) {
+          SQLTransaction.executeSql('UPDATE '+ tableName +' set '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
+          }, function (SQLTransaction, error) {
+            console.error(error);
+          });
+        });
+      }).error(errorHandler);
     }
   };
 
@@ -168,27 +191,57 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
     }
 
     if ($rootScope.online) {
+      var SQL = {
+        selectKey: '',
+        primaryKey: '',
+        value: [],
+        wild: []
+      };
+      var dataCopy = {};
+
       $http.post('api/'+ tableName, saveInstance).success(function (data, status, headers, config) {
+        // since we're going to be using the keys for query preparation
+        // we don't need any surprises - so we're going to be removing
+        // the message key which will save us from a heap of troubles!
+        dataCopy = angular.copy(data);
+        delete dataCopy['message'];
+
+        that.getWebSQLdb().transaction(function (SQLTransaction) {
+          SQL.selectKey = Object.keys(dataCopy).join(', ');
+          SQL.primaryKey = Object.keys(dataCopy).splice(-1)[0];
+          for (key in dataCopy) {
+            SQL.value.push(dataCopy[key]);
+            SQL.wild.push('?');
+          }
+
+          SQL.wild = SQL.wild.join(', ');
+          SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
+          }, function (SQLTransaction, error) {
+            console.error(error);
+          });
+        }, function (SQLTransaction, error) {
+          console.error(error);
+        });
+
         notify(data);
         callback(data, status, headers, config);
-      }).error(function (data, status, headers, config) {
-        switch(status) {
-          case 412:
-            notify(data);
-            setTimeout(function () {
-              document.location.href = window.location.origin + window.location.pathname;
-            }, 3000);
-          break;
+      }).error(errorHandler);
+    }
+  };
 
-          // conflict on constraints
-          case 409:
-            notify(data);
-          break;
+  that.delete = function (tableName, paramKey, id, callback) {
+    if ($rootScope.online) {
+      $http.delete('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
+        that.getWebSQLdb().transaction(function (SQLTransaction) {
+          SQLTransaction.executeSql('DELETE FROM '+ tableName +' WHERE '+ paramKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
+          }, function (SQLTransaction, error) {
+            console.error(error);
+          });
+        });
 
-          default:
-          break
-        }
-      });
+        notify(data);
+        callback(data, status, headers, config);
+      }).error(errorHandler);
     }
   };
 

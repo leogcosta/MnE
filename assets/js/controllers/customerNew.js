@@ -6,13 +6,8 @@ var customerNewCtrl = app.controller('customerNewCtrl', ['$scope', '$location', 
   };
 
   this.save = function () {
-    /*
     dbEngine.save('customers', $scope.newCustomer, function (data, status, headers, config) {
       $location.path('/customers');
-    });
-    */
-    dbEngine.update('customers', {customer_id: '55', customer_full_name: 'KILLER12', customer_email: 'moe.duffdude@gmail.com'}, function (data, status, headers, config) {
-      console.log(data);
     });
   };
 

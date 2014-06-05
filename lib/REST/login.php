@@ -25,7 +25,7 @@
    */
   function login_DELETE () {
     user_login('', '', TRUE);
-    // should i go with 403: Forbidden or 410 Unauthorized
+    // should i go with 403: Forbidden or 401 Unauthorized
     // i choose 403 - gives it a nice bad ass look!
     logout() ? Flight::json(['message' => 'logged out, now that you are'], 202) : Flight::json(['message' => 'YOU SHALL NOT LOGOUT!'], 403);
   }

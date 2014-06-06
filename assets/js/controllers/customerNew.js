@@ -1,4 +1,4 @@
-var customerNewCtrl = app.controller('customerNewCtrl', ['$scope', '$location', '$http', 'dbEngine', function ($scope, $location, $http, dbEngine) {
+var customerNewCtrl = app.controller('customerNewCtrl', ['$rootScope', '$scope', '$location', '$http', 'dbEngine', function ($rootScope, $scope, $location, $http, dbEngine) {
   $scope.newCustomer = {
     customer_full_name: '',
     customer_phone_number: '',

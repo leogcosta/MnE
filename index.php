@@ -8,8 +8,8 @@
 
 <!DOCTYPE html>
 
-<!-- <html lang="en" manifest="app.appcache"> -->
 <html lang="en">
+<!-- <html lang="en" manifest="app.appcache"> -->
   <head>
     <meta charset="utf-8">
     <meta content="MnE" name="apple-mobile-web-app-title">

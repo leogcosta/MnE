@@ -17,9 +17,12 @@
     $request = json_decode(Flight::request() -> body, TRUE);
     $request['customer_user_user_id'] = $_SESSION['user_id'];
     $id = getDB() -> insert(CUSTOMERS, $request);
+    // i think it's a bug on Medoo, on failures of insertion it returns '0'
+    // which is a string, to the issues page...
+    settype($id, 'integer');
 
     // insertion went well --- NAAAAAT!
-    if ($id === '0') {
+    if ($id === 0) {
       Flight::json(['message' => 'customer full name already exists'], 409);
     } else {
       $request['customer_id'] = $id;

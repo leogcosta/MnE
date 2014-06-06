@@ -20,10 +20,10 @@
 
     // insertion went well --- NAAAAAT!
     if ($id === '0') {
-      Flight::json(['message' => 'Customer full name already exists'], 409);
+      Flight::json(['message' => 'customer full name already exists'], 409);
     } else {
       $request['customer_id'] = $id;
-      $request['message'] = "Customer {$request['customer_full_name']} added";
+      $request['message'] = "customer {$request['customer_full_name']} added";
       Flight::json($request, 202);
     }
   }
@@ -35,9 +35,10 @@
     $request = json_decode(Flight::request() -> body, TRUE);
     $result = getDB() -> update(CUSTOMERS, $request, ['customer_id' => $id]);
     if ($result) {
+      $request['message'] = 'customer updated';
       Flight::json($request, 202);
     } else {
-      $request['message'] = 'Customer update rejected';
+      $request['message'] = 'customer update rejected';
       Flight::json($request, 406);
     }
   }
@@ -47,6 +48,6 @@
   function customer_DELETE ($id) {
     user_login('', '', TRUE);
     $result = getDB() -> delete(CUSTOMERS, ['customer_id' => $id]);
-    $result ? Flight::json(['message' => 'Customer deleted'], 200) : Flight::json(['message' => 'Customer already deleted'], 404);
+    $result ? Flight::json(['message' => 'customer deleted'], 200) : Flight::json(['message' => 'customer already deleted'], 404);
   }
 ?>

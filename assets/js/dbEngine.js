@@ -98,14 +98,14 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
   };
 
   that.get = function (tableName, id, callback) {
-    if ($rootScope.online) {
-      var SQL = {
-        selectKey: '',
-        primaryKey: '',
-        value: [],
-        wild: []
-      };
+    var SQL = {
+      selectKey: '',
+      primaryKey: '',
+      value: [],
+      wild: []
+    };
 
+    if ($rootScope.online) {
       $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
         SQL.selectKey = Object.keys(data).join(', ');
         SQL.primaryKey = Object.keys(data)[0];
@@ -131,6 +131,26 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
 
         callback(data, status, headers, config);
       }).error(errorHandler);
+    } else {
+      switch(tableName) {
+        case 'customers':
+          SQL.selectKey = 'customer_id, customer_full_name, customer_phone_number, customer_email, operation';
+          SQL.primaryKey = 'customer_id';
+        break;
+
+        default:
+        break;
+      };
+
+      that.getWebSQLdb().transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=? AND operation!=?', [id, 'DELETE'], function (SQLTransaction, SQLResultSet) {
+          if (SQLResultSet.rows.length === 0) {
+            notify({message: 'customer id '+ id +' does not exist'});
+          } else {
+            callback(SQLResultSet.rows.item(0), 200, null, null);
+          }
+        });
+      });
     }
   };
 
@@ -141,19 +161,47 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       $http.get('api/'+ tableName).success(function (data, status, headers, config) {
         callback(data, status, headers, config);
       }).error(errorHandler);
+    } else {
+      // so as to NOT pay huge processing time on * we're going to do a little
+      // switch up game
+      var selectKey = '';
+      switch(tableName) {
+        case 'customers':
+          selectKey = 'customer_id, customer_full_name, customer_phone_number, customer_email, operation';
+        break;
+
+        default:
+          selectKey = '*'
+        break;
+      }
+
+      that.getWebSQLdb().transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('SELECT '+ selectKey +' FROM '+ tableName +' WHERE operation!=?', ['DELETE'], function (SQLTransaction, SQLResultSet) {
+          if (SQLResultSet.rows.length === 0) {
+            callback([], 200, null, null);
+          } else {
+            var rows = [], length = SQLResultSet.rows.length, i = 0;
+            for (; i < length;i++) {
+              rows.push(SQLResultSet.rows.item(i));
+            }
+
+            callback(rows, 200, null, null);
+          }
+        });
+      });
     }
   };
 
 
 
   that.update = function (tableName, updateInstance, callback) {
-    if ($rootScope.online) {
-      var SQL = {
-        setKey: [],
-        value: []
-      };
-      var dataCopy = {};
+    var SQL = {
+      setKey: [],
+      value: []
+    };
+    var dataCopy = {};
 
+    if ($rootScope.online) {
       $http.put('api/'+ tableName +'/'+ updateInstance[Object.keys(updateInstance)[0]], updateInstance).success(function (data, status, headers, config) {
         dataCopy = angular.copy(data);
         delete dataCopy['message'];
@@ -175,6 +223,29 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
           });
         });
       }).error(errorHandler);
+    } else {
+      var keys = Object.keys(updateInstance).splice(1);
+
+      for (key in keys) {
+        SQL.setKey.push(keys[key] + '=?');
+        SQL.value.push(updateInstance[keys[key]]);
+      }
+
+      SQL.setKey.push('operation=?');
+      SQL.value.push('UPDATE');
+      SQL.setKey = SQL.setKey.join(', ');
+      SQL.setKey += ' WHERE '+ Object.keys(updateInstance)[0] +'=?';
+      SQL.value.push(updateInstance[Object.keys(updateInstance)[0]]);
+
+      that.getWebSQLdb().transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('UPDATE '+ tableName +' set '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
+          updateInstance.message = 'customer updated';
+          notify(updateInstance);
+          callback(updateInstance, 202, null, null);
+        }, function (SQLTransaction, error) {
+          console.error(error);
+        });
+      });
     }
   };
 
@@ -190,15 +261,15 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       break;
     }
 
-    if ($rootScope.online) {
-      var SQL = {
-        selectKey: '',
-        primaryKey: '',
-        value: [],
-        wild: []
-      };
-      var dataCopy = {};
+    var SQL = {
+      selectKey: '',
+      primaryKey: '',
+      value: [],
+      wild: []
+    };
+    var dataCopy = {};
 
+    if ($rootScope.online) {
       $http.post('api/'+ tableName, saveInstance).success(function (data, status, headers, config) {
         // since we're going to be using the keys for query preparation
         // we don't need any surprises - so we're going to be removing
@@ -226,13 +297,34 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
         notify(data);
         callback(data, status, headers, config);
       }).error(errorHandler);
+    } else {
+      saveInstance.operation = 'SAVE';
+
+      that.getWebSQLdb().transaction(function (SQLTransaction) {
+        SQL.selectKey = Object.keys(saveInstance).join(', ');
+        for (key in saveInstance) {
+          SQL.value.push(saveInstance[key]);
+          SQL.wild.push('?');
+        }
+
+        SQL.wild = SQL.wild.join(', ');
+        SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
+          saveInstance.message = 'customer '+ saveInstance.customer_full_name +' added';
+          saveInstance.customer_id = SQLResultSet.insertId;
+          notify(saveInstance);
+          callback(saveInstance, 202, null, null);
+        }, function (SQLTransaction, error) {
+          notify({message: 'customer full name already exists'});
+          console.error(error);
+        });
+      });
     }
   };
 
   that.delete = function (tableName, paramKey, id, callback) {
     if ($rootScope.online) {
       $http.delete('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
-        that.getWebSQLdb().transaction(function (SQLTransaction) {
+        that.getWebSQLdb().transaction(function (SQLTransaction) {yhngb
           SQLTransaction.executeSql('DELETE FROM '+ tableName +' WHERE '+ paramKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
           }, function (SQLTransaction, error) {
             console.error(error);
@@ -242,6 +334,17 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
         notify(data);
         callback(data, status, headers, config);
       }).error(errorHandler);
+    } else {
+      var data = {};
+      that.getWebSQLdb().transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('UPDATE '+ tableName +' set operation=? WHERE '+ paramKey +'=?', ['DELETE', id], function (SQLTransaction, SQLResultSet) {
+          data = {'message': 'customer deleted'};
+          notify(data);
+          callback(data, 200, null, null);
+        }, function (SQLTransaction, error) {
+          console.error(error);
+        });
+      });
     }
   };
 

@@ -10,7 +10,6 @@ Cash flow control made easy
 - [PHP](http://php.net)
 - [MySQL](http://www.mysql.com)
 - [Apache](http://apache.org)
-- [Moment.js](http://momentjs.com)
 - [Pace](http://github.hubspot.com/pace/)
 - [Offline](http://github.hubspot.com/offline/)
 - [ionicons](http://ionicons.com)

@@ -22,6 +22,7 @@ app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootSco
     }
   });
 
+  /*
   $rootScope.online = Offline.state === 'up' ? true : false;
 
   Offline.on('up', function () {
@@ -34,6 +35,9 @@ app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootSco
     $rootScope.online = false;
     $rootScope.$apply();
   });
+  */
+
+  $rootScope.online = false;
 
   dbEngine.bootWebSQL();
 }]);

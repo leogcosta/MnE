@@ -45,8 +45,8 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
 
       $location.path('/customers');
     }).error(function (data, status, headers, config) {
-      console.log(data);
       notify(data);
+      console.error(data);
     });
   };
 

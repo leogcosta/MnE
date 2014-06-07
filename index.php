@@ -30,7 +30,7 @@
     </div>
 
     <div  class="container">
-      <div class="row" ng-view></div>
+      <div id="#ngView" class="row" ng-view></div>
 
       <nav class="row menu hide">
         <a href="#/customers" class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
@@ -68,6 +68,7 @@
     <script src="assets/angular/angular-touch.min.js"></script>
 
     <script src="assets/js/dbEngine.js"></script>
+    <script src="assets/js/salt.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/controllers/login.js"></script>
     <script src="assets/js/controllers/customers.js"></script>

@@ -10,7 +10,10 @@ var customerNewCtrl = app.controller('customerNewCtrl', ['$rootScope', '$scope',
       // someday we will leave in a world where we don't need $rootScope.$apply();
       // #believe #comingSoon #angularjsIsAwesome
       $location.path('/customers');
-      $rootScope.$apply();
+
+      if ($scope.$$phase === null) {
+        $scope.$apply();
+      }
     });
   };
 

@@ -26,26 +26,30 @@
   <div
     class="row ngRepeat moe-list"
     ng-repeat="customer in customers | filter:search:strict | orderBy:'customer_full_name':false"
+    ng-swipe-left="customer.showAction = true"
+    ng-swipe-right="customer.showAction = false"
   >
     <div
-      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital"
+      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital-container"
       ng-class="{save: customer.operation === 'SAVE', update: customer.operation === 'UPDATE'}"
     >
       <h1
-        class="Lato-Hai"
+        class="Lato-Hai customer-inital"
         ng-bind="customer.customer_full_name[0]|uppercase"
       ></h1>
     </div>
 
-    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 moe-content">
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
       <p
         class="ClearSans-Regular customer-name"
         ng-bind="customer.customer_full_name"
       ></p>
 
-      <h1 class="ClearSans-Thin customer-owes">
-        {{ 93656.99|currency:'' }}
-      </h1>
+      <h1 class="ClearSans-Thin customer-owes" ng-bind="93656.99|currency:''"></h1>
+
+      <div class="ngShowHide" ng-show="customer.showAction">
+        ACTION
+      </div>
     </div>
   </div>
 </div>

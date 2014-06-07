@@ -371,26 +371,41 @@ nav.menu > a.active {
   font-size: 28px;
 }
 
-.moe-list .customer-owes .operation {
+.moe-list .action {
   position: absolute;
-  color: #999999;
-  font-size: 60%;
   top: 0;
+  left: 16px;
+  right: 8px;
+  height: 78px;
+  background-color: rgba(255, 255, 255, 0.875);
+  text-align: center;
 }
 
-.moe-list .customer-owes .operation.save {
+.moe-list .action a {
+  font-size: 38px;
+  height: 78px;
+  margin-top: 4px;
+  text-decoration: none;
+  color: #666666;
+}
+
+.moe-list .action small {
+  font-size: 14px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+}
+
+.moe-list .action a.phone {
   color: rgba(39, 174, 96, 0.7);
 }
 
-.moe-list .customer-owes .operation.update {
-  color: yellow;
+.moe-list .action a.sale {
+  color: rgba(231, 76, 60, 0.7);
 }
 
-.moe-list .action {
-  border: 1px solid red;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+.moe-list .action a.info {
+  color: rgba(41, 128, 185, 0.7);
 }
 /* HTML5: END ----------------------------------------------------------------*/

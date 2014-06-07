@@ -22,7 +22,9 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       break;
 
       // precondition failed
+      // forbidden (XSRF detection)
       case 412:
+      case 403:
         setTimeout(function () {
           // redirecting to the login page in 3 - 2 - 1...
           document.location.href = window.location.origin + window.location.pathname;
@@ -176,7 +178,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       }
 
       that.getWebSQLdb().transaction(function (SQLTransaction) {
-        SQLTransaction.executeSql('SELECT '+ selectKey +' FROM '+ tableName +' WHERE operation!=?', ['DELETE'], function (SQLTransaction, SQLResultSet) {
+        SQLTransaction.executeSql('SELECT '+ selectKey +' FROM '+ tableName +' WHERE operation!=? OR operation IS NULL', ['DELETE'], function (SQLTransaction, SQLResultSet) {
           if (SQLResultSet.rows.length === 0) {
             callback([], 200, null, null);
           } else {

@@ -4,7 +4,7 @@
       type="text"
       class="search form-control input-sm"
       placeholder="Search Customers"
-      ng-model="searchCustomers.$"
+      ng-model="search.$"
     >
 
     <i class="search-icon ion-ios7-search"></i>
@@ -23,39 +23,29 @@
 
 
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
-  <div class="row moe-list">
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital">
-      <h1 class="Lato-Hai">M</h1>
-      <p></p>
+  <div
+    class="row ngRepeat moe-list"
+    ng-repeat="customer in customers | filter:search:strict | orderBy:'customer_full_name':false"
+  >
+    <div
+      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital"
+      ng-class="{save: customer.operation === 'SAVE', update: customer.operation === 'UPDATE'}"
+    >
+      <h1
+        class="Lato-Hai"
+        ng-bind="customer.customer_full_name[0]|uppercase"
+      ></h1>
     </div>
 
     <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 moe-content">
-      <p class="ClearSans-Medium customer-name">Moe Szyslak</p>
-      <h1 class="ClearSans-Thin customer-owes">13, 656.99<small>&nbsp;birr</small></h1>
-    </div>
-  </div>
+      <p
+        class="ClearSans-Regular customer-name"
+        ng-bind="customer.customer_full_name"
+      ></p>
 
-  <div class="row moe-list">
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital">
-      <h1 class="Lato-Hai">B</h1>
-      <p></p>
-    </div>
-
-    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 moe-content">
-      <p class="ClearSans-Medium customer-name">Biniam Teka</p>
-      <h1 class="ClearSans-Thin customer-owes">125, 356.00<small>&nbsp;birr</small></h1>
-    </div>
-  </div>
-
-  <div class="row moe-list">
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital">
-      <h1 class="Lato-Hai">E</h1>
-      <p></p>
-    </div>
-
-    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 moe-content">
-      <p class="ClearSans-Medium customer-name">Eyassu Berehanu</p>
-      <h1 class="ClearSans-Thin customer-owes">204, 613.40<small>&nbsp;birr</small></h1>
+      <h1 class="ClearSans-Thin customer-owes">
+        {{ 93656.99|currency:'' }}
+      </h1>
     </div>
   </div>
 </div>

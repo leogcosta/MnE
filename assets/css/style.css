@@ -406,4 +406,20 @@ nav.menu > a.active {
 .moe-list .action a.info {
   color: rgba(41, 128, 185, 0.7);
 }
+
+.editForm input {
+  border: 0;
+  border-bottom: 1px solid rgba(51, 51, 51, 0.125);
+}
+
+.editForm input:focus,
+.editForm input:active {
+  box-shadow: none;
+  border-bottom: 1px solid rgba(51, 51, 51, 0.25);
+}
+
+.delete-container {
+  margin-top: 400px;
+  margin-bottom: 50px;
+}
 /* HTML5: END ----------------------------------------------------------------*/

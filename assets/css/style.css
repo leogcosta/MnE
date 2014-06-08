@@ -281,6 +281,7 @@ nav.menu > a.active {
   height: 32px;
   padding: 0;
   border: 0;
+  z-index: 100;
 }
 
 .search-nav .new-entity i {

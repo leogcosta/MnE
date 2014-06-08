@@ -257,6 +257,7 @@ nav.menu > a.active {
   padding-left: 32px;
   color: #666666;
   font-size: 14px;
+  z-index: 100;
 }
 
 .search-nav input.search:focus {
@@ -269,6 +270,7 @@ nav.menu > a.active {
   left: 24px;
   font-size: 20px;
   color: #999999;
+  z-index: 101;
 }
 
 .search-nav .new-entity {

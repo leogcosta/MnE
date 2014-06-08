@@ -330,30 +330,30 @@ nav.menu > a.active {
   right: 0;
   bottom: 0;
   left: 0;
-  width: 78px;
-  height: 78px;
+  width: 72px;
+  height: 72px;
   margin: auto;
   padding: 0;
   padding-top: 16px;
   border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 78px;
+  border-radius: 72px;
   color: #666666;
 }
 
-.moe-list .customer-inital.save {
+.moe-list h1.customer-inital {
+  font-size: 42px;
+  padding: 0;
+  padding-top: 12px;
+  padding-left: 2px;
+  margin: 0;
+}
+
+.moe-list h1.customer-inital.save {
   background-color: rgba(46, 204, 113, 0.5);
 }
 
-.moe-list .customer-inital.update {
+.moe-list h1.customer-inital.update {
   background-color: rgba(243, 156, 18, 0.5);
-}
-
-.moe-list .customer-inital h1 {
-  font-size: 42px;
-  padding: 8px;
-  margin: 0;
-  margin-top: 5px;
-  margin-left: 2px;
 }
 
 .moe-list .customer-name {
@@ -376,8 +376,8 @@ nav.menu > a.active {
 .moe-list .action {
   position: absolute;
   top: 0;
-  left: 16px;
-  right: 8px;
+  left: 15px;
+  right: 15px;
   height: 78px;
   background-color: rgba(255, 255, 255, 0.875);
   text-align: center;
@@ -386,7 +386,6 @@ nav.menu > a.active {
 .moe-list .action a {
   font-size: 38px;
   height: 78px;
-  margin-top: 4px;
   text-decoration: none;
   color: #666666;
 }

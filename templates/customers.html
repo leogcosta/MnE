@@ -47,24 +47,21 @@
 
       <h1 class="ClearSans-Thin customer-owes" ng-bind="93656.99|currency:''"></h1>
 
-      <div class="ngShowHide action" ng-show="customer.showAction">
-        <div class="row">
-          <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sale" href="#/customers/sale/">
-            <i class="ion-ios7-pricetag-outline"></i>
-            <small class="ClearSans-Regular">Sale</small>
-          </a>
+      <div class="row ngShowHide action" ng-show="customer.showAction">
+        <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sale" href="#/customers/sale/">
+          <i class="ion-ios7-pricetag-outline"></i>
+          <small class="ClearSans-Regular">Sale</small>
+        </a>
 
-          <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 phone" href="tel:{{ customer.customer_phone_number }}">
-            <i class="ion-ios7-telephone-outline"></i>
-            <small class="ClearSans-Regular">Call</small>
-          </a>
+        <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 phone" href="tel:{{ customer.customer_phone_number }}">
+          <i class="ion-ios7-telephone-outline"></i>
+          <small class="ClearSans-Regular">Call</small>
+        </a>
 
-          <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info" href="tel:+251912442676">
-            <i class="ion-ios7-information-outline"></i>
-            <small class="ClearSans-Regular">Info</small>
-          </a>
-        </div>
-
+        <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info" href="tel:+251912442676">
+          <i class="ion-ios7-information-outline"></i>
+          <small class="ClearSans-Regular">Info</small>
+        </a>
       </div>
     </div>
   </div>

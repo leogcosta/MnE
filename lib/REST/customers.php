@@ -36,8 +36,9 @@
   function customer_PUT ($id) {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+
     $result = getDB() -> update(CUSTOMERS, $request, ['customer_id' => $id]);
-    if ($result) {
+    if ($result === 1 || $result === 0) {
       $request['message'] = 'customer updated';
       Flight::json($request, 202);
     } else {

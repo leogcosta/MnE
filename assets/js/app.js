@@ -15,11 +15,21 @@ app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootSco
     $('.menu > a').removeClass('active');
 
     switch(target.controller) {
-      case 'customersCtrl':
+      case 'customerCtrl':
       case 'customerNewCtrl':
+      case 'customersCtrl':
         $('a[href="#/customers"]').addClass('active');
       break;
     }
+
+    // when navigating from a scrolled position, the next view will take
+    // the `further` bottom of the next page --- it's really hard to explain
+    // the `bug`
+    //
+    // i just have to scroll to the top ERY time - that's it! - geez!
+    $('html, body').animate({
+      scrollTop: 0
+    }, 500, 'easeOutExpo');
   });
 
   /*

@@ -24,7 +24,7 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
       console.log(data);
       $location.path('/customers');
     }).error(function (data, status, headers, config) {
-      console.log(data);
+      console.error(data);
     });
   } else {
     // we're going to be checking the localStorage for `credentials`

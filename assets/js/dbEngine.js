@@ -37,8 +37,14 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
   };
 
   var SQLErrorHandeler = function (SQLTransaction, error) {
-    if (error.message.search(/constraint/i) !== -1) {
-      notify({message: 'constraint failure'});
+    // the error message returned is different on browsers i.e.
+    // Chrome and Safari - some day we come one --- na, that would be boring!
+    //
+    // any who, the error message is tailored to iOS, like i said
+    // the app is optimized for iOS, for a different agent you can log the error
+    // and tailor it to your self
+    if (error.message.search(/not unique/i) !== -1) {
+      notify({message: 'unique constraint failure'});
     }
 
     console.error(error);

@@ -57,6 +57,7 @@
     </div>
 
     <script src="assets/jquery/jquery-1.11.0.min.js"></script>
+    <script src="assets/jquery/jquery.ui.effect.min.js"></script>
     <script src="assets/fastclick/fastclick.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/offline/offline.min.js"></script>
@@ -68,11 +69,14 @@
     <script src="assets/angular/angular-touch.min.js"></script>
 
     <script src="assets/js/dbEngine.js"></script>
-    <script src="assets/js/salt.js"></script>
+    <script src="assets/js/syncEngine.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/controllers/login.js"></script>
-    <script src="assets/js/controllers/customers.js"></script>
+
+    <script src="assets/js/controllers/customer.js"></script>
     <script src="assets/js/controllers/customerNew.js"></script>
+    <script src="assets/js/controllers/customers.js"></script>
+
     <script src="assets/js/script.js"></script>
 
     <!-- want pace to be initiated AFTER Safari's `roll` ends -->

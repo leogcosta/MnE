@@ -1,0 +1,107 @@
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs">
+  <div class="row nav-tip">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <i class="ion-ios7-person-outline"></i>
+    </div>
+  </div>
+
+  <div class="row nav-tip">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <h1 class="ClearSans-Thin">Customer Info.</h1>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs">
+      <form
+        name="customerForm"
+        class="form-horizontal editForm"
+        role="form"
+        novalidate
+        ng-submit="customerCtrl.update()"
+      >
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Full Name *"
+              required
+              ng-model="customer.customer_full_name"
+              ng-maxlength="64"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <input
+              type="tel"
+              class="form-control"
+              placeholder="Phone Number *"
+              required
+              ng-model="customer.customer_phone_number"
+              ng-pattern="/^((\+251)|0)[0-9]{9}$/"
+              ng-maxlength="13"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              ng-model="customer.customer_email"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ngShowHide"
+            ng-show="customer.customer_email !== '' && customer.customer_email !== undefined"
+          >
+            <a href="mailto:{{ customer.customer_email }}"
+              class="btn btn-default btn-block"
+            >
+              Email Customer
+            </a>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <button
+              type="submit"
+              ng-disabled="customerForm.$invalid"
+              class="btn btn-primary btn-block"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group delete-container">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <button
+              type="button"
+              class="btn btn-danger btn-block"
+              ng-swipe-right="customerCtrl.delete()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
+</div>
+

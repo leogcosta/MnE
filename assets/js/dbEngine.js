@@ -34,7 +34,15 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       default:
       break
     }
-  }
+  };
+
+  var SQLErrorHandeler = function (SQLTransaction, error) {
+    if (error.message.search(/constraint/i) !== -1) {
+      notify({message: 'constraint failure'});
+    }
+
+    console.error(error);
+  };
 
 
 
@@ -76,26 +84,11 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
             SQLTransaction.executeSql(that.WebSQL.SQL['sales'], [], function (SQLTransaction, SQLResultSet) {
               SQLTransaction.executeSql(that.WebSQL.SQL['transactions'], [], function (SQLTransaction, SQLResultSet) {
                 console.info('WebSQL booting completed');
-              }, function (SQLTransaction, e) {
-                console.log('ERROR on TRANSATCIONS');
-                console.log(e);
-              });
-            }, function (SQLTransaction, e) {
-              console.log('ERROR on SALES');
-              console.log(e);
-            });
-          }, function (SQLTransaction, e) {
-            console.log('ERROR on ACCOUNTS');
-            console.log(e);
-          });
-        }, function (SQLTransaction, e) {
-          console.log('ERROR on ITEMS');
-          console.log(e);
-        });
-      }, function (SQLTransaction, e) {
-        console.log('ERROR on CUSTOMERS');
-        console.log(e);
-      });
+              }, SQLErrorHandeler);
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
+        }, SQLErrorHandeler);
+      }, SQLErrorHandeler);
     });
   };
 
@@ -122,13 +115,9 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
           SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
             if (SQLResultSet.rows.length === 0) {
               SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
-              }, function (SQLTransaction, error) {
-                console.error(error);
-              });
+              }, SQLErrorHandeler);
             }
-          }, function (SQLTransaction, error) {
-            console.error(error);
-          });
+          }, SQLErrorHandeler);
         });
 
         callback(data, status, headers, config);
@@ -145,13 +134,13 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       };
 
       that.getWebSQLdb().transaction(function (SQLTransaction) {
-        SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=? AND operation!=?', [id, 'DELETE'], function (SQLTransaction, SQLResultSet) {
+        SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=? AND (operation IS NULL OR operation!=?)', [id, 'DELETE'], function (SQLTransaction, SQLResultSet) {
           if (SQLResultSet.rows.length === 0) {
             notify({message: 'customer id '+ id +' does not exist'});
           } else {
-            callback(SQLResultSet.rows.item(0), 200, null, null);
+            callback(angular.copy(SQLResultSet.rows.item(0)), 200, null, null);
           }
-        });
+        }, SQLErrorHandeler);
       });
     }
   };
@@ -189,7 +178,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
 
             callback(rows, 200, null, null);
           }
-        });
+        }, SQLErrorHandeler);
       });
     }
   };
@@ -205,6 +194,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
 
     if ($rootScope.online) {
       $http.put('api/'+ tableName +'/'+ updateInstance[Object.keys(updateInstance)[0]], updateInstance).success(function (data, status, headers, config) {
+        notify(data);
         dataCopy = angular.copy(data);
         delete dataCopy['message'];
         var keys = Object.keys(dataCopy).splice(1);
@@ -219,10 +209,8 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
         SQL.value.push(dataCopy[Object.keys(dataCopy)[0]]);
 
         that.getWebSQLdb().transaction(function (SQLTransaction) {
-          SQLTransaction.executeSql('UPDATE '+ tableName +' set '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
-          }, function (SQLTransaction, error) {
-            console.error(error);
-          });
+          SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
+          }, SQLErrorHandeler);
         });
       }).error(errorHandler);
     } else {
@@ -240,13 +228,10 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       SQL.value.push(updateInstance[Object.keys(updateInstance)[0]]);
 
       that.getWebSQLdb().transaction(function (SQLTransaction) {
-        SQLTransaction.executeSql('UPDATE '+ tableName +' set '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
-          updateInstance.message = 'customer updated';
-          notify(updateInstance);
+        SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
+          notify({message: 'customer updated'});
           callback(updateInstance, 202, null, null);
-        }, function (SQLTransaction, error) {
-          console.error(error);
-        });
+        }, SQLErrorHandeler);
       });
     }
   };
@@ -289,12 +274,8 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
 
           SQL.wild = SQL.wild.join(', ');
           SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
-          }, function (SQLTransaction, error) {
-            console.error(error);
-          });
-        }, function (SQLTransaction, error) {
-          console.error(error);
-        });
+          }, SQLErrorHandeler);
+        }, SQLErrorHandeler);
 
         notify(data);
         callback(data, status, headers, config);
@@ -315,10 +296,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
           saveInstance.customer_id = SQLResultSet.insertId;
           notify(saveInstance);
           callback(saveInstance, 202, null, null);
-        }, function (SQLTransaction, error) {
-          notify({message: 'customer full name already exists'});
-          console.error(error);
-        });
+        }, SQLErrorHandeler);
       });
     }
   };
@@ -328,9 +306,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
       $http.delete('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
         that.getWebSQLdb().transaction(function (SQLTransaction) {yhngb
           SQLTransaction.executeSql('DELETE FROM '+ tableName +' WHERE '+ paramKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
-          }, function (SQLTransaction, error) {
-            console.error(error);
-          });
+          }, SQLErrorHandeler);
         });
 
         notify(data);
@@ -343,9 +319,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
           data = {'message': 'customer deleted'};
           notify(data);
           callback(data, 200, null, null);
-        }, function (SQLTransaction, error) {
-          console.error(error);
-        });
+        }, SQLErrorHandeler);
       });
     }
   };

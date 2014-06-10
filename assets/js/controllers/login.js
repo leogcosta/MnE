@@ -21,6 +21,7 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
   // else --- you don't wanna know!
   if ($scope.online) {
     $http.get('api/login').success(function (data, status, headers, config) {
+      notify({message: 'welcome back ('+ localStorage.user_username +')'});
       console.log(data);
       $location.path('/customers');
     }).error(function (data, status, headers, config) {

@@ -37,31 +37,47 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
 
   Offline.on('up', function () {
     $rootScope.online = true;
+    syncEngine();
     $rootScope.$apply();
-    // we should be syncing here...
   });
 
   Offline.on('down', function () {
     $rootScope.online = false;
+    notify({message: 'you\'re now offline'});
     $rootScope.$apply();
   });
   */
 
   $rootScope.online = false;
 
-  dbEngine.bootWebSQL();
+  // i know i could have done a factory where it'll be shared among controllers
+  // but am `experimenting` - so...let me be
+  $rootScope.data = {
+    customers: []
+  };
+
+  // bootWebSQL returns a promise
+  // so latter on we can use .then to do a sequential execution - like
+  // the good ol' days :)
+  //dbEngine.bootWebSQL();
+  dbEngine.setThat().then(function () {
+    dbEngine.bootWebSQL();
+  });
 }]);
 
 app.config(function ($routeProvider) {
   $routeProvider.when('/login', {
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl'
-  }).when('/customers', {
-    templateUrl: 'templates/customers.html',
-    controller: 'customersCtrl'
+  }).when('/customers/info/:id', {
+    templateUrl: 'templates/customer.html',
+    controller: 'customerCtrl'
   }).when('/customers/new', {
     templateUrl: 'templates/customerNew.html',
     controller: 'customerNewCtrl'
+  }).when('/customers', {
+    templateUrl: 'templates/customers.html',
+    controller: 'customersCtrl'
   }).otherwise({
     redirectTo: '/login'
   });

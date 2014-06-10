@@ -5,7 +5,7 @@
 // am not going to be using the REST services provided by Angular since it's `hard`
 // to handle errors without intercepting or something (without INTERCEPTION)
 var dbEngine = angular.module('dbEngine', []);
-dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($rootScope, $http, $location) {
+dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function ($rootScope, $q, $http, $location) {
   var errorHandler = function (data, status, headers, config) {
     notify(data);
     console.error(data);
@@ -66,6 +66,8 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
 
   // boot all necessary table creation on WebSQL in initial connection
   that.bootWebSQL = function () {
+    var deferred = $q.defer();
+
     that.WebSQL.db = openDatabase('mne', '1.0', 'MnE Database', (5*1024*1024));
 
     // since we're going to be managing only ONE user at a given time
@@ -89,13 +91,15 @@ dbEngine.factory('dbEngine', ['$rootScope', '$http', '$location', function ($roo
           SQLTransaction.executeSql(that.WebSQL.SQL['accounts'], [], function (SQLTransaction, SQLResultSet) {
             SQLTransaction.executeSql(that.WebSQL.SQL['sales'], [], function (SQLTransaction, SQLResultSet) {
               SQLTransaction.executeSql(that.WebSQL.SQL['transactions'], [], function (SQLTransaction, SQLResultSet) {
-                console.info('WebSQL booting completed');
+                deferred.resolve('WebSQL booting completed');
               }, SQLErrorHandeler);
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         }, SQLErrorHandeler);
       }, SQLErrorHandeler);
     });
+
+    return deferred.promise;
   };
 
   that.get = function (tableName, id, callback) {

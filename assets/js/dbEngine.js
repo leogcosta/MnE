@@ -94,7 +94,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
           SQLTransaction.executeSql(that.WebSQL.SQL['accounts'], [], function (SQLTransaction, SQLResultSet) {
             SQLTransaction.executeSql(that.WebSQL.SQL['sales'], [], function (SQLTransaction, SQLResultSet) {
               SQLTransaction.executeSql(that.WebSQL.SQL['transactions'], [], function (SQLTransaction, SQLResultSet) {
-                console.info('booting completed!');
+                console.info('boot completed!');
                 deferred.resolve('WebSQL booting completed');
               }, SQLErrorHandeler);
             }, SQLErrorHandeler);

@@ -1,8 +1,46 @@
 CACHE MANIFEST
-# Rev 0.0.2
+# Rev 0.0.1
 
 CACHE:
+app.appcache
 
+assets/bootstrap/css/bootstrap.min.css
+assets/pace/themes/pace-theme-minimal.css
+assets/ionicons/css/ionicons.min.css
+assets/css/style.css
+assets/jquery/jquery-1.11.0.min.js
+assets/jquery/jquery.ui.effect.min.js
+assets/fastclick/fastclick.js
+assets/bootstrap/js/bootstrap.min.js
+assets/offline/offline.min.js
+assets/moment/moment.min.js
+assets/angular/angular.min.js
+assets/angular/angular-animate.min.js
+assets/angular/angular-route.min.js
+assets/angular/angular-resource.min.js
+assets/angular/angular-touch.min.js
+assets/pace/pace.min.js
+assets/js/dbEngine.js
+assets/js/syncEngine.js
+assets/js/app.js
+assets/js/controllers/login.js
+assets/js/controllers/customer.js
+assets/js/controllers/customerNew.js
+assets/js/controllers/customers.js
+assets/js/script.js
+assets/font/clearsans/WOFF/ClearSans-Medium.woff
+assets/font/clearsans/WOFF/ClearSans-Regular.woff
+assets/font/clearsans/WOFF/ClearSans-Light.woff
+assets/font/clearsans/WOFF/ClearSans-Thin.woff
+assets/font/lato/Lato-Hai.ttf
+assets/ionicons/fonts/ionicons.woff
+assets/ionicons/fonts/ionicons.ttf
+assets/ionicons/fonts/ionicons.eot
+assets/ionicons/fonts/ionicons.svg
+templates/customer.html
+templates/customerNew.html
+templates/customers.html
+templates/login.html
 
 NETWORK:
 *

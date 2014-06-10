@@ -32,7 +32,7 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
     }, 500, 'easeOutExpo');
   });
 
-  /*
+  ///*
   $rootScope.online = Offline.state === 'up' ? true : false;
 
   Offline.on('up', function () {
@@ -46,9 +46,9 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
     notify({message: 'you\'re now offline'});
     $rootScope.$apply();
   });
-  */
+  //*/
 
-  $rootScope.online = false;
+  //$rootScope.online = false;
 
   // i know i could have done a factory where it'll be shared among controllers
   // but am `experimenting` - so...let me be

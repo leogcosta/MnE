@@ -5,6 +5,7 @@
 // am not going to be using the REST services provided by Angular since it's `hard`
 // to handle errors without intercepting or something (without INTERCEPTION)
 var dbEngine = angular.module('dbEngine', []);
+
 dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function ($rootScope, $q, $http, $location) {
   var errorHandler = function (data, status, headers, config) {
     notify(data);
@@ -60,15 +61,17 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
     }
   };
 
-  that.getWebSQLdb = function () {
-    return openDatabase('mne', '1.0', 'MnE Database', (5*1024*1024));
+  that.setThat = function () {
+    var deferred = $q.defer();
+    that.WebSQL.db = openDatabase('mne', '1.0', 'MnE Database', (5*1024*1024));
+    console.info('initiation completed!');
+    deferred.resolve('db opened');
+    return deferred.promise;
   }
 
   // boot all necessary table creation on WebSQL in initial connection
   that.bootWebSQL = function () {
     var deferred = $q.defer();
-
-    that.WebSQL.db = openDatabase('mne', '1.0', 'MnE Database', (5*1024*1024));
 
     // since we're going to be managing only ONE user at a given time
     // `extra` column `operation` is going to be used for syncing purposes
@@ -91,6 +94,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
           SQLTransaction.executeSql(that.WebSQL.SQL['accounts'], [], function (SQLTransaction, SQLResultSet) {
             SQLTransaction.executeSql(that.WebSQL.SQL['sales'], [], function (SQLTransaction, SQLResultSet) {
               SQLTransaction.executeSql(that.WebSQL.SQL['transactions'], [], function (SQLTransaction, SQLResultSet) {
+                console.info('booting completed!');
                 deferred.resolve('WebSQL booting completed');
               }, SQLErrorHandeler);
             }, SQLErrorHandeler);
@@ -121,7 +125,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
 
         SQL.wild = SQL.wild.join(', ');
 
-        that.getWebSQLdb().transaction(function (SQLTransaction) {
+        that.WebSQL.db.transaction(function (SQLTransaction) {
           SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
             if (SQLResultSet.rows.length === 0) {
               SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
@@ -143,7 +147,8 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
         break;
       };
 
-      that.getWebSQLdb().transaction(function (SQLTransaction) {
+
+      that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('SELECT '+ SQL.selectKey +' FROM '+ tableName +' WHERE '+ SQL.primaryKey +'=? AND (operation IS NULL OR operation!=?)', [id, 'DELETE'], function (SQLTransaction, SQLResultSet) {
           if (SQLResultSet.rows.length === 0) {
             notify({message: 'customer id '+ id +' does not exist'});
@@ -176,13 +181,13 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
         break;
       }
 
-      that.getWebSQLdb().transaction(function (SQLTransaction) {
+      that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('SELECT '+ selectKey +' FROM '+ tableName +' WHERE operation!=? OR operation IS NULL', ['DELETE'], function (SQLTransaction, SQLResultSet) {
           if (SQLResultSet.rows.length === 0) {
             callback([], 200, null, null);
           } else {
             var rows = [], length = SQLResultSet.rows.length, i = 0;
-            for (; i < length;i++) {
+            for (; i < length; i++) {
               rows.push(SQLResultSet.rows.item(i));
             }
 
@@ -218,10 +223,11 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
         SQL.setKey += ' WHERE '+ Object.keys(dataCopy)[0] +'=?';
         SQL.value.push(dataCopy[Object.keys(dataCopy)[0]]);
 
-        that.getWebSQLdb().transaction(function (SQLTransaction) {
+        that.WebSQL.db.transaction(function (SQLTransaction) {
           SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
           }, SQLErrorHandeler);
         });
+
       }).error(errorHandler);
     } else {
       var keys = Object.keys(updateInstance).splice(1);
@@ -237,7 +243,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
       SQL.setKey += ' WHERE '+ Object.keys(updateInstance)[0] +'=?';
       SQL.value.push(updateInstance[Object.keys(updateInstance)[0]]);
 
-      that.getWebSQLdb().transaction(function (SQLTransaction) {
+      that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
           notify({message: 'customer updated'});
           callback(updateInstance, 202, null, null);
@@ -274,33 +280,34 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
         dataCopy = angular.copy(data);
         delete dataCopy['message'];
 
-        that.getWebSQLdb().transaction(function (SQLTransaction) {
-          SQL.selectKey = Object.keys(dataCopy).join(', ');
-          SQL.primaryKey = Object.keys(dataCopy).splice(-1)[0];
-          for (key in dataCopy) {
-            SQL.value.push(dataCopy[key]);
-            SQL.wild.push('?');
-          }
-
-          SQL.wild = SQL.wild.join(', ');
-          SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
-          }, SQLErrorHandeler);
-        }, SQLErrorHandeler);
-
-        notify(data);
-        callback(data, status, headers, config);
-      }).error(errorHandler);
-    } else {
-      saveInstance.operation = 'SAVE';
-
-      that.getWebSQLdb().transaction(function (SQLTransaction) {
-        SQL.selectKey = Object.keys(saveInstance).join(', ');
-        for (key in saveInstance) {
-          SQL.value.push(saveInstance[key]);
+        SQL.selectKey = Object.keys(dataCopy).join(', ');
+        SQL.primaryKey = Object.keys(dataCopy).splice(-1)[0];
+        for (key in dataCopy) {
+          SQL.value.push(dataCopy[key]);
           SQL.wild.push('?');
         }
 
         SQL.wild = SQL.wild.join(', ');
+
+        that.WebSQL.db.transaction(function (SQLTransaction) {
+          SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
+            notify(data);
+            callback(data, status, headers, config);
+          }, SQLErrorHandeler);
+        });
+      }).error(errorHandler);
+    } else {
+      saveInstance.operation = 'SAVE';
+
+      SQL.selectKey = Object.keys(saveInstance).join(', ');
+      for (key in saveInstance) {
+        SQL.value.push(saveInstance[key]);
+        SQL.wild.push('?');
+      }
+
+      SQL.wild = SQL.wild.join(', ');
+
+      that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
           saveInstance.message = 'customer '+ saveInstance.customer_full_name +' added';
           saveInstance.customer_id = SQLResultSet.insertId;
@@ -314,17 +321,17 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
   that.delete = function (tableName, paramKey, id, callback) {
     if ($rootScope.online) {
       $http.delete('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
-        that.getWebSQLdb().transaction(function (SQLTransaction) {yhngb
+        that.WebSQL.db.transaction(function (SQLTransaction) {
           SQLTransaction.executeSql('DELETE FROM '+ tableName +' WHERE '+ paramKey +'=?', [id], function (SQLTransaction, SQLResultSet) {
+            notify(data);
+            callback(data, status, headers, config);
           }, SQLErrorHandeler);
         });
-
-        notify(data);
-        callback(data, status, headers, config);
       }).error(errorHandler);
     } else {
       var data = {};
-      that.getWebSQLdb().transaction(function (SQLTransaction) {
+
+      that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' set operation=? WHERE '+ paramKey +'=?', ['DELETE', id], function (SQLTransaction, SQLResultSet) {
           data = {'message': 'customer deleted'};
           notify(data);

@@ -1,6 +1,6 @@
-var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngTouch', 'dbEngine']);
+var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngTouch', 'dbEngine', 'syncEngine']);
 
-app.controller('appCtrl', ['$rootScope', '$http', 'dbEngine', function ($rootScope, $http, dbEngine) {
+app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine', function ($rootScope, $q, $http, dbEngine, syncEngine) {
   $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {
     console.log(rejection);
   });

@@ -42,6 +42,7 @@ syncEngine.factory('syncEngine', ['$rootScope', '$q', '$http', 'dbEngine', funct
             save(key, SQL);
           }
 
+          $rootScope.$broadcast('sync-completed');
           deferred.resolve('sync completed');
         }, SQLErrorHandeler);
       });

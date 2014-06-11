@@ -322,14 +322,14 @@ nav.menu > a.active {
   border-bottom: 1px solid rgba(51, 51, 51, 0.1);
 }
 
-.moe-list .customer-inital-container {
+.moe-list .item-inital-container {
   height: 78px;
   padding: 0;
   margin: 0;
   text-align: center;
 }
 
-.moe-list h1.customer-inital {
+.moe-list h1.item-inital {
   position: absolute;
   top: 0;
   right: 0;
@@ -347,7 +347,7 @@ nav.menu > a.active {
   color: #666666;
 }
 
-.moe-list h1.customer-inital.save {
+.moe-list h1.item-inital.save {
   background-color: rgba(46, 204, 113, 0.5);
 }
 
@@ -355,7 +355,7 @@ nav.menu > a.active {
   background-color: rgba(243, 156, 18, 0.5);
 }
 
-.moe-list .customer-name {
+.moe-list .item-name {
   margin: 0;
   margin-top: 2px;
   margin-bottom: 4px;
@@ -365,7 +365,11 @@ nav.menu > a.active {
   text-transform: capitalize;
 }
 
-.moe-list .customer-owes {
+.moe-list .item-name small {
+  font-size: 16px;
+}
+
+.moe-list .item-owes {
   margin: 0;
   padding: 0;
   color: rgba(231, 76, 60, 0.7);

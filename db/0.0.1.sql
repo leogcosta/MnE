@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS customers (
 
 CREATE TABLE IF NOT EXISTS items (
   item_id int(11) NOT NULL AUTO_INCREMENT,
-  item_item_id int(11) NOT NULL,
-  item_name int(11) NOT NULL,
+  item_item_id varchar(64) NOT NULL,
+  item_name varchar(64) NOT NULL,
   item_unit_price decimal(10,3) NOT NULL,
   PRIMARY KEY (item_id),
   UNIQUE KEY item_item_id (item_item_id)

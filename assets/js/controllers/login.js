@@ -1,4 +1,4 @@
-var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'dbEngine', function ($scope, $location, $http, dbEngine) {
+var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'dbEngine', 'syncEngine', function ($scope, $location, $http, dbEngine, syncEngine) {
   $scope.credentials = {
     username: '',
     password: ''
@@ -44,7 +44,13 @@ var loginCtrl = app.controller('loginCtrl', ['$scope', '$location', '$http', 'db
         localStorage[key] = data[key];
       }
 
-      $location.path('/customers');
+      syncEngine().then(function () {
+        $location.path('/customers');
+
+        if ($scope.$$phase === null) {
+          $scope.$apply();
+        }
+      });
     }).error(function (data, status, headers, config) {
       notify(data);
       console.error(data);

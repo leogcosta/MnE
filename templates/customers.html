@@ -30,10 +30,10 @@
     ng-swipe-right="customer.showAction = false"
   >
     <div
-      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 customer-inital-container"
+      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container"
     >
       <h1
-        class="Lato-Hai customer-inital"
+        class="Lato-Hai item-inital"
         ng-class="{save: customer.operation === 'SAVE', update: customer.operation === 'UPDATE'}"
         ng-bind="customer.customer_full_name[0]|uppercase"
       ></h1>
@@ -41,11 +41,11 @@
 
     <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
       <p
-        class="ClearSans-Regular customer-name"
+        class="ClearSans-Regular item-name"
         ng-bind="customer.customer_full_name"
       ></p>
 
-      <h1 class="ClearSans-Thin customer-owes" ng-bind="93656.99|currency:''"></h1>
+      <h1 class="ClearSans-Thin item-owes" ng-bind="93656.99|currency:''"></h1>
 
       <div class="row ngShowHide action" ng-show="customer.showAction">
         <a class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sale" href="#/customers/sale/">

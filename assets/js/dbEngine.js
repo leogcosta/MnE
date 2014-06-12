@@ -143,6 +143,16 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
           SQL.primaryKey = 'customer_id';
         break;
 
+        case 'items':
+          SQL.selectKey = 'item_id, item_item_id, item_name, item_unit_price, operation';
+          SQL.primaryKey = 'item_id';
+        break;
+
+        case 'accounts':
+          SQL.selectKey = 'account_id, account_name, account_user_user_id, operation';
+          SQL.primaryKey = 'account_id';
+        break;
+
         default:
         break;
       };
@@ -174,6 +184,14 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
       switch(tableName) {
         case 'customers':
           selectKey = 'customer_id, customer_full_name, customer_phone_number, customer_email, operation';
+        break;
+
+        case 'items':
+          selectKey = 'item_id, item_item_id, item_name, item_unit_price, operation';
+        break;
+
+        case 'accounts':
+          selectKey = 'account_id, account_name, account_user_user_id, operation';
         break;
 
         default:
@@ -245,7 +263,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
 
       that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
-          notify({message: 'customer updated'});
+          notify({message: 'updated'});
           callback(updateInstance, 202, null, null);
         }, SQLErrorHandeler);
       });
@@ -309,7 +327,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
 
       that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
-          saveInstance.message = 'customer '+ saveInstance.customer_full_name +' added';
+          saveInstance.message = 'saved';
           saveInstance.customer_id = SQLResultSet.insertId;
           notify(saveInstance);
           callback(saveInstance, 202, null, null);
@@ -333,7 +351,7 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
 
       that.WebSQL.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' set operation=? WHERE '+ paramKey +'=?', ['DELETE', id], function (SQLTransaction, SQLResultSet) {
-          data = {'message': 'customer deleted'};
+          data = {'message': 'deleted'};
           notify(data);
           callback(data, 200, null, null);
         }, SQLErrorHandeler);

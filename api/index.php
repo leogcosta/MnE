@@ -6,6 +6,8 @@
 
   require_once('../lib/REST/login.php');
   require_once('../lib/REST/customers.php');
+  require_once('../lib/REST/items.php');
+  require_once('../lib/REST/accounts.php');
 
   require_once('../lib/REST/sync.php');
   start_session();
@@ -28,6 +30,18 @@
   Flight::route('POST /customers', 'customer_POST');
   Flight::route('PUT /customers/@id', 'customer_PUT');
   Flight::route('DELETE /customers/@id', 'customer_DELETE');
+
+  // Item
+  Flight::route('GET /items(/@id)', 'item_GET');
+  Flight::route('POST /items', 'item_POST');
+  Flight::route('PUT /items/@id', 'item_PUT');
+  Flight::route('DELETE /items/@id', 'item_DELETE');
+
+  // Account
+  Flight::route('GET /accounts(/@id)', 'account_GET');
+  Flight::route('POST /accounts', 'account_POST');
+  Flight::route('PUT /accounts/@id', 'account_PUT');
+  Flight::route('DELETE /accounts/@id', 'account_DELETE');
 
   // sync
   Flight::route('POST /sync', 'sync');

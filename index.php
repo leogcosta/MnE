@@ -74,8 +74,16 @@
     <script src="assets/js/controllers/login.js"></script>
 
     <script src="assets/js/controllers/customer.js"></script>
-    <script src="assets/js/controllers/customerNew.js"></script>
     <script src="assets/js/controllers/customers.js"></script>
+    <script src="assets/js/controllers/customerNew.js"></script>
+
+    <script src="assets/js/controllers/item.js"></script>
+    <script src="assets/js/controllers/items.js"></script>
+    <script src="assets/js/controllers/itemNew.js"></script>
+
+    <script src="assets/js/controllers/account.js"></script>
+    <script src="assets/js/controllers/accounts.js"></script>
+    <script src="assets/js/controllers/accountNew.js"></script>
 
     <script src="assets/js/script.js"></script>
 

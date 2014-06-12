@@ -1,0 +1,76 @@
+<nav class="search-nav row">
+  <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+    <input
+      type="text"
+      class="search form-control input-sm"
+      placeholder="Search Accounts"
+      ng-model="search.$"
+    >
+
+    <i class="search-icon ion-ios7-search"></i>
+  </div>
+
+  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+    <a
+      href="#/accounts/new"
+      class="btn btn-block btn-xs btn-default new-entity"
+    >
+      <i class="ion-ios7-plus-outline"></i>
+    </a>
+  </div>
+</nav>
+
+
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
+  <div
+    class="row ngRepeat moe-list"
+    ng-repeat="account in data.accounts | filter:search:strict | orderBy:'account_name':false"
+    ng-swipe-left="account.showAction = true"
+    ng-swipe-right="account.showAction = false"
+  >
+    <div
+      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container"
+    >
+      <h1
+        class="Lato-Hai item-inital"
+        ng-class="{save: account.operation === 'SAVE', update: account.operation === 'UPDATE'}"
+        ng-bind="account.account_name[0]|uppercase"
+      ></h1>
+    </div>
+
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+      <p
+        class="ClearSans-Regular item-name"
+        ng-bind="account.account_name"
+      ></p>
+
+      <p
+        class="ClearSans-Regular item-unit-price"
+        ng-bind="item.item_unit_price | currency:''"
+      ></p>
+
+      <div
+        class="row ngShowHide action"
+        ng-show="account.showAction"
+      >
+        <a
+          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sale"
+          href="#/accounts/log/{{ account.account_id }}"
+        >
+          <i class="ion-social-buffer-outline"></i>
+          <small class="ClearSans-Regular">Log</small>
+        </a>
+
+        <a
+          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 info"
+          href="#/accounts/info/{{ account.account_id }}"
+        >
+          <i class="ion-ios7-information-outline"></i>
+          <small class="ClearSans-Regular">Info</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+

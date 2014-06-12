@@ -16,9 +16,21 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
 
     switch(target.controller) {
       case 'customerCtrl':
-      case 'customerNewCtrl':
       case 'customersCtrl':
+      case 'customerNewCtrl':
         $('a[href="#/customers"]').addClass('active');
+      break;
+
+      case 'itemCtrl':
+      case 'itemsCtrl':
+      case 'itemNewCtrl':
+        $('a[href="#/items"]').addClass('active');
+      break;
+
+      case 'accountCtrl':
+      case 'accountsCtrl':
+      case 'accountNewCtrl':
+        $('a[href="#/accounts"]').addClass('active');
       break;
     }
 
@@ -69,16 +81,42 @@ app.config(function ($routeProvider) {
   $routeProvider.when('/login', {
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl'
+  }).
+
+  when('/customers/new', {
+    templateUrl: 'templates/customerNew.html',
+    controller: 'customerNewCtrl'
   }).when('/customers/info/:id', {
     templateUrl: 'templates/customer.html',
     controller: 'customerCtrl'
-  }).when('/customers/new', {
-    templateUrl: 'templates/customerNew.html',
-    controller: 'customerNewCtrl'
   }).when('/customers', {
     templateUrl: 'templates/customers.html',
     controller: 'customersCtrl'
-  }).otherwise({
+  }).
+
+  when('/items/new', {
+    templateUrl: 'templates/itemNew.html',
+    controller: 'itemNewCtrl'
+  }).when('/items/info/:id', {
+    templateUrl: 'templates/item.html',
+    controller: 'itemCtrl'
+  }).when('/items', {
+    templateUrl: 'templates/items.html',
+    controller: 'itemsCtrl'
+  }).
+
+  when('/accounts/new', {
+    templateUrl: 'templates/accountNew.html',
+    controller: 'accountNewCtrl'
+  }).when('/accounts/info/:id', {
+    templateUrl: 'templates/account.html',
+    controller: 'accountCtrl'
+  }).when('/accounts', {
+    templateUrl: 'templates/accounts.html',
+    controller: 'accountsCtrl'
+  }).
+
+  otherwise({
     redirectTo: '/login'
   });
 });

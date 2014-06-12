@@ -1,0 +1,81 @@
+<nav class="search-nav row">
+  <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+    <input
+      type="text"
+      class="search form-control input-sm"
+      placeholder="Search Items"
+      ng-model="search.$"
+    >
+
+    <i class="search-icon ion-ios7-search"></i>
+  </div>
+
+  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+    <a
+      href="#/items/new"
+      class="btn btn-block btn-xs btn-default new-entity"
+    >
+      <i class="ion-ios7-plus-outline"></i>
+    </a>
+  </div>
+</nav>
+
+
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
+  <div
+    class="row ngRepeat moe-list"
+    ng-repeat="item in data.items | filter:search:strict | orderBy:'item_name':false"
+    ng-swipe-left="item.showAction = true"
+    ng-swipe-right="item.showAction = false"
+  >
+    <div
+      class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container"
+    >
+      <h1
+        class="Lato-Hai item-inital"
+        ng-class="{save: item.operation === 'SAVE', update: item.operation === 'UPDATE'}"
+        ng-bind="item.item_name[0]|uppercase"
+      ></h1>
+    </div>
+
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+      <p
+        class="ClearSans-Regular item-name"
+        ng-bind="item.item_name"
+      ></p>
+
+      <p
+        class="ClearSans-Medium item-code"
+        ng-bind="item.item_item_id"
+      ></p>
+
+      <p
+        class="ClearSans-Regular item-unit-price"
+        ng-bind="item.item_unit_price | currency:''"
+      ></p>
+
+      <div
+        class="row ngShowHide action"
+        ng-show="item.showAction"
+      >
+        <a
+          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sale"
+          href="#/items/sale/{{ item_id }}"
+        >
+          <i class="ion-ios7-pricetag-outline"></i>
+          <small class="ClearSans-Regular">Sale</small>
+        </a>
+
+        <a
+          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 info"
+          href="#/items/info/{{ item.item_id }}"
+        >
+          <i class="ion-ios7-information-outline"></i>
+          <small class="ClearSans-Regular">Info</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+

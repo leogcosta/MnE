@@ -24,4 +24,6 @@
   // tables
   define('USERS', 'users');
   define('CUSTOMERS', 'customers');
+  define('ITEMS', 'items');
+  define('ACCOUNTS', 'accounts');
 ?>

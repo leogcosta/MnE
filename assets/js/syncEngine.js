@@ -19,51 +19,54 @@ syncEngine.factory('syncEngine', ['$rootScope', '$q', '$http', 'dbEngine', funct
     });
   }
 
+  function clearAndMerge (key, data) {
+    dbEngine.WebSQL.db.transaction(function (SQLTransaction) {
+      SQLTransaction.executeSql('DELETE FROM '+ key +'', [], function (SQLTransaction, SQLResultSet) {
+        that[key] = [];
+
+        for (row in data[key]) {
+          var SQL = {
+            selectKey: '',
+            value: [],
+            wild: []
+          };
+
+          that[key].push(data[key][row]);
+
+          for (objKey in data[key][row]) {
+            SQL.value.push(data[key][row][objKey]);
+            SQL.wild.push('?');
+          }
+
+          SQL.selectKey = Object.keys(data[key][row]).join(', ');
+          SQL.wild = SQL.wild.join(', ');
+
+          save(key, SQL);
+        }
+
+        // this `fixes` the lag
+        // am like (to the freaken' bug)
+        // i will find you and i will kill you! (Liam Neces - Taken)
+        for (key in that) {
+          $rootScope.data[key] = that[key];
+        }
+
+        if ($rootScope.$$phase === null) {
+          $rootScope.$apply();
+        }
+      });
+    });
+  }
+
   // this will merge (forcefully) the returned data with the local db
   function merge (data) {
     for (key in data) {
-      // clearing the table
-      dbEngine.WebSQL.db.transaction(function (SQLTransaction) {
-        SQLTransaction.executeSql('DELETE FROM '+ key +'', [], function (SQLTransaction, SQLResultSet) {
-          that[key] = [];
-
-          for (row in data[key][key]) {
-            var SQL = {
-              selectKey: '',
-              value: [],
-              wild: []
-            };
-
-            that[key].push(data[key][key][row]);
-
-            for (objKey in data[key][key][row]) {
-              SQL.value.push(data[key][key][row][objKey]);
-              SQL.wild.push('?');
-            }
-
-            SQL.selectKey = Object.keys(data[key][key][row]).join(', ');
-            SQL.wild = SQL.wild.join(', ');
-
-            save(key, SQL);
-          }
-
-          // this `fixes` the lag
-          // am like (to the freaken' bug)
-          // i will find you and i will kill you! (Liam Neces - Taken)
-          for (key in that) {
-            $rootScope.data[key] = that[key];
-          }
-
-          if ($rootScope.$$phase === null) {
-            $rootScope.$apply();
-          }
-
-          console.info('sync completed');
-          notify({message: 'sync completed'});
-          deferred.resolve('sync completed');
-        }, SQLErrorHandeler);
-      });
+      clearAndMerge(key, data[key]);
     }
+
+    console.info('sync completed');
+    notify({message: 'sync completed'});
+    deferred.resolve('sync completed');
   }
 
   // this will send `push` request to the server
@@ -94,13 +97,23 @@ syncEngine.factory('syncEngine', ['$rootScope', '$q', '$http', 'dbEngine', funct
         SAVE: [],
         DELETE: [],
         UPDATE: []
+      },
+      items: {
+        SAVE: [],
+        DELETE: [],
+        UPDATE: []
+      },
+      accounts: {
+        SAVE: [],
+        DELETE: [],
+        UPDATE: []
       }
     };
     // pushing all `local` changes to the server...
     // reading tables where operation is either SAVE, DELETE OR UPDATE...
 
-    // reading customers...
     dbEngine.WebSQL.db.transaction(function (SQLTransaction) {
+      // reading customers...
       SQLTransaction.executeSql('SELECT customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id, operation FROM customers WHERE operation = ? OR operation = ? OR operation = ?', ['SAVE', 'UPDATE', 'DELETE'], function (SQLTransaction, SQLResultSet) {
         // seems everything looks in sync
         for (var i = 0; i < SQLResultSet.rows.length; i++) {
@@ -108,8 +121,24 @@ syncEngine.factory('syncEngine', ['$rootScope', '$q', '$http', 'dbEngine', funct
           sync.customers[row.operation].push(row);
         }
 
-        // sending the `push` request...
-        push(sync);
+        // reading items...
+        SQLTransaction.executeSql('SELECT item_id, item_item_id, item_name, item_unit_price, operation FROM items WHERE operation = ? OR operation = ? OR operation = ?', ['SAVE', 'UPDATE', 'DELETE'], function (SQLTransaction, SQLResultSet) {
+          for (var i = 0; i < SQLResultSet.rows.length; i++) {
+            var row = SQLResultSet.rows.item(i);
+            sync.items[row.operation].push(row);
+          }
+
+          // reading accounts...
+          SQLTransaction.executeSql('SELECT account_id, account_name, account_user_user_id, operation FROM accounts WHERE operation = ? OR operation = ? OR operation = ?', ['SAVE', 'UPDATE', 'DELETE'], function (SQLTransaction, SQLResultSet) {
+            for (var i = 0; i < SQLResultSet.rows.length; i++) {
+              var row = SQLResultSet.rows.item(i);
+              sync.accounts[row.operation].push(row);
+            }
+
+            // sending the `push` request...
+            push(sync);
+          });
+        });
       }, SQLErrorHandeler);
     });
 

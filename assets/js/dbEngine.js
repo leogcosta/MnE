@@ -278,6 +278,10 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
         saveInstance['customer_user_user_id'] = localStorage.user_id;
       break;
 
+      case 'accounts':
+        saveInstance['account_user_user_id'] = localStorage.user_id;
+      break;
+
       default:
       break;
     }

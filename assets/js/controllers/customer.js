@@ -1,4 +1,4 @@
-var customerCtrl = app.controller('customerCtrl', ['$rootScope', '$scope', '$location', '$http', '$routeParams', 'dbEngine', function ($rootScope, $scope, $location, $http, $routeParams, dbEngine) {
+var customerCtrl = app.controller('customerCtrl', ['$scope', '$location', '$routeParams', 'dbEngine', function ($scope, $location, $routeParams, dbEngine) {
   dbEngine.get('customers', $routeParams.id, function (data, status, headers, config) {
     $scope.customer = data;
 

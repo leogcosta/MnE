@@ -1,4 +1,4 @@
-var customersCtrl = app.controller('customersCtrl', ['$rootScope', '$scope', '$location', '$http', 'dbEngine', 'syncEngine', function ($rootScope, $scope, $location, $http, dbEngine, syncEngine) {
+var customersCtrl = app.controller('customersCtrl', ['$rootScope', 'dbEngine', function ($rootScope, dbEngine) {
   dbEngine.query('customers', function (data, status, headers, config) {
     $rootScope.data.customers = data;
 
@@ -26,6 +26,4 @@ var customersCtrl = app.controller('customersCtrl', ['$rootScope', '$scope', '$l
     });
   });
   */
-
-  $scope.customersCtrl = this;
 }]);

@@ -14,7 +14,7 @@
     <meta charset="utf-8">
     <meta content="MnE" name="apple-mobile-web-app-title">
     <meta content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimal-ui" name="viewport">
-    <link href="assets/ico/apple-touch-icon-144-precomposed.png" sizes="144x144" rel="apple-touch-icon-precomposed">
+    <link href="assets/image/ico/apple-touch-icon-144-precomposed.png" sizes="144x144" rel="apple-touch-icon-precomposed">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 

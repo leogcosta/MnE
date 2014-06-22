@@ -1,15 +1,15 @@
 <?php
   require_once('../config.php'); // configuration variables
-  require_once('../lib/medoo.php'); // utilities function
+  require_once('../lib/medoo.php'); // light database engine (medoo.in)
   require_once('../lib/utils.php'); // utilities function
-  require_once('flight/Flight.php'); // and finally Flight (used for `routing`)
+  require_once('../lib/flight/Flight.php'); // and finally Flight (used for `routing`)
 
-  require_once('../lib/REST/login.php');
-  require_once('../lib/REST/customers.php');
-  require_once('../lib/REST/items.php');
-  require_once('../lib/REST/accounts.php');
+  require_once('../scripts/login.php');
+  require_once('../scripts/customers.php');
+  require_once('../scripts/items.php');
+  require_once('../scripts/accounts.php');
 
-  require_once('../lib/REST/sync.php');
+  require_once('../scripts/sync.php');
   start_session();
   verify_xsrf();
 

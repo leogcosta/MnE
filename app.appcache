@@ -27,6 +27,7 @@ assets/js/controllers/login.js
 assets/js/controllers/customer.js
 assets/js/controllers/customerNew.js
 assets/js/controllers/customers.js
+assets/js/controllers/items.js
 assets/js/script.js
 assets/font/clearsans/WOFF/ClearSans-Medium.woff
 assets/font/clearsans/WOFF/ClearSans-Regular.woff
@@ -40,6 +41,7 @@ assets/ionicons/fonts/ionicons.svg
 templates/customer.html
 templates/customerNew.html
 templates/customers.html
+templates/items.html
 templates/login.html
 
 NETWORK:

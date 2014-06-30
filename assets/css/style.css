@@ -20,6 +20,14 @@
 }
 
 @font-face {
+  font-family: 'Droid Sans Ethiopic';
+  src: url(../font/clearsans/WOFF/ClearSans-Medium.woff);
+  font-style: normal;
+  font-weight: 400;
+  src: url(../font/DroidSansEthiopic/DroidSansEthiopic-Regular.ttf) format('truetype');
+}
+
+@font-face {
   font-family: 'Lato-Hai';
   src: url(../font/lato/Lato-Hai.ttf);
 }
@@ -42,6 +50,10 @@
 
 .Lato-Hai {
   font-family: 'Lato-Hai';
+}
+
+.Droid-Sans-Ethiopic {
+  font-family: 'Droid Sans Ethiopic', serif;
 }
 /* font: END -----------------------------------------------------------------*/
 
@@ -194,6 +206,10 @@ body {
   padding-bottom: 46px;
   padding-left: 8px;
   padding-right: 8px;
+}
+
+.mt12 {
+  margin-top: 12px;
 }
 
 nav.menu {
@@ -423,6 +439,10 @@ nav.menu > a.active {
 
 .moe-list .action a.info {
   color: rgba(41, 128, 185, 0.7);
+}
+
+.col-lg-12 > .moe-list:last-child {
+  border-bottom: 0px solid rgba(51, 51, 51, 0.1);
 }
 
 .editForm input {

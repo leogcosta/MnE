@@ -32,6 +32,10 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
       case 'accountNewCtrl':
         $('a[href="#/accounts"]').addClass('active');
       break;
+
+      case 'moreCtrl':
+        $('a[href="#/more"]').addClass('active');
+      break;
     }
 
     // when navigating from a scrolled position, the next view will take
@@ -64,6 +68,7 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
 
   // i know i could have done a factory where it'll be shared among controllers
   // but am `experimenting` - so...let me be
+  // + it's bad to create a serve who's ONLY purpose is to serve data
   $rootScope.data = {
     customers: []
   };
@@ -71,7 +76,6 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
   // bootWebSQL returns a promise
   // so latter on we can use .then to do a sequential execution - like
   // the good ol' days :)
-  //dbEngine.bootWebSQL();
   dbEngine.setThat().then(function () {
     dbEngine.bootWebSQL();
   });
@@ -114,6 +118,11 @@ app.config(function ($routeProvider) {
   }).when('/accounts', {
     templateUrl: 'templates/accounts.html',
     controller: 'accountsCtrl'
+  }).
+
+  when('/more', {
+    templateUrl: 'templates/more.html',
+    controller: 'moreCtrl'
   }).
 
   otherwise({

@@ -85,6 +85,8 @@
     <script src="assets/js/controllers/accounts.js"></script>
     <script src="assets/js/controllers/accountNew.js"></script>
 
+    <script src="assets/js/controllers/more.js"></script>
+
     <script src="assets/js/script.js"></script>
 
     <!-- want pace to be initiated AFTER Safari's `roll` ends -->

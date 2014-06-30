@@ -33,8 +33,8 @@ $(document).ready(function () {
 
 
 
-// notification:
-// basically sets a height to 24px - what am i saying it exactly does that
+// notification
+// basically sets a height to 24px - what am i saying --- it exactly does that
 function notify (option) {
   clearTimeout(GLOBAL.notifyTimer);
   $('.notification-bar').animate({

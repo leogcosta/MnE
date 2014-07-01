@@ -2,6 +2,7 @@
   require_once('../config.php'); // configuration variables
   require_once('../lib/medoo.php'); // light database engine (medoo.in)
   require_once('../lib/utils.php'); // utilities function
+  require_once('../lib/dbQuery.php'); // db Query functions
   require_once('../lib/flight/Flight.php'); // and finally Flight (used for `routing`)
 
   require_once('../scripts/login.php');
@@ -44,7 +45,7 @@
   Flight::route('DELETE /accounts/@id', 'account_DELETE');
 
   // sync
-  Flight::route('POST /sync', 'sync');
+  // Flight::route('POST /sync', 'sync');
 
   Flight::start();
 ?>

@@ -1,4 +1,5 @@
-var customersCtrl = app.controller('customersCtrl', ['$rootScope', 'dbEngine', function ($rootScope, dbEngine) {
+var customersCtrl = app.controller('customersCtrl', ['$scope', '$q', 'dbEngine2', function ($scope, $q, dbEngine2) {
+  /*
   dbEngine.query('customers', function (data, status, headers, config) {
     $rootScope.data.customers = data;
 
@@ -6,24 +7,27 @@ var customersCtrl = app.controller('customersCtrl', ['$rootScope', 'dbEngine', f
       $rootScope.$apply();
     }
   });
-
-  /*
-  // Bug Godzilla:
-  // whenever 'sync-completed' is fired we're going to `reload` the current
-  // listing, we're not going to be loading ERY where, just where it matters.
-  // `more` code on our side, but worth it --- i think
-  $rootScope.$on('sync-completed', function () {
-    // for some reason i quite don't understand after firing `sync-completed`
-    // it takes like forever for dbEngine to callback - NOT dbEngine engine's
-    // fault because i tested it with like infinity callbacks and all went
-    // well without a glitch
-    dbEngine.query('customers', function (data, status, headers, config) {
-      $rootScope.data.customers = data;
-
-      if ($rootScope.$$phase === null) {
-        $rootScope.$apply();
-      }
-    });
-  });
   */
+
+  this.db = function () {
+    // boot sequence
+    dbEngine2.webdb.open().then(function (message) {
+      console.log(message);
+
+      dbEngine2.webdb.initiateTables().then(function (message) {
+        console.log(message);
+
+        dbEngine2.get('customers', 3, function (data, status, headers, config) {
+          console.log(data);
+        });
+      }, function (error) {
+        console.error(error);
+      });
+    }, function (error) {
+      console.error(error);
+    });
+
+  };
+
+  $scope.customersCtrl = this;
 }]);

@@ -32,7 +32,7 @@
   $GLOBALS['TABLES'] = [
     CUSTOMERS => [
       'tableName' => 'customers',
-      'tableSelect' => ['customer_id', 'customer_full_name', 'customer_phone_number', 'customer_email', 'customer_user_user_id'],
+      'tableSelect' => ['customer_id', 'customer_full_name', 'customer_phone_number', 'customer_email', 'customer_user_user_id', 'customer_timestamp'],
       'tableId' => 'customer_id',
       'getError' => 'customer does not exist',
       'collisionError' => 'customer constraint error',
@@ -44,7 +44,7 @@
 
     ACCOUNTS => [
       'tableName' => 'accounts',
-      'tableSelect' => ['account_id', 'account_name', 'account_user_user_id'],
+      'tableSelect' => ['account_id', 'account_name', 'account_user_user_id', 'account_timestamp'],
       'tableId' => 'account_id',
       'getError' => 'account does not exist',
       'collisionError' => 'account constraint error',
@@ -56,7 +56,7 @@
 
     ITEMS => [
       'tableName' => 'items',
-      'tableSelect' => ['item_id', 'item_item_id', 'item_name', 'item_unit_price'],
+      'tableSelect' => ['item_id', 'item_item_id', 'item_name', 'item_unit_price', 'item_timestamp'],
       'tableId' => 'item_id',
       'getError' => 'item does not exist',
       'collisionError' => 'item constraint error',

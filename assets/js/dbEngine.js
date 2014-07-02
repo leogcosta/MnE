@@ -365,3 +365,236 @@ dbEngine.factory('dbEngine', ['$rootScope', '$q', '$http', '$location', function
 
   return that;
 }]);
+
+
+
+dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope, $q, $http) {
+  // this is the `closure` that's going to be returned
+  var that = {
+    webdb: {
+      db: null,
+      size: 5242880, // that's 5MB right there - 5*1024*1024
+      sql: {
+        customers: 'CREATE TABLE IF NOT EXISTS customers ('+
+                        'customer_id INTEGER PRIMARY KEY ASC,'+
+                        'customer_full_name VARCHAR UNIQUE COLLATE NOCASE,'+
+                        'customer_phone_number VARCHAR,'+
+                        'customer_email VARCHAR,'+
+                        'customer_user_user_id INTEGER,'+
+                        'operation VARCHAR,'+
+                        'customer_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')));',
+
+        items: 'CREATE TABLE IF NOT EXISTS items ('+
+                        'item_id INTEGER PRIMARY KEY ASC,'+
+                        'item_item_id VARCHAR UNIQUE COLLATE NOCASE,'+
+                        'item_name VARCHAR,'+
+                        'item_unit_price DECIMAL(10,3),'+
+                        'operation VARCHAR,'+
+                        'item_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')));',
+
+        accounts: 'CREATE TABLE IF NOT EXISTS accounts ('+
+                        'account_id INTEGER PRIMARY KEY ASC,'+
+                        'account_name VARCHAR UNIQUE COLLATE NOCASE,'+
+                        'account_user_user_id INTEGER,'+
+                        'operation VARCHAR,'+
+                        'account_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')));',
+
+        sales:   'CREATE TABLE IF NOT EXISTS sales ('+
+                        'sale_id INTEGER PRIMARY KEY ASC,'+
+                        'sale_item_item_id INTEGER,'+
+                        'sale_item_unit_price DECIMAL(10,3),'+
+                        'sale_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')),'+
+                        'sale_hold DECIMAL(10,3),'+
+                        'sale_customer_customer_id INTEGER,'+
+                        'sale_user_user_id INTEGER,'+
+                        'operation VARCHAR);',
+
+        transactions: 'CREATE TABLE IF NOT EXISTS transactions ('+
+                        'transaction_id INTEGER PRIMARY KEY ASC,'+
+                        'transaction_type VARCHAR,'+
+                        'transaction_amount DECIMAL(10,3),'+
+                        'transaction_description TEXT,'+
+                        'transaction_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')),'+
+                        'transaction_account_account_id INTEGER,'+
+                        'transaction_user_user_id INTEGER,'+
+                        'trasaction_sale_sale_id INTEGER,'+
+                        'transaction_account_from_account_id INTEGER,'+
+                        'operation VARCHAR);'
+      },
+
+      keys: {
+        customers: {
+          primaryKey: 'customer_id',
+          selectKey: 'customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id, customer_timestamp, operation'
+        }
+      }
+    }
+  };
+
+  // this is our generic error hander
+  // it's called ERYtime a promise is broken
+  // i wouldn't wanna be that guy
+  var promiseBroken = function (error) {
+    console.error(error);
+  };
+
+
+
+  var SQLErrorHandeler = function (SQLTransaction, error) {
+    // the error message returned is different on browsers i.e.
+    // Chrome and Safari - some day we come one --- na, that would be boring!
+    //
+    // any who, the error message is tailored to iOS, like i said
+    // the app is optimized for iOS, for a different agent you can log the error
+    // and tailor it to your self
+    if (error.message.search(/not unique/i) !== -1) {
+      notify({message: 'unique constraint failure'});
+    }
+
+    console.error(error);
+  };
+
+
+
+  // and this is called whenever a server returns a non-success
+  // response header
+  var HTTPerrorHandler = function (data, status, headers, config) {
+    notify(data);
+    console.error(data);
+
+    switch (status) {
+      // conflict on constraints
+      // POST
+      case 409:
+      break;
+
+      // conflict on constraints
+      // PUT
+      case 406:
+      break;
+
+      // precondition failed
+      // forbidden (XSRF detection)
+      case 412:
+      case 403:
+        setTimeout(function () {
+          // redirecting to the login page in 3 - 2 - 1...
+          document.location.href = window.location.origin + window.location.pathname;
+        }, 3000);
+      break;
+
+      default:
+      break
+    }
+  };
+
+  // open it up
+  // like a slut opens her legs --- BOOM!
+  that.webdb.open = function () {
+    var deferred = $q.defer();
+
+    try {
+      that.webdb.db = openDatabase('mne', '1.0', 'MnE Database', that.webdb.size);
+      deferred.resolve('"MnE" database opened without a glitch');
+    } catch (e) {
+      deferred.reject(e.message);
+    }
+
+    return deferred.promise;
+  };
+
+
+
+  // executes the SQL inside webdb.sql
+  that.webdb.initiateTable = function (tableName) {
+    var deferred = $q.defer();
+
+    that.webdb.db.transaction(function (SQLTransaction) {
+      SQLTransaction.executeSql(that.webdb.sql[tableName], [], function (SQLTransaction, SQLResultSet) {
+        deferred.resolve('"'+ tableName + '"" sql executed without a glitch');
+      }, function (SQLTransaction, error) {
+        deferred.reject(error);
+      });
+    });
+
+    return deferred.promise;
+  };
+
+
+
+  // am making the pyramid --- how can i avoid the pyramid i wonder....
+  // that is one fine looking pyramid right there!
+  that.webdb.initiateTables = function () {
+    var deferred = $q.defer();
+
+    // customers
+    that.webdb.initiateTable('customers').then(function (message) {
+      console.log(message);
+      // items
+      that.webdb.initiateTable('items').then(function (message) {
+        console.log(message);
+        // accounts
+        that.webdb.initiateTable('accounts').then(function (message) {
+          console.log(message);
+          // sales
+          that.webdb.initiateTable('sales').then(function (message) {
+            console.log(message);
+            // transactions
+            that.webdb.initiateTable('transactions').then(function (message) {
+              console.log(message);
+              deferred.resolve('hurray, ALL tables executed with out a glitch');
+            }, promiseBroken);
+          }, promiseBroken);
+        }, promiseBroken);
+      }, promiseBroken);
+    }, promiseBroken);
+
+    return deferred.promise;
+  };
+
+
+
+  // and comes the CRUD
+  // @param tableName - table name
+  // @param id - id of resource to be returned
+  that.get = function (tableName, id, callback) {
+    if ($rootScope.online === true) {
+      $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
+        callback(data, status, headers, config);
+
+        // `AFTER` returning we see to check the `fetched` data
+        // exits in the local database --- if it doesn't we add it
+        that.webdb.db.transaction(function (SQLTransaction) {
+          SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [id], function (SQLTransaction, SQLResultSet) {
+            // well what do you know, the newly fetched row
+            // does not exist in the local db, so since it's 'new'
+            // we'll sync it with no preconditions
+            if (SQLResultSet.rows.length === 0) {
+              data.operation = '';
+
+              var sql = {
+                key: [],
+                wild: [],
+                value: [],
+                key: Object.keys(data)
+              };
+
+              for (key in sql.key) {
+                sql.key.push(sql.key[key]);
+                sql.wild.push('?');
+              }
+
+              sql.wild = sql.wild.join(', ');
+
+              //SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
+              //}, SQLErrorHandeler);
+            }
+          }, SQLErrorHandeler);
+        });
+      }).error(HTTPerrorHandler);
+    }
+  };
+
+
+  return that;
+}]);

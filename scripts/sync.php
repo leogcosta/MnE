@@ -15,6 +15,9 @@
     */
 
   function sync () {
+    $request = json_decode(Flight::request() -> body, TRUE);
+    Flight::json($request, 202);
+    /*
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
     $iCount = [
@@ -184,5 +187,6 @@
 
 
     Flight::json($response, 202);
+    */
   }
 ?>

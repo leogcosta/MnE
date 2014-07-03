@@ -45,7 +45,7 @@
   Flight::route('DELETE /accounts/@id', 'account_DELETE');
 
   // sync
-  // Flight::route('POST /sync', 'sync');
+  Flight::route('POST /sync', 'sync');
 
   Flight::start();
 ?>

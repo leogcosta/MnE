@@ -24,6 +24,9 @@
 
 
   function POST ($defName, $request) {
+    // removing if existent
+    unset($request['operation']);
+
     $id = getDB() -> insert($GLOBALS['TABLES'][$defName]['tableName'], $request);
     settype($id, 'integer');
 
@@ -39,6 +42,9 @@
 
 
   function PUT ($defName, $id, $request) {
+    // removing if existent
+    unset($request['operation']);
+
     $result = getDB() -> update($GLOBALS['TABLES'][$defName]['tableName'],
                                 $request, [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
     if ($result === 1 || $result === 0) {

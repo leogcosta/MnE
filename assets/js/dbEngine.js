@@ -568,26 +568,66 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [id], function (SQLTransaction, SQLResultSet) {
             // well what do you know, the newly fetched row
             // does not exist in the local db, so since it's 'new'
-            // we'll sync it with no preconditions
+            // we'll sync it with `no preconditions`
+
+            data.operation = '';
+
             if (SQLResultSet.rows.length === 0) {
-              data.operation = '';
+              console.log('adding to WebSQL...');
 
               var sql = {
-                key: [],
                 wild: [],
                 value: [],
                 key: Object.keys(data)
               };
 
               for (key in sql.key) {
-                sql.key.push(sql.key[key]);
                 sql.wild.push('?');
+                sql.value.push(data[sql.key[key]]);
               }
 
               sql.wild = sql.wild.join(', ');
 
-              //SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ SQL.selectKey +') VALUES ('+ SQL.wild +')', SQL.value, function (SQLTransaction, SQLResultSet) {
-              //}, SQLErrorHandeler);
+              SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ that.webdb.keys[tableName].selectKey +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+              }, SQLErrorHandeler);
+            } else {
+              // we have `existence` of the record, we compare the last operation timestamp
+              // to figure out weather or not we need to sync here or to the server
+              // we're assuming the latest operation timestamp is the shit
+
+              // sever has the latest `version` of this data
+              var diff = moment(data.customer_timestamp).diff(moment(SQLResultSet.rows.item(0).customer_timestamp));
+              if (diff > 0) {
+                //SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
+                console.log('server has the latest `version`');
+
+                var sql = {
+                  set: [],
+                  value: []
+                };
+
+                for (key in data) {
+                  sql.set.push(key +' = ?');
+                  sql.value.push(data[key]);
+                }
+
+                sql.set = sql.set.join(', ');
+                sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
+                sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
+
+                SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+                  console.log('GET synced');
+                }, SQLErrorHandeler);
+              } else if (diff < 0) {
+                console.log('local has the latest version');
+                console.log('pushing to server...');
+                $http.put('api/'+ tableName +'/'+ data[that.webdb.keys[tableName].primaryKey], SQLResultSet.rows.item(0)).success(function (data, status, headers, config) {
+                  console.log('changes have been successfully pushed to server');
+                  notify({message: 'GET synced'});
+                }).error(HTTPerrorHandler);
+              } else {
+                console.log('phew, everything seems to be "in-place"');
+              }
             }
           }, SQLErrorHandeler);
         });

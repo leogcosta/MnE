@@ -583,12 +583,13 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
               for (key in sql.key) {
                 sql.wild.push('?');
-                sql.value.push(data[sql.key[key]]);
+                sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
               }
 
               sql.wild = sql.wild.join(', ');
 
               SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ that.webdb.keys[tableName].selectKey +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+                console.log('added to WebSQL');
               }, SQLErrorHandeler);
             } else {
               // we have `existence` of the record, we compare the last operation timestamp
@@ -598,7 +599,6 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
               // sever has the latest `version` of this data
               var diff = moment(data.customer_timestamp).diff(moment(SQLResultSet.rows.item(0).customer_timestamp));
               if (diff > 0) {
-                //SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ SQL.setKey, SQL.value, function (SQLTransaction, SQLResultSet) {
                 console.log('server has the latest `version`');
 
                 var sql = {
@@ -608,7 +608,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
                 for (key in data) {
                   sql.set.push(key +' = ?');
-                  sql.value.push(data[key]);
+                  sql.value.push(data[key] === null ? '' : data[key]);
                 }
 
                 sql.set = sql.set.join(', ');
@@ -632,8 +632,124 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           }, SQLErrorHandeler);
         });
       }).error(HTTPerrorHandler);
+    } else {
+      console.log('fetching `offline` mode...');
+
+      // we are offline --- pray to MeganFox there exits a record
+      that.webdb.db.transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [id], function (SQLTransaction, SQLResultSet) {
+          // there should be ONLY one returned
+          // or YOU did something wrong
+          if (SQLResultSet.rows.length === 1) {
+            // we have send back the copied version --- since the returned one
+            // is protected
+            callback(angular.copy(SQLResultSet.rows.item(0)), null, null, null);
+          } else {
+            notify({message: 'whoops, i can\'t do *that*'});
+          }
+        }, SQLErrorHandeler);
+      }, SQLErrorHandeler);
     }
   };
+
+
+
+  // yep this fetches ERYthing and returns it - nothing "fancy"
+  // or should it --- i think it should ASAP --- fancy it is!
+  that.query = function (tableName, callback) {
+    if ($rootScope.online === true) {
+      $http.get('api/'+ tableName).success(function (data, status, headers, config) {
+        callback(data, status, headers, config);
+
+        // what this `check` is basically does what get does
+        this.check = function (data) {
+          that.webdb.db.transaction(function (SQLTransaction) {
+            SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [data[that.webdb.keys[tableName].primaryKey]], function (SQLTransaction, SQLResultSet) {
+              if (SQLResultSet.rows.length === 1) {
+                console.log('checking...');
+
+                var diff = moment(data.customer_timestamp).diff(moment(SQLResultSet.rows.item(0).customer_timestamp));
+                if (diff > 0) {
+                  console.log('server has the latest `version`');
+
+                  var sql = {
+                    set: [],
+                    value: []
+                  };
+
+                  for (key in data) {
+                    sql.set.push(key +' = ?');
+                    sql.value.push(data[key] === null ? '' : data[key]);
+                  }
+
+                  sql.set = sql.set.join(', ');
+                  sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
+                  sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
+
+                  SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+                    console.log('GET synced');
+                  }, SQLErrorHandeler);
+                } else if (diff < 0) {
+                  console.log('local has the latest version');
+                  console.log('pushing to server...');
+                  $http.put('api/'+ tableName +'/'+ data[that.webdb.keys[tableName].primaryKey], SQLResultSet.rows.item(0)).success(function (data, status, headers, config) {
+                    // we won't be notifying here since there might be
+                    // one too many
+                    console.log('changes have been successfully pushed to server');
+                  }).error(HTTPerrorHandler);
+                } else {
+                  console.log('phew, everything seems to be "in-place"');
+                }
+              } else if (SQLResultSet.rows.length === 0) {
+                console.log('adding to WebSQL...');
+
+                var sql = {
+                  wild: [],
+                  value: [],
+                  key: Object.keys(data)
+                };
+
+                for (key in sql.key) {
+                  sql.wild.push('?');
+                  sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
+                }
+
+                sql.wild = sql.wild.join(', ');
+
+                SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ that.webdb.keys[tableName].selectKey +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+                }, SQLErrorHandeler);
+              }
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
+        }
+
+        // now comes the fancy part
+        // we'll look through each data to see if ERYthing is in sync
+        // if not we make it sync
+        // now this is where the `fancy` part comes in play
+        // there are no promises here ---
+        // just hope everything goes according to `plan`
+        for (index in data) {
+          data[index].operation = '';
+          this.check(data[index]);
+        }
+      }).error(HTTPerrorHandler);
+    } else {
+      // nothing fancy here
+      // returning from webSQL
+      that.webdb.db.transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName, [], function (SQLTransaction, SQLResultSet) {
+          var i = 0, l = SQLResultSet.rows.length, data = [];
+          for (; i < l; i++) {
+            data.push(angular.copy(SQLResultSet.rows.item(i)));
+          }
+
+          callback(data, null, null, null);
+        }, SQLErrorHandeler);
+      }, SQLErrorHandeler);
+    }
+  };
+
 
 
   return that;

@@ -425,7 +425,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       keys: {
         customers: {
           primaryKey: 'customer_id',
-          selectKey: 'customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id, customer_timestamp, operation'
+          selectKey: 'customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id, customer_timestamp, operation',
+          timestamp: 'customer_timestamp'
         }
       }
     }
@@ -446,7 +447,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
     //
     // any who, the error message is tailored to iOS, like i said
     // the app is optimized for iOS, for a different agent you can log the error
-    // and tailor it to your self
+    // and tailor it to yourself
     if (error.message.search(/not unique/i) !== -1) {
       notify({message: 'unique constraint failure'});
     }
@@ -487,6 +488,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       break
     }
   };
+
+
 
   // open it up
   // like a slut opens her legs --- BOOM!
@@ -588,7 +591,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
               sql.wild = sql.wild.join(', ');
 
-              SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ that.webdb.keys[tableName].selectKey +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+              SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
                 console.log('added to WebSQL');
               }, SQLErrorHandeler);
             } else {
@@ -666,8 +669,6 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           that.webdb.db.transaction(function (SQLTransaction) {
             SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [data[that.webdb.keys[tableName].primaryKey]], function (SQLTransaction, SQLResultSet) {
               if (SQLResultSet.rows.length === 1) {
-                console.log('checking...');
-
                 var diff = moment(data.customer_timestamp).diff(moment(SQLResultSet.rows.item(0).customer_timestamp));
                 if (diff > 0) {
                   console.log('server has the latest `version`');
@@ -697,8 +698,6 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                     // one too many
                     console.log('changes have been successfully pushed to server');
                   }).error(HTTPerrorHandler);
-                } else {
-                  console.log('phew, everything seems to be "in-place"');
                 }
               } else if (SQLResultSet.rows.length === 0) {
                 console.log('adding to WebSQL...');
@@ -716,7 +715,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
                 sql.wild = sql.wild.join(', ');
 
-                SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ that.webdb.keys[tableName].selectKey +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+                SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
                 }, SQLErrorHandeler);
               }
             }, SQLErrorHandeler);
@@ -745,6 +744,266 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           }
 
           callback(data, null, null, null);
+        }, SQLErrorHandeler);
+      }, SQLErrorHandeler);
+    }
+  };
+
+
+
+  that.save = function (tableName, instance, callback) {
+    if ($rootScope.online === true) {
+      // we send it to server, and see what it has to say about that
+      // i.e. we have our lawdy validation-god
+      $http.post('api/'+ tableName, instance).success(function (data, status, headers, config) {
+        callback(data, status, headers, config);
+
+        // since new data is returned we save it to WebSQL
+        // with out any preconditions --- BUT there might be an offline
+        // data lurking somewhere, we just hope that isn't the case
+        console.log('adding to WebSQL...');
+
+        delete data.message;
+        data.operation = '';
+
+        var sql = {
+          wild: [],
+          value: [],
+          key: Object.keys(data)
+        };
+
+        for (key in sql.key) {
+          sql.wild.push('?');
+          sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
+        }
+
+        sql.wild = sql.wild.join(', ');
+
+        that.webdb.db.transaction(function (SQLTransaction) {
+          SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+            console.log('added to WebSQL');
+          }, SQLErrorHandeler);
+        }, SQLErrorHandeler);
+      }).error(HTTPerrorHandler);
+    } else {
+      // we change the operation mode
+      // and it'll be synced once online
+      console.log('adding to WebSQL...');
+
+      instance.operation = 'SAVE';
+
+      // depending on the table name
+      // we're going to be setting some values
+      switch (tableName) {
+        case 'accounts':
+          instance.account_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          instance.account_user_user_id = localStorage.user_id;
+        break;
+
+        case 'customers':
+          instance.customer_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          instance.customer_user_user_id = localStorage.user_id;
+        break;
+
+        case 'items':
+          instance.item_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+        break;
+
+        case 'sales':
+          instance.sale_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          instance.sale_user_user_id = localStorage.user_id;
+        break;
+
+        case 'transactions':
+          instance.transaction_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          instance.transaction_user_user_id = localStorage.user_id;
+        break;
+      }
+
+      var sql = {
+        wild: [],
+        value: [],
+        key: Object.keys(instance)
+      };
+
+      for (key in sql.key) {
+        sql.wild.push('?');
+        sql.value.push(instance[sql.key[key]] === null ? '' : instance[sql.key[key]]);
+      }
+
+      sql.wild = sql.wild.join(', ');
+
+      that.webdb.db.transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+          console.log('added to WebSQL');
+          notify({message: 'saved'});
+          instance[that.webdb.keys[tableName].primaryKey] = SQLResultSet.insertId;
+          callback(instance, null, null, null);
+        }, SQLErrorHandeler);
+      }, SQLErrorHandeler);
+    }
+  };
+
+
+
+  // on update - PK stays the same, there's no updating that son
+  // also some keys of an object will not change through
+  // the lifetime of the instance
+  that.update = function (tableName, instance, callback) {
+    if ($rootScope.online === true) {
+      // we're going to do something fancy here --- watch-out shufer! watch-out
+      $http.put('api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey], instance).success(function (data, status, headers, config) {
+        // there's a `latest` version that isn't merged with the
+        // local db, so we merge the shit out of it
+        if (data.hasOwnProperty('merge') === true) {
+          console.log('merging..');
+          delete data.merge;
+          data.operation = 'MERGE';
+
+          that.webdb.db.transaction(function (SQLTransaction) {
+            var sql = {
+              set: [],
+              value: []
+            };
+
+            for (key in data) {
+              sql.set.push(key +' = ?');
+              sql.value.push(data[key] === null ? '' : data[key]);
+            }
+
+            sql.set = sql.set.join(', ');
+            sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
+            sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
+
+            SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+              notify({message: 'merge sync'});
+              callback(data, status, headers, config);
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
+        } else {
+          callback(data, status, headers, config);
+        }
+      }).error(HTTPerrorHandler);
+    } else {
+      // we will not be checking for existence --- because the 'instance'
+      // must exist in the first place to be edited here --- BUT there
+      // is a `situation` where this logic would fail, let the system have
+      // a hole :)
+      instance.operation = 'UPDATE';
+
+      switch (tableName) {
+        case 'accounts':
+          instance.account_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          delete instance.account_user_user_id;
+        break;
+
+        case 'customers':
+          instance.customer_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          delete instance.customer_user_user_id;
+        break;
+
+        case 'items':
+          instance.item_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+        break;
+
+        case 'sales':
+          instance.sale_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          delete instance.sale_user_user_id;
+        break;
+
+        case 'transactions':
+          instance.transaction_timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+          delete instance.transaction_user_user_id;
+        break;
+      }
+
+      var sql = {
+        set: [],
+        value: []
+      };
+
+      for (key in instance) {
+        sql.set.push(key +' = ?');
+        sql.value.push(instance[key] === null ? '' : instance[key]);
+      }
+
+      sql.set = sql.set.join(', ');
+      sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
+      sql.value.push(instance[that.webdb.keys[tableName].primaryKey]);
+
+      that.webdb.db.transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+          notify({message: 'updated'});
+          callback(instance, null, null, null);
+        }, SQLErrorHandeler);
+      }, SQLErrorHandeler);
+    }
+  };
+
+
+
+  that.delete = function (tableName, instance, callback) {
+    if ($rootScope.online === true) {
+      var url = that.webdb.keys[tableName].hasOwnProperty('timestamp') === true ?
+                'api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey] +'/'+ instance[that.webdb.keys[tableName].timestamp] :
+                'api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey];
+
+      $http.delete(url).success(function (data, status, headers, config) {
+        // there's a `latest` version that isn't merged with the
+        // local db, so we merge the shit out of it
+        if (data.hasOwnProperty('merge') === true) {
+          console.log('merging..');
+          delete data.merge;
+          data.operation = 'MERGE';
+
+          that.webdb.db.transaction(function (SQLTransaction) {
+            var sql = {
+              set: [],
+              value: []
+            };
+
+            for (key in data) {
+              sql.set.push(key +' = ?');
+              sql.value.push(data[key] === null ? '' : data[key]);
+            }
+
+            sql.set = sql.set.join(', ');
+            sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
+            sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
+
+            SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+              notify({message: 'merge sync'});
+              callback(data, status, headers, config);
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
+        } else {
+          notify(data);
+          callback(data, status, headers, config);
+
+          console.log('deleting from local db too...');
+          that.webdb.db.transaction(function (SQLTransaction) {
+            var sql = {
+              value: [instance[that.webdb.keys[tableName].primaryKey]]
+            };
+
+            SQLTransaction.executeSql('DELETE FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', sql.value, function (SQLTransaction, SQLResultSet) {
+              console.log('deletion from local db went without a glitch');
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
+        }
+      }).error(HTTPerrorHandler);
+    } else {
+      // we will "delete" the data BUT (ohhhh, here we go) the **REAL**
+      // deletion will take place once online and 'verified' by the server
+      var sql = {
+        set: 'operation = ? WHERE '+ that.webdb.keys[tableName].primaryKey + ' = ?;',
+        value: ['DELETE', instance[that.webdb.keys[tableName].primaryKey]]
+      };
+
+      that.webdb.db.transaction(function (SQLTransaction) {
+        SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+          notify({message: 'deleted'});
+          callback({}, null, null, null);
         }, SQLErrorHandeler);
       }, SQLErrorHandeler);
     }

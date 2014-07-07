@@ -16,8 +16,8 @@
     PUT(ITEMS, $id, $request);
   }
 
-  function item_DELETE ($id) {
+  function item_DELETE ($id, $timesatmp) {
     user_login('', '', TRUE);
-    DELETE(ITEMS, $id);
+    DELETE(ITEMS, $id, $timesatmp);
   }
 ?>

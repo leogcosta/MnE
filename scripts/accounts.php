@@ -17,8 +17,8 @@
     PUT(ACCOUNTS, $id, $request);
   }
 
-  function account_DELETE ($id) {
+  function account_DELETE ($id, $timesatmp) {
     user_login('', '', TRUE);
-    DELETE(ACCOUNTS, $id);
+    DELETE(ACCOUNTS, $id, $timesatmp);
   }
 ?>

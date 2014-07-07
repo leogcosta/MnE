@@ -8,6 +8,7 @@
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
     $request['customer_user_user_id'] = $_SESSION['user_id'];
+    $request['customer_timestamp'] = date('Y-m-d H:i:s');
     POST(CUSTOMERS, $request);
   }
 
@@ -17,8 +18,8 @@
     PUT(CUSTOMERS, $id, $request);
   }
 
-  function customer_DELETE ($id) {
+  function customer_DELETE ($id, $timesatmp) {
     user_login('', '', TRUE);
-    DELETE(CUSTOMERS, $id);
+    DELETE(CUSTOMERS, $id, $timesatmp);
   }
 ?>

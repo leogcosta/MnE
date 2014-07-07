@@ -44,23 +44,80 @@
   function PUT ($defName, $id, $request) {
     // removing if existent
     unset($request['operation']);
+    unset($request['customer_user_user_id']);
 
-    $result = getDB() -> update($GLOBALS['TABLES'][$defName]['tableName'],
-                                $request, [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
-    if ($result === 1 || $result === 0) {
-      $request['message'] = $GLOBALS['TABLES'][$defName]['updateSuccess'];
-      Flight::json($request, 202);
+    // inside the config set, if a 'timestamp' key is existent
+    // we're going to do a little be more than a normal update
+    if (isset($GLOBALS['TABLES'][$defName]['timestamp'])) {
+      $row = getDB() -> get($GLOBALS['TABLES'][$defName]['tableName'],
+                              $GLOBALS['TABLES'][$defName]['tableSelect'],
+                              [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
+
+      $db_timestamp = date_create_from_format('Y-m-d H:i:s', $row[$GLOBALS['TABLES'][$defName]['timestamp']]);
+      $client_timestamp = date_create_from_format('Y-m-d H:i:s', $request[$GLOBALS['TABLES'][$defName]['timestamp']]);
+
+      if ($db_timestamp > $client_timestamp) {
+        // adding a merge key, which will be detected by the db engine
+        // which will sync (i.e. overwrite) the local instance
+        $row['merge'] = TRUE;
+        Flight::json($row, 202);
+      } else {
+        // everything looks good, continuing with the update...
+        $result = getDB() -> update($GLOBALS['TABLES'][$defName]['tableName'],
+                                    $request, [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
+        if ($result === 1 || $result === 0) {
+          $request['message'] = $GLOBALS['TABLES'][$defName]['updateSuccess'];
+          Flight::json($request, 202);
+        } else {
+          $request['message'] = $GLOBALS['TABLES'][$defName]['collisionError'];
+          Flight::json($request, 406);
+        }
+      }
     } else {
-      $request['message'] = $GLOBALS['TABLES'][$defName]['collisionError'];
-      Flight::json($request, 406);
+      // proceeding with `normal` update
+      $result = getDB() -> update($GLOBALS['TABLES'][$defName]['tableName'],
+                                  $request, [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
+      if ($result === 1 || $result === 0) {
+        $request['message'] = $GLOBALS['TABLES'][$defName]['updateSuccess'];
+        Flight::json($request, 202);
+      } else {
+        $request['message'] = $GLOBALS['TABLES'][$defName]['collisionError'];
+        Flight::json($request, 406);
+      }
     }
   }
 
 
 
-  function DELETE ($defName, $id) {
-    $result = getDB() -> delete($GLOBALS['TABLES'][$defName]['tableName'],
-                                [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
-    $result ? Flight::json(['message' => $GLOBALS['TABLES'][$defName]['deleteSuccess']], 200) : Flight::json(['message' => $GLOBALS['TABLES'][$defName]['deleteError']], 404);
+  function DELETE ($defName, $id, $timestamp = null) {
+    // same drill on delete too
+    // if the 'two' are not in sync --- merge is returned instead of
+    // the requested operation
+    if (isset($GLOBALS['TABLES'][$defName]['timestamp'])) {
+      $row = getDB() -> get($GLOBALS['TABLES'][$defName]['tableName'],
+                              $GLOBALS['TABLES'][$defName]['tableSelect'],
+                              [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
+
+      $db_timestamp = date_create_from_format('Y-m-d H:i:s', $row[$GLOBALS['TABLES'][$defName]['timestamp']]);
+      $client_timestamp = date_create_from_format('Y-m-d H:i:s', $timestamp);
+
+      if ($db_timestamp > $client_timestamp) {
+        // adding a merge key, which will be detected by the db engine
+        // which will sync (i.e. overwrite) the local instance
+        $row['merge'] = TRUE;
+        Flight::json($row, 202);
+      } else {
+        // everything looks good, continuing with the update...
+        $result = getDB() -> delete($GLOBALS['TABLES'][$defName]['tableName'],
+                                    [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
+      }
+    } else {
+      // proceeding with the normal deletion
+      $result = getDB() -> delete($GLOBALS['TABLES'][$defName]['tableName'],
+                                  [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);
+    }
+
+    // this might seem blasphemy BUT it's for the greater good
+    Flight::json(['message' => $GLOBALS['TABLES'][$defName]['deleteSuccess']], 200);
   }
 ?>

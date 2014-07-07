@@ -561,7 +561,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   // @param tableName - table name
   // @param id - id of resource to be returned
   that.get = function (tableName, id, callback) {
-    if ($rootScope.online === true) {
+    if ($rootScope.online === true && $rootScope.syncMode === false) {
       $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
         callback(data, status, headers, config);
 
@@ -660,7 +660,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   // yep this fetches ERYthing and returns it - nothing "fancy"
   // or should it --- i think it should ASAP --- fancy it is!
   that.query = function (tableName, callback) {
-    if ($rootScope.online === true) {
+    if ($rootScope.online === true && $rootScope.syncMode === false) {
       $http.get('api/'+ tableName).success(function (data, status, headers, config) {
         callback(data, status, headers, config);
 
@@ -752,7 +752,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
 
   that.save = function (tableName, instance, callback) {
-    if ($rootScope.online === true) {
+    if ($rootScope.online === true && $rootScope.syncMode === false) {
       // we send it to server, and see what it has to say about that
       // i.e. we have our lawdy validation-god
       $http.post('api/'+ tableName, instance).success(function (data, status, headers, config) {
@@ -850,7 +850,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   // also some keys of an object will not change through
   // the lifetime of the instance
   that.update = function (tableName, instance, callback) {
-    if ($rootScope.online === true) {
+    if ($rootScope.online === true && $rootScope.syncMode === false) {
       // we're going to do something fancy here --- watch-out shufer! watch-out
       $http.put('api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey], instance).success(function (data, status, headers, config) {
         // there's a `latest` version that isn't merged with the
@@ -943,7 +943,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
 
   that.delete = function (tableName, instance, callback) {
-    if ($rootScope.online === true) {
+    if ($rootScope.online === true && $rootScope.syncMode === false) {
       var url = that.webdb.keys[tableName].hasOwnProperty('timestamp') === true ?
                 'api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey] +'/'+ instance[that.webdb.keys[tableName].timestamp] :
                 'api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey];

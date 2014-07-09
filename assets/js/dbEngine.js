@@ -65,6 +65,30 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           primaryKey: 'customer_id',
           selectKey: 'customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id, customer_timestamp, operation',
           timestamp: 'customer_timestamp'
+        },
+
+        items: {
+          primaryKey: 'item_id',
+          selectKey: 'item_id, item_item_id, item_name, item_unit_price, item_timestamp, operation',
+          timestamp: 'item_timestamp'
+        },
+
+        accounts: {
+          primaryKey: 'account_id',
+          selectKey: 'account_id, account_name, account_user_user_id, account_timestamp, operation',
+          timestamp: 'account_timestamp'
+        },
+
+        sales: {
+          primaryKey: 'sale_id',
+          selectKey: 'sale_id, sale_item_item_id, sale_item_quantity, sale_item_unit_price, sale_timestamp, sale_hold, sale_customer_customer_id, sale_user_user_id, operation',
+          timestamp: 'sale_timestamp'
+        },
+
+        transactions: {
+          primaryKey: 'transaction_id',
+          selectKey: 'transaction_id, transaction_type, transaction_amount, transaction_description, transaction_timestamp, transaction_account_account_id, transaction_user_user_id, trasaction_sale_sale_id, transaction_account_from_account_id, operation',
+          timestamp: 'transaction_timestamp'
         }
       }
     }

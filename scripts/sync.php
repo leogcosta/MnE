@@ -15,8 +15,6 @@
     */
 
   function sync () {
-    $request = json_decode(Flight::request() -> body, TRUE);
-    Flight::json($request, 202);
     /*
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
@@ -195,6 +193,7 @@
 
 
   function syncTable ($tableName) {
+    user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
     $tableName = strtoupper($tableName);
     $mergeList = [];

@@ -40,6 +40,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         sales:   'CREATE TABLE IF NOT EXISTS sales ('+
                         'sale_id INTEGER PRIMARY KEY ASC,'+
                         'sale_item_item_id INTEGER,'+
+                        'sale_item_quantity INTEGER,'+
                         'sale_item_unit_price DECIMAL(10,3),'+
                         'sale_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')),'+
                         'sale_hold DECIMAL(10,3),'+

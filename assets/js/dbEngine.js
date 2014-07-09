@@ -636,7 +636,9 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         });
       }).error(HTTPerrorHandler);
     } else {
-      console.log('fetching `offline` mode...');
+      // we immediately `free` the `lock` on syncMode
+      // just in-case `this` is called from the syncEngine
+      $rootScope.syncMode = false;
 
       // we are offline --- pray to MeganFox there exits a record
       that.webdb.db.transaction(function (SQLTransaction) {
@@ -734,6 +736,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         }
       }).error(HTTPerrorHandler);
     } else {
+      $rootScope.syncMode = false;
+
       // nothing fancy here
       // returning from webSQL
       that.webdb.db.transaction(function (SQLTransaction) {
@@ -786,6 +790,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         }, SQLErrorHandeler);
       }).error(HTTPerrorHandler);
     } else {
+      $rootScope.syncMode = false;
+
       // we change the operation mode
       // and it'll be synced once online
       console.log('adding to WebSQL...');
@@ -885,6 +891,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         }
       }).error(HTTPerrorHandler);
     } else {
+      $rootScope.syncMode = false;
+
       // we will not be checking for existence --- because the 'instance'
       // must exist in the first place to be edited here --- BUT there
       // is a `situation` where this logic would fail, let the system have
@@ -993,6 +1001,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         }
       }).error(HTTPerrorHandler);
     } else {
+      $rootScope.syncMode = false;
+
       // we will "delete" the data BUT (ohhhh, here we go) the **REAL**
       // deletion will take place once online and 'verified' by the server
       var sql = {

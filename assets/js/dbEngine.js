@@ -207,7 +207,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             // transactions
             that.webdb.initiateTable('transactions').then(function (message) {
               console.log(message);
-              deferred.resolve('hurray, ALL tables executed with out a glitch');
+              deferred.resolve('hurray, ALL table\'s SQL executed with out a glitch');
             }, promiseBroken);
           }, promiseBroken);
         }, promiseBroken);

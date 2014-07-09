@@ -46,6 +46,7 @@
 
   // sync
   Flight::route('POST /sync', 'sync');
+  Flight::route('POST /sync/@table', 'syncTable');
 
   Flight::start();
 ?>

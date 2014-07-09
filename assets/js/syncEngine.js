@@ -104,12 +104,14 @@ syncEngine.factory('syncEngine2', ['$rootScope', '$q', '$http', 'dbEngine2', fun
               // #BOOM!
               merge(tableName, data.MERGE, function () {
                 console.log('MERGE completed on ['+ tableName +']!');
+                callback();
               });
             }
           }, function (SQLTransaction, error) {
             if (++sqlExecutionCount === dataListLength) {
               merge(tableName, data.MERGE, function () {
                 console.log('MERGE completed on ['+ tableName +']!');
+                callback();
               });
             }
           });
@@ -147,7 +149,15 @@ syncEngine.factory('syncEngine2', ['$rootScope', '$q', '$http', 'dbEngine2', fun
           // i get a feeling that syncing might become expensive
           // 100ms of execution time in 4S is my threshold
           purgeTable(tableName, data, function () {
-            console.log('purge completed!');
+            // we'll be reordering the data structure before calling back
+            // the callback --- Tropic Thunder, am the dude playin' the dude...
+            for (index in data.MERGE) {
+              data.MERGE[index].operation = 'MERGE';
+              data.LIST.push(data.MERGE[index]);
+            }
+
+            data = data.LIST;
+            callback(data);
           });
         }).error(function (data, status, headers, config) {
           console.error(data);

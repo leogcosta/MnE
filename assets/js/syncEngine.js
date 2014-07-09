@@ -78,43 +78,54 @@ syncEngine.factory('syncEngine2', ['$rootScope', '$q', '$http', 'dbEngine2', fun
         console.log('redecorating ['+ tableName +']...');
         var sqlExecutionCount = 0, dataListLength = data.LIST.length;
 
-        for (index in data.LIST) {
-          delete data.LIST[index].operation;
+        if (data.LIST.length > 0) {
+          for (index in data.LIST) {
+            delete data.LIST[index].operation;
 
-          var sql = {
-            wild: [],
-            value: [],
-            key: Object.keys(data.LIST[index])
-          };
+            var sql = {
+              wild: [],
+              value: [],
+              key: Object.keys(data.LIST[index])
+            };
 
-          for (key in sql.key) {
-            sql.wild.push('?');
-            sql.value.push(data.LIST[index][sql.key[key]] === null ? '' : data.LIST[index][sql.key[key]]);
+            for (key in sql.key) {
+              sql.wild.push('?');
+              sql.value.push(data.LIST[index][sql.key[key]] === null ? '' : data.LIST[index][sql.key[key]]);
+            }
+
+            sql.wild = sql.wild.join(', ');
+
+            // we get 'around' the sync behavior in a neat way
+            // once we know we're "done" with the redecoration, we start
+            // with the merging process
+            SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+              if (++sqlExecutionCount === dataListLength) {
+                // since we are done with the redecoration, we move on to
+                // the merging process --- that way we can charge double
+                // #BOOM!
+                merge(tableName, data.MERGE, function () {
+                  console.log('MERGE completed on ['+ tableName +']!');
+                  callback();
+                });
+              }
+            }, function (SQLTransaction, error) {
+              if (++sqlExecutionCount === dataListLength) {
+                merge(tableName, data.MERGE, function () {
+                  console.log('MERGE completed on ['+ tableName +']!');
+                  callback();
+                });
+              }
+            });
           }
-
-          sql.wild = sql.wild.join(', ');
-
-          // we get 'around' the sync behavior in a neat way
-          // once we know we're "done" with the redecoration, we start
-          // with the merging process
-          SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
-            if (++sqlExecutionCount === dataListLength) {
-              // since we are done with the redecoration, we move on to
-              // the merging process --- that way we can charge double
-              // #BOOM!
-              merge(tableName, data.MERGE, function () {
-                console.log('MERGE completed on ['+ tableName +']!');
-                callback();
-              });
-            }
-          }, function (SQLTransaction, error) {
-            if (++sqlExecutionCount === dataListLength) {
-              merge(tableName, data.MERGE, function () {
-                console.log('MERGE completed on ['+ tableName +']!');
-                callback();
-              });
-            }
+        } else if (data.LIST.length === 0 && data.MERGE.length > 0) {
+          console.log('got empty LIST ['+ tableName +']');
+          merge(tableName, data.MERGE, function () {
+            console.log('MERGE completed on ['+ tableName +']!');
+            callback();
           });
+        } else {
+          console.log('got empty on ['+ tableName +']');
+          callback();
         }
       }, SQLErrorHandeler);
     }, SQLErrorHandeler);

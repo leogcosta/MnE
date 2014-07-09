@@ -333,7 +333,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           that.webdb.db.transaction(function (SQLTransaction) {
             SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [data[that.webdb.keys[tableName].primaryKey]], function (SQLTransaction, SQLResultSet) {
               if (SQLResultSet.rows.length === 1) {
-                var diff = moment(data.customer_timestamp).diff(moment(SQLResultSet.rows.item(0).customer_timestamp));
+                var diff = moment(data[that.webdb.keys[tableName].timestamp]).diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp]));
                 if (diff > 0) {
                   console.log('server has the latest `version`');
 

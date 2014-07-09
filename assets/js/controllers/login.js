@@ -46,10 +46,11 @@ var loginCtrl = app.controller('loginCtrl', ['$rootScope', '$scope', '$location'
       }
 
       // on inital ONLINE login --- we'll be calling sync to well...
+      // SYNC!
       var sync = {
-        'keys': Object.keys(dbEngine2.webdb.sql),
-        'length': Object.keys(dbEngine2.webdb.sql).length,
-        'index': 0
+        keys: Object.keys(dbEngine2.webdb.sql),
+        length: Object.keys(dbEngine2.webdb.sql).length,
+        index: 0
       };
 
       var iSyncDeferred = $q.defer();

@@ -1,6 +1,10 @@
 var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngTouch', 'dbEngine', 'syncEngine']);
 
-app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine', function ($rootScope, $q, $http, dbEngine, syncEngine) {
+app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', function ($rootScope, $q, dbEngine2, syncEngine2) {
+  var promiseBroken = function (error) {
+    console.error(error);
+  };
+
   $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {
     console.log(rejection);
   });
@@ -52,8 +56,43 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
   $rootScope.online = Offline.state === 'up' ? true : false;
 
   Offline.on('up', function () {
+    // shit goes down once connection is reestablished son
+    var sync = {
+      keys: Object.keys(dbEngine2.webdb.sql),
+      length: Object.keys(dbEngine2.webdb.sql).length,
+      index: 0
+    };
+
+    var iSyncDeferred = $q.defer();
+
+    var iSync = function () {
+      syncEngine2.syncTable(sync.keys[sync.index], function (data) {
+        if (++sync.index < sync.length) {
+          iSync();
+        } else if (sync.index === sync.length) {
+          iSyncDeferred.resolve('sync completed');
+        }
+      });
+
+      return iSyncDeferred.promise;
+    };
+
+    notify({message: 'syncing...'});
+    dbEngine2.webdb.open().then(function (message) {
+      dbEngine2.webdb.initiateTables().then(function (message) {
+        iSync().then(function (msg) {
+          notify({message: msg});
+          // is anyone out there, this is John Connor
+          // leader of the resistance
+          $rootScope.$broadcast('SYNC');
+          if ($rootScope.$$phase === null) {
+            $rootScope.$apply();
+          }
+        }, promiseBroken);
+      }, promiseBroken);
+    }, promiseBroken);
+
     $rootScope.online = true;
-    syncEngine();
     $rootScope.$apply();
   });
 
@@ -66,18 +105,19 @@ app.controller('appCtrl', ['$rootScope', '$q', '$http', 'dbEngine', 'syncEngine'
 
   //$rootScope.online = false;
 
-  // i know i could have done a factory where it'll be shared among controllers
-  // but am `experimenting` - so...let me be
-  // + it's bad to create a serve who's ONLY purpose is to serve data
-  $rootScope.data = {
-    customers: []
-  };
+  $rootScope.syncMode = false;
 
-  // bootWebSQL returns a promise
-  // so latter on we can use .then to do a sequential execution - like
-  // the good ol' days :)
-  dbEngine.setThat().then(function () {
-    dbEngine.bootWebSQL();
+  console.log('Booting WebSQL...');
+  dbEngine2.webdb.open().then(function (message) {
+    console.log(message);
+
+    dbEngine2.webdb.initiateTables().then(function (message) {
+      console.log(message);
+    }, function (error) {
+      console.error(error);
+    });
+  }, function (error) {
+    console.error(error);
   });
 }]);
 

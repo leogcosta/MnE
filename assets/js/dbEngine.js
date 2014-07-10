@@ -481,6 +481,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           }
         }
 
+        notify({message: 'saved'});
         callback(data, status, headers, config);
 
         // since new data is returned we save it to WebSQL
@@ -623,10 +624,12 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
             SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
               notify({message: 'merge sync'});
+              notify({message: 'updated'});
               callback(data, status, headers, config);
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         } else {
+          notify({message: 'updated'});
           callback(data, status, headers, config);
         }
       }).error(HTTPerrorHandler);
@@ -681,7 +684,6 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
       that.webdb.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
-          notify({message: 'updated'});
 
           instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
           for (index in that.webdb.keys[tableName].number) {
@@ -692,6 +694,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             }
           }
 
+          notify({message: 'updated'});
           callback(instance, null, null, null);
         }, SQLErrorHandeler);
       }, SQLErrorHandeler);

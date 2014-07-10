@@ -168,6 +168,18 @@ syncEngine.factory('syncEngine2', ['$rootScope', '$q', '$http', 'dbEngine2', fun
             }
 
             data = data.LIST;
+            for(row in data) {
+              data[row][dbEngine2.webdb.keys[tableName].timestamp] = moment(data[row][dbEngine2.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+
+              for (index in dbEngine2.webdb.keys[tableName].number) {
+                if (isNaN(data[row][dbEngine2.webdb.keys[tableName].number[index]]) === true) {
+                  data[row][dbEngine2.webdb.keys[tableName].number[index]] = '';
+                } else {
+                  data[row][dbEngine2.webdb.keys[tableName].number[index]] = Number(data[row][dbEngine2.webdb.keys[tableName].number[index]]);
+                }
+              }
+            }
+
             callback(data);
           });
         }).error(function (data, status, headers, config) {

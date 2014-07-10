@@ -14,10 +14,10 @@
     <meta charset="utf-8">
     <meta content="MnE" name="apple-mobile-web-app-title">
     <meta content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimal-ui" name="viewport">
-    <link href="assets/image/ico/apple-touch-icon-144-precomposed.png" sizes="144x144" rel="apple-touch-icon-precomposed">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
+    <link href="assets/image/ico/apple-touch-icon-144-precomposed.png" sizes="144x144" rel="apple-touch-icon-precomposed">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/pace/themes/pace-theme-minimal.css">
     <link rel="stylesheet" href="assets/ionicons/css/ionicons.min.css">
@@ -73,17 +73,15 @@
     <script src="assets/js/app.js"></script>
     <script src="assets/js/controllers/login.js"></script>
 
-    <script src="assets/js/controllers/customer.js"></script>
     <script src="assets/js/controllers/customers.js"></script>
-    <script src="assets/js/controllers/customerNew.js"></script>
 
-    <script src="assets/js/controllers/item.js"></script>
-    <script src="assets/js/controllers/items.js"></script>
-    <script src="assets/js/controllers/itemNew.js"></script>
+    <script src="assets/js/controllers/items/all.js"></script>
+    <script src="assets/js/controllers/items/new.js"></script>
+    <script src="assets/js/controllers/items/edit.js"></script>
 
-    <script src="assets/js/controllers/account.js"></script>
-    <script src="assets/js/controllers/accounts.js"></script>
-    <script src="assets/js/controllers/accountNew.js"></script>
+    <script src="assets/js/controllers/accounts/all.js"></script>
+    <script src="assets/js/controllers/accounts/new.js"></script>
+    <script src="assets/js/controllers/accounts/edit.js"></script>
 
     <script src="assets/js/controllers/more.js"></script>
 

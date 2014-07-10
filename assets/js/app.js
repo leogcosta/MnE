@@ -19,8 +19,8 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
     $('.menu > a').removeClass('active');
 
     switch(target.controller) {
-      case 'customerCtrl':
       case 'customersCtrl':
+      case 'customerEditCtrl':
       case 'customerNewCtrl':
         $('a[href="#/customers"]').addClass('active');
       break;
@@ -128,13 +128,13 @@ app.config(function ($routeProvider) {
   }).
 
   when('/customers/new', {
-    templateUrl: 'templates/customerNew.html',
+    templateUrl: 'templates/customers/new.html',
     controller: 'customerNewCtrl'
   }).when('/customers/info/:id', {
-    templateUrl: 'templates/customer.html',
-    controller: 'customerCtrl'
+    templateUrl: 'templates/customers/edit.html',
+    controller: 'customerEditCtrl'
   }).when('/customers', {
-    templateUrl: 'templates/customers.html',
+    templateUrl: 'templates/customers/list.html',
     controller: 'customersCtrl'
   }).
 

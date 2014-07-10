@@ -65,31 +65,36 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         customers: {
           primaryKey: 'customer_id',
           selectKey: 'customer_id, customer_full_name, customer_phone_number, customer_email, customer_user_user_id, customer_timestamp, operation',
-          timestamp: 'customer_timestamp'
+          timestamp: 'customer_timestamp',
+          number: ['customer_id', 'customer_user_user_id']
         },
 
         items: {
           primaryKey: 'item_id',
           selectKey: 'item_id, item_item_id, item_name, item_unit_price, item_timestamp, operation',
-          timestamp: 'item_timestamp'
+          timestamp: 'item_timestamp',
+          number: ['item_id', 'item_unit_price']
         },
 
         accounts: {
           primaryKey: 'account_id',
           selectKey: 'account_id, account_name, account_user_user_id, account_timestamp, operation',
-          timestamp: 'account_timestamp'
+          timestamp: 'account_timestamp',
+          number: ['account_id', 'account_user_user_id']
         },
 
         sales: {
           primaryKey: 'sale_id',
           selectKey: 'sale_id, sale_item_item_id, sale_item_quantity, sale_item_unit_price, sale_timestamp, sale_hold, sale_customer_customer_id, sale_user_user_id, operation',
-          timestamp: 'sale_timestamp'
+          timestamp: 'sale_timestamp',
+          number: ['sale_id', 'sale_item_item_id', 'sale_item_quantity', 'sale_item_unit_price', 'sale_hold', 'sale_customer_customer_id', 'sale_user_user_id']
         },
 
         transactions: {
           primaryKey: 'transaction_id',
           selectKey: 'transaction_id, transaction_type, transaction_amount, transaction_description, transaction_timestamp, transaction_account_account_id, transaction_user_user_id, trasaction_sale_sale_id, transaction_account_from_account_id, operation',
-          timestamp: 'transaction_timestamp'
+          timestamp: 'transaction_timestamp',
+          number: ['transaction_id', 'transaction_amount', 'transaction_account_account_id', 'transaction_user_user_id', 'trasaction_sale_sale_id', 'transaction_account_from_account_id']
         }
       }
     }
@@ -226,6 +231,17 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   that.get = function (tableName, id, callback) {
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
+        // appropriate type conversion
+        // timestamps and numbers get converted
+        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+        for (index in that.webdb.keys[tableName].number) {
+          if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
+            data[that.webdb.keys[tableName].number[index]] = '';
+          } else {
+            data[that.webdb.keys[tableName].number[index]] = Number(data[that.webdb.keys[tableName].number[index]]);
+          }
+        }
+
         callback(data, status, headers, config);
 
         // `AFTER` returning we see to check the `fetched` data
@@ -263,7 +279,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
               // we're assuming the latest operation timestamp is the shit
 
               // sever has the latest `version` of this data
-              var diff = moment(data.customer_timestamp).diff(moment(SQLResultSet.rows.item(0).customer_timestamp));
+              var diff = moment(data[that.webdb.keys[tableName].timestamp]).diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp]));
               if (diff > 0) {
                 console.log('server has the latest `version`');
 
@@ -311,7 +327,17 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           if (SQLResultSet.rows.length === 1) {
             // we have send back the copied version --- since the returned one
             // is protected
-            callback(angular.copy(SQLResultSet.rows.item(0)), null, null, null);
+            var data = angular.copy(SQLResultSet.rows.item(0));
+            data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+            for (index in that.webdb.keys[tableName].number) {
+              if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
+                data[that.webdb.keys[tableName].number[index]] = '';
+              } else {
+                data[that.webdb.keys[tableName].number[index]] = Number(data[that.webdb.keys[tableName].number[index]]);
+              }
+            }
+
+            callback(data, null, null, null);
           } else {
             notify({message: 'whoops, i can\'t do *that*'});
           }
@@ -327,6 +353,18 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   that.query = function (tableName, callback) {
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       $http.get('api/'+ tableName).success(function (data, status, headers, config) {
+        for(row in data) {
+          data[row][that.webdb.keys[tableName].timestamp] = moment(data[row][that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+
+          for (index in that.webdb.keys[tableName].number) {
+            if (isNaN(data[row][that.webdb.keys[tableName].number[index]]) === true) {
+              data[row][that.webdb.keys[tableName].number[index]] = '';
+            } else {
+              data[row][that.webdb.keys[tableName].number[index]] = Number(data[row][that.webdb.keys[tableName].number[index]]);
+            }
+          }
+        }
+
         callback(data, status, headers, config);
 
         // what this `check` is basically does what get does
@@ -407,7 +445,18 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName, [], function (SQLTransaction, SQLResultSet) {
           var i = 0, l = SQLResultSet.rows.length, data = [];
           for (; i < l; i++) {
-            data.push(angular.copy(SQLResultSet.rows.item(i)));
+            var row = angular.copy(SQLResultSet.rows.item(i));
+            row[that.webdb.keys[tableName].timestamp] = moment(row[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+
+            for (index in that.webdb.keys[tableName].number) {
+              if (isNaN(row[that.webdb.keys[tableName].number[index]]) === true) {
+                row[that.webdb.keys[tableName].number[index]] = '';
+              } else {
+                row[that.webdb.keys[tableName].number[index]] = Number(row[that.webdb.keys[tableName].number[index]]);
+              }
+            }
+
+            data.push(row);
           }
 
           callback(data, null, null, null);
@@ -423,6 +472,15 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       // we send it to server, and see what it has to say about that
       // i.e. we have our lawdy validation-god
       $http.post('api/'+ tableName, instance).success(function (data, status, headers, config) {
+        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+        for (index in that.webdb.keys[tableName].number) {
+          if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
+            data[that.webdb.keys[tableName].number[index]] = '';
+          } else {
+            data[that.webdb.keys[tableName].number[index]] = Number(data[that.webdb.keys[tableName].number[index]]);
+          }
+        }
+
         callback(data, status, headers, config);
 
         // since new data is returned we save it to WebSQL
@@ -507,6 +565,16 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           console.log('added to WebSQL');
           notify({message: 'saved'});
           instance[that.webdb.keys[tableName].primaryKey] = SQLResultSet.insertId;
+
+          instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+          for (index in that.webdb.keys[tableName].number) {
+            if (isNaN(instance[that.webdb.keys[tableName].number[index]]) === true) {
+              instance[that.webdb.keys[tableName].number[index]] = '';
+            } else {
+              instance[that.webdb.keys[tableName].number[index]] = Number(instance[that.webdb.keys[tableName].number[index]]);
+            }
+          }
+
           callback(instance, null, null, null);
         }, SQLErrorHandeler);
       }, SQLErrorHandeler);
@@ -522,6 +590,15 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       // we're going to do something fancy here --- watch-out shufer! watch-out
       $http.put('api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey], instance).success(function (data, status, headers, config) {
+        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+        for (index in that.webdb.keys[tableName].number) {
+          if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
+            data[that.webdb.keys[tableName].number[index]] = '';
+          } else {
+            data[that.webdb.keys[tableName].number[index]] = Number(data[that.webdb.keys[tableName].number[index]]);
+          }
+        }
+
         // there's a `latest` version that isn't merged with the
         // local db, so we merge the shit out of it
         if (data.hasOwnProperty('merge') === true) {
@@ -605,6 +682,16 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       that.webdb.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
           notify({message: 'updated'});
+
+          instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+          for (index in that.webdb.keys[tableName].number) {
+            if (isNaN(instance[that.webdb.keys[tableName].number[index]]) === true) {
+              instance[that.webdb.keys[tableName].number[index]] = '';
+            } else {
+              instance[that.webdb.keys[tableName].number[index]] = Number(instance[that.webdb.keys[tableName].number[index]]);
+            }
+          }
+
           callback(instance, null, null, null);
         }, SQLErrorHandeler);
       }, SQLErrorHandeler);

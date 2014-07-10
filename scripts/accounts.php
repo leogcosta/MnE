@@ -7,7 +7,11 @@
   function account_POST () {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+    unset($request['account_id']);
     $request['account_user_user_id'] = $_SESSION['user_id'];
+    if (validate_date($request['account_timestamp']) === FALSE) {
+      $request['account_timestamp'] = date('Y-m-d H:i:s');
+    }
     POST(ACCOUNTS, $request);
   }
 

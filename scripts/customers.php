@@ -7,8 +7,11 @@
   function customer_POST () {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+    unset($request['customer_id']);
     $request['customer_user_user_id'] = $_SESSION['user_id'];
-    $request['customer_timestamp'] = date('Y-m-d H:i:s');
+    if (validate_date($request['customer_timestamp']) === FALSE) {
+      $request['customer_timestamp'] = date('Y-m-d H:i:s');
+    }
     POST(CUSTOMERS, $request);
   }
 

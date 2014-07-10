@@ -44,7 +44,6 @@
   function PUT ($defName, $id, $request) {
     // removing if existent
     unset($request['operation']);
-    unset($request['customer_user_user_id']);
 
     // inside the config set, if a 'timestamp' key is existent
     // we're going to do a little be more than a normal update

@@ -9,6 +9,8 @@
   require_once('../scripts/customers.php');
   require_once('../scripts/items.php');
   require_once('../scripts/accounts.php');
+  require_once('../scripts/sales.php');
+  require_once('../scripts/transactions.php');
 
   require_once('../scripts/sync.php');
   start_session();
@@ -44,8 +46,19 @@
   Flight::route('PUT /accounts/@id', 'account_PUT');
   Flight::route('DELETE /accounts/@id(/@timesatmp)', 'account_DELETE');
 
+  // Sales
+  Flight::route('GET /sales(/@id)', 'sale_GET');
+  Flight::route('POST /sales', 'sale_POST');
+  Flight::route('PUT /sales/@id', 'sale_PUT');
+  Flight::route('DELETE /sales/@id(/@timesatmp)', 'sale_DELETE');
+
+  // Transactions
+  Flight::route('GET /transactions(/@id)', 'transaction_GET');
+  Flight::route('POST /transactions', 'transaction_POST');
+  Flight::route('PUT /transactions/@id', 'transaction_PUT');
+  Flight::route('DELETE /transactions/@id(/@timesatmp)', 'transaction_DELETE');
+
   // sync
-  Flight::route('POST /sync', 'sync');
   Flight::route('POST /sync/@table', 'syncTable');
 
   Flight::start();

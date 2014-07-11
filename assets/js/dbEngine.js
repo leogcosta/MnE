@@ -233,7 +233,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
         // appropriate type conversion
         // timestamps and numbers get converted
-        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
         for (index in that.webdb.keys[tableName].number) {
           if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
             data[that.webdb.keys[tableName].number[index]] = '';
@@ -328,7 +328,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             // we have send back the copied version --- since the returned one
             // is protected
             var data = angular.copy(SQLResultSet.rows.item(0));
-            data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+            data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
             for (index in that.webdb.keys[tableName].number) {
               if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
                 data[that.webdb.keys[tableName].number[index]] = '';
@@ -354,7 +354,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       $http.get('api/'+ tableName).success(function (data, status, headers, config) {
         for(row in data) {
-          data[row][that.webdb.keys[tableName].timestamp] = moment(data[row][that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+          data[row][that.webdb.keys[tableName].timestamp] = moment(data[row][that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
 
           for (index in that.webdb.keys[tableName].number) {
             if (isNaN(data[row][that.webdb.keys[tableName].number[index]]) === true) {
@@ -446,7 +446,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           var i = 0, l = SQLResultSet.rows.length, data = [];
           for (; i < l; i++) {
             var row = angular.copy(SQLResultSet.rows.item(i));
-            row[that.webdb.keys[tableName].timestamp] = moment(row[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+            row[that.webdb.keys[tableName].timestamp] = moment(row[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
 
             for (index in that.webdb.keys[tableName].number) {
               if (isNaN(row[that.webdb.keys[tableName].number[index]]) === true) {
@@ -472,7 +472,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       // we send it to server, and see what it has to say about that
       // i.e. we have our lawdy validation-god
       $http.post('api/'+ tableName, instance).success(function (data, status, headers, config) {
-        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
         for (index in that.webdb.keys[tableName].number) {
           if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
             data[that.webdb.keys[tableName].number[index]] = '';
@@ -567,7 +567,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           notify({message: 'saved'});
           instance[that.webdb.keys[tableName].primaryKey] = SQLResultSet.insertId;
 
-          instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+          instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
           for (index in that.webdb.keys[tableName].number) {
             if (isNaN(instance[that.webdb.keys[tableName].number[index]]) === true) {
               instance[that.webdb.keys[tableName].number[index]] = '';
@@ -588,10 +588,12 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   // also some keys of an object will not change through
   // the lifetime of the instance
   that.update = function (tableName, instance, callback) {
+    console.log(instance);
+
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       // we're going to do something fancy here --- watch-out shufer! watch-out
       $http.put('api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey], instance).success(function (data, status, headers, config) {
-        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+        data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
         for (index in that.webdb.keys[tableName].number) {
           if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
             data[that.webdb.keys[tableName].number[index]] = '';
@@ -624,13 +626,34 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
             SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
               notify({message: 'merge sync'});
-              notify({message: 'updated'});
               callback(data, status, headers, config);
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         } else {
           notify({message: 'updated'});
           callback(data, status, headers, config);
+          delete data.message;
+
+          // my god this fixes a HUGE ass bug
+          that.webdb.db.transaction(function (SQLTransaction) {
+            var sql = {
+              set: [],
+              value: []
+            };
+
+            for (key in data) {
+              sql.set.push(key +' = ?');
+              sql.value.push(data[key] === null ? '' : data[key]);
+            }
+
+            sql.set = sql.set.join(', ');
+            sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
+            sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
+
+            SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
+              console.log('silent update on ['+ tableName +'] went with out a glitch')
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
         }
       }).error(HTTPerrorHandler);
     } else {
@@ -685,7 +708,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       that.webdb.db.transaction(function (SQLTransaction) {
         SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
 
-          instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss');
+          instance[that.webdb.keys[tableName].timestamp] = moment(instance[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
           for (index in that.webdb.keys[tableName].number) {
             if (isNaN(instance[that.webdb.keys[tableName].number[index]]) === true) {
               instance[that.webdb.keys[tableName].number[index]] = '';

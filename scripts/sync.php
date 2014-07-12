@@ -98,7 +98,7 @@
 
                 if ($db_timestamp > $client_timestamp) {
                   // server has the latest version, ABANDON ship!
-                  array_push($mergeList[$key], $backup);
+                  array_push($mergeList, $backup);
                 } else {
                   // ERYthing looks good, continue with the merge
                   unset($value1['operation']);

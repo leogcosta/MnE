@@ -427,6 +427,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                 sql.wild = sql.wild.join(', ');
 
                 SQLTransaction.executeSql('INSERT INTO '+ tableName +' ('+ sql.key.join(', ') +') VALUES ('+ sql.wild +')', sql.value, function (SQLTransaction, SQLResultSet) {
+                  console.log('added to WebSQL');
                 }, SQLErrorHandeler);
               }
             }, SQLErrorHandeler);

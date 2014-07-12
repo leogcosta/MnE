@@ -15,20 +15,20 @@
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs">
       <form
-        name="customerForm"
+        name="editForm"
         class="form-horizontal editForm"
         role="form"
         novalidate
-        ng-submit="customerCtrl.update()"
+        ng-submit="editCtrl.update()"
       >
         <div class="form-group">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="text"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Full Name *"
               required
-              ng-model="customer.customer_full_name"
+              ng-model="edit.customer_full_name"
               ng-maxlength="64"
               required
             >
@@ -39,10 +39,10 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="tel"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Phone Number *"
               required
-              ng-model="customer.customer_phone_number"
+              ng-model="edit.customer_phone_number"
               ng-pattern="/^((\+251)|0)[0-9]{9}$/"
               ng-maxlength="13"
               required
@@ -54,9 +54,9 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="email"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Email"
-              ng-model="customer.customer_email"
+              ng-model="edit.customer_email"
             >
           </div>
         </div>
@@ -64,10 +64,10 @@
         <div class="form-group">
           <div
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ngShowHide"
-            ng-show="customer.customer_email !== '' && customer.customer_email !== undefined"
+            ng-show="edit.customer_email !== '' && edit.customer_email !== null && (editForm.$error.hasOwnProperty('email') && editForm.$error.email === false)"
           >
-            <a href="mailto:{{ customer.customer_email }}"
-              class="btn btn-default btn-block"
+            <a href="mailto:{{ edit.customer_email }}"
+              class="btn btn-default btn-lg btn-block"
             >
               Email Customer
             </a>
@@ -78,8 +78,8 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <button
               type="submit"
-              ng-disabled="customerForm.$invalid"
-              class="btn btn-primary btn-block"
+              ng-disabled="editForm.$invalid"
+              class="btn btn-primary btn-lg btn-block"
             >
               Update
             </button>
@@ -90,8 +90,8 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <button
               type="button"
-              class="btn btn-danger btn-block"
-              ng-swipe-right="customerCtrl.delete()"
+              class="btn btn-danger btn-lg btn-block"
+              ng-swipe-right="editCtrl.delete()"
             >
               Delete
             </button>

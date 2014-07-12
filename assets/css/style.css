@@ -219,7 +219,7 @@ nav.menu {
   right: 0;
   height: 44px;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 1.0);
   border-top: 1px solid rgba(51, 51, 51, 0.125);
 }
 
@@ -337,12 +337,16 @@ nav.menu > a.active {
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 .moe-list {
   padding: 2px 0px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   border-bottom: 1px solid rgba(51, 51, 51, 0.1);
 }
 
+.col-lg-12.col-md-12.col-sm-12.col-xs-12 > .moe-list:last-child {
+  border-bottom: 0px solid rgba(51, 51, 51, 0.1);
+}
+
 .moe-list .item-inital-container {
-  height: 78px;
+  height: 64px;
   padding: 0;
   margin: 0;
   text-align: center;
@@ -354,15 +358,15 @@ nav.menu > a.active {
   right: 0;
   bottom: 0;
   left: 0;
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   margin: auto;
   padding: 0;
   padding-top: 10px;
   padding-left: 1px;
   border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 72px;
-  font-size: 42px;
+  border-radius: 64px;
+  font-size: 36px;
   color: #666666;
 }
 
@@ -374,12 +378,16 @@ nav.menu > a.active {
   background-color: rgba(243, 156, 18, 0.5);
 }
 
+.moe-list h1.item-inital.merge {
+  background-color: rgba(231, 76, 60, 0.5);
+}
+
 .moe-list .item-name {
   margin: 0;
   margin-top: 2px;
   margin-bottom: 4px;
   font-size: 20px;
-  color: #666666;
+  color: #7c7c7c;
   line-height: 20px;
   text-transform: capitalize;
 }
@@ -387,8 +395,8 @@ nav.menu > a.active {
 .moe-list .item-code {
   margin: 0;
   margin-top: -2px;
-  font-size: 14px;
-  color: rgba(153, 153, 153, 1.0);
+  font-size: 12px;
+  color: #95a5a6;
   text-transform: uppercase;
 }
 
@@ -396,15 +404,15 @@ nav.menu > a.active {
   margin: 0;
   margin-top: -6px;
   margin-bottom: -8px;
-  font-size: 28px;
-  color: rgba(231, 76, 60, 0.7);
+  font-size: 22px;
+  color: #16a085;
 }
 
 .moe-list .item-owes {
   margin: 0;
   padding: 0;
-  color: rgba(231, 76, 60, 0.7);
-  font-size: 28px;
+  color: #16a085;
+  font-size: 24px;
 }
 
 .moe-list .action {
@@ -412,16 +420,17 @@ nav.menu > a.active {
   top: 0;
   left: 15px;
   right: 15px;
-  height: 78px;
-  background-color: rgba(255, 255, 255, 0.95);
+  height: 64px;
+  background-color: rgba(255, 255, 255, 1.0);
   text-align: center;
 }
 
 .moe-list .action a {
   font-size: 38px;
-  height: 78px;
+  height: 64px;
   text-decoration: none;
   color: #666666;
+  margin-top: -4px;
 }
 
 .moe-list .action small {
@@ -429,28 +438,19 @@ nav.menu > a.active {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 14px;
+  bottom: 2px;
 }
 
-.moe-list .action a.phone {
-  color: rgba(39, 174, 96, 0.7);
-}
-
-.moe-list .action a.sale {
-  color: rgba(231, 76, 60, 0.7);
-}
-
+.moe-list .action a.phone,
+.moe-list .action a.sale,
 .moe-list .action a.info {
-  color: rgba(41, 128, 185, 0.7);
-}
-
-.col-lg-12 > .moe-list:last-child {
-  border-bottom: 0px solid rgba(51, 51, 51, 0.1);
+  color: rgba(51, 51, 51, 0.5);
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 
 
 
+.newForm input,
 .editForm input {
   font-size: 16px;
   padding: 0;
@@ -458,7 +458,9 @@ nav.menu > a.active {
   border-bottom: 1px solid rgba(51, 51, 51, 0.125);
 }
 
+.newForm input:focus,
 .editForm input:focus,
+.newForm input:active,
 .editForm input:active {
   box-shadow: none;
   border-bottom: 1px solid rgba(51, 51, 51, 0.25);

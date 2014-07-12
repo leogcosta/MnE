@@ -15,20 +15,20 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
       <form
-        name="newClientForm"
+        name="newForm"
         class="form-horizontal"
         role="form"
         novalidate
-        ng-submit="customerNewCtrl.save()"
+        ng-submit="saveCtrl.save()"
       >
         <div class="form-group">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="text"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Full Name *"
               required
-              ng-model="newCustomer.customer_full_name"
+              ng-model="instance.customer_full_name"
               ng-maxlength="64"
               required
             >
@@ -39,10 +39,10 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="tel"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Phone Number *"
               required
-              ng-model="newCustomer.customer_phone_number"
+              ng-model="instance.customer_phone_number"
               ng-pattern="/^((\+251)|0)[0-9]{9}$/"
               ng-maxlength="13"
               required
@@ -54,9 +54,9 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="email"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Email"
-              ng-model="newCustomer.customer_email"
+              ng-model="instance.customer_email"
             >
           </div>
         </div>
@@ -64,8 +64,8 @@
         <div class="form-group">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <button
-              ng-disabled="newClientForm.$invalid"
-              class="btn btn-success btn-block"
+              ng-disabled="newForm.$invalid"
+              class="btn btn-success btn-block btn-lg"
             >
             Save
             </button>

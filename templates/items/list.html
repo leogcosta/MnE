@@ -25,7 +25,7 @@
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
   <div
     class="row ngRepeat moe-list"
-    ng-repeat="item in data.items | filter:search:strict | orderBy:'item_name':false"
+    ng-repeat="item in items | filter:search:strict | orderBy:'item_name':false"
     ng-swipe-left="item.showAction = true"
     ng-swipe-right="item.showAction = false"
   >
@@ -34,7 +34,7 @@
     >
       <h1
         class="Lato-Hai item-inital"
-        ng-class="{save: item.operation === 'SAVE', update: item.operation === 'UPDATE'}"
+        ng-class="{merge: item.operation === 'MERGE', save: item.operation === 'SAVE', update: item.operation === 'UPDATE'}"
         ng-bind="item.item_name[0]|uppercase"
       ></h1>
     </div>

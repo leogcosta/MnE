@@ -19,15 +19,15 @@
         class="form-horizontal editForm"
         role="form"
         novalidate
-        ng-submit="itemCtrl.update()"
+        ng-submit="editCtrl.update()"
       >
         <div class="form-group">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="text"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Name *"
-              ng-model="item.item_name"
+              ng-model="edit.item_name"
               ng-maxlength="128"
               required
             >
@@ -38,9 +38,9 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="text"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="ID *"
-              ng-model="item.item_item_id"
+              ng-model="edit.item_item_id"
               ng-maxlength="64"
               required
             >
@@ -51,9 +51,9 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <input
               type="number"
-              class="form-control"
+              class="form-control input-lg"
               placeholder="Unit Price"
-              ng-model="item.item_unit_price"
+              ng-model="edit.item_unit_price"
               required
             >
           </div>
@@ -64,7 +64,7 @@
             <button
               type="submit"
               ng-disabled="editForm.$invalid"
-              class="btn btn-primary btn-block"
+              class="btn btn-lg btn-primary btn-block"
             >
               Update
             </button>
@@ -75,8 +75,8 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <button
               type="button"
-              class="btn btn-danger btn-block"
-              ng-swipe-right="itemCtrl.delete()"
+              class="btn btn-lg btn-danger btn-block"
+              ng-swipe-right="editCtrl.delete()"
             >
               Delete
             </button>

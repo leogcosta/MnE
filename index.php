@@ -74,15 +74,7 @@
     <script src="assets/js/controllers/login.js"></script>
 
     <script src="assets/js/controllers/customers.js"></script>
-
-    <script src="assets/js/controllers/items/all.js"></script>
-    <script src="assets/js/controllers/items/new.js"></script>
-    <script src="assets/js/controllers/items/edit.js"></script>
-
-    <script src="assets/js/controllers/accounts/all.js"></script>
-    <script src="assets/js/controllers/accounts/new.js"></script>
-    <script src="assets/js/controllers/accounts/edit.js"></script>
-
+    <script src="assets/js/controllers/items.js"></script>
     <script src="assets/js/controllers/more.js"></script>
 
     <script src="assets/js/script.js"></script>

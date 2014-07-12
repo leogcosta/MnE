@@ -264,8 +264,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
               };
 
               for (key in sql.key) {
-                sql.wild.push('?');
-                sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
+                if (key !== '$$hashKey') {
+                  sql.wild.push('?');
+                  sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
+                }
               }
 
               sql.wild = sql.wild.join(', ');
@@ -382,14 +384,19 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                   };
 
                   for (key in data) {
-                    sql.set.push(key +' = ?');
-                    sql.value.push(data[key] === null ? '' : data[key]);
+                    // i don't know where this $$hashKey is coming from
+                    // but it's very meeeebad --- meeeekay
+                    if (key !== '$$hashKey') {
+                      sql.set.push(key +' = ?');
+                      sql.value.push(data[key] === null ? '' : data[key]);
+                    }
                   }
 
                   sql.set = sql.set.join(', ');
                   sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
                   sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
 
+                  console.log(sql);
                   SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
                     console.log('GET synced');
                   }, SQLErrorHandeler);
@@ -431,10 +438,46 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         // now this is where the `fancy` part comes in play
         // there are no promises here ---
         // just hope everything goes according to `plan`
+        var reverseIndex = []; // will be used for reveres *cleaning*
         for (index in data) {
           data[index].operation = '';
+          reverseIndex.push(data[index][that.webdb.keys[tableName].primaryKey]);
           this.check(data[index]);
         }
+
+        // after 5 seconds (which is more than enough + we're not in a hurry)
+        // we'll go through the local db record and `delete` stuff that's
+        // *just* hanging around
+        //
+        // PS
+        // i did not go in to the promise and stuff --- yep it's that
+        // lazy moment --- very un-German
+        setTimeout(function () {
+          console.log('spring cleaning...');
+
+          that.webdb.db.transaction(function (SQLTransaction) {
+            SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName, [], function (SQLTransaction, SQLResultSet) {
+              var i = 0, l = SQLResultSet.rows.length, data = [];
+
+              for (; i < l; i++) {
+                var row = angular.copy(SQLResultSet.rows.item(i));
+                if (reverseIndex.indexOf(row[that.webdb.keys[tableName].primaryKey]) === -1 && (row.operation === '' || row.operation === null)) {
+                  SQLTransaction.executeSql('DELETE FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [row[that.webdb.keys[tableName].primaryKey]], function (SQLTransaction, SQLResultSet) {
+                    if ((i + 1) === l) {
+                      console.log('spring cleaning DON!');
+                    }
+                  }, SQLErrorHandeler);
+                } else if ((i + 1) === l) {
+                  console.log('spring cleaning DON!');
+                }
+              }
+
+              if (l === 0) {
+                console.log('this is wired, still NO spring cleaning!');
+              }
+            }, SQLErrorHandeler);
+          }, SQLErrorHandeler);
+        }, 5000);
       }).error(HTTPerrorHandler);
     } else {
       $rootScope.syncMode = false;
@@ -499,8 +542,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         };
 
         for (key in sql.key) {
-          sql.wild.push('?');
-          sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
+          if (key !== '$$hashKey') {
+            sql.wild.push('?');
+            sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
+          }
         }
 
         sql.wild = sql.wild.join(', ');
@@ -555,8 +600,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       };
 
       for (key in sql.key) {
-        sql.wild.push('?');
-        sql.value.push(instance[sql.key[key]] === null ? '' : instance[sql.key[key]]);
+        if (key !== '$$hashKey') {
+          sql.wild.push('?');
+          sql.value.push(instance[sql.key[key]] === null ? '' : instance[sql.key[key]]);
+        }
       }
 
       sql.wild = sql.wild.join(', ');
@@ -588,8 +635,6 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   // also some keys of an object will not change through
   // the lifetime of the instance
   that.update = function (tableName, instance, callback) {
-    console.log(instance);
-
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       // we're going to do something fancy here --- watch-out shufer! watch-out
       $http.put('api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey], instance).success(function (data, status, headers, config) {
@@ -616,8 +661,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             };
 
             for (key in data) {
-              sql.set.push(key +' = ?');
-              sql.value.push(data[key] === null ? '' : data[key]);
+              if (key !== '$$hashKey') {
+                sql.set.push(key +' = ?');
+                sql.value.push(data[key] === null ? '' : data[key]);
+              }
             }
 
             sql.set = sql.set.join(', ');
@@ -642,8 +689,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             };
 
             for (key in data) {
-              sql.set.push(key +' = ?');
-              sql.value.push(data[key] === null ? '' : data[key]);
+              if (key !== '$$hashKey') {
+                sql.set.push(key +' = ?');
+                sql.value.push(data[key] === null ? '' : data[key]);
+              }
             }
 
             sql.set = sql.set.join(', ');
@@ -697,8 +746,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       };
 
       for (key in instance) {
-        sql.set.push(key +' = ?');
-        sql.value.push(instance[key] === null ? '' : instance[key]);
+        if (key !== '$$hashKey') {
+          sql.set.push(key +' = ?');
+          sql.value.push(instance[key] === null ? '' : instance[key]);
+        }
       }
 
       sql.set = sql.set.join(', ');
@@ -747,8 +798,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             };
 
             for (key in data) {
-              sql.set.push(key +' = ?');
-              sql.value.push(data[key] === null ? '' : data[key]);
+              if (key !== '$$hashKey') {
+                sql.set.push(key +' = ?');
+                sql.value.push(data[key] === null ? '' : data[key]);
+              }
             }
 
             sql.set = sql.set.join(', ');

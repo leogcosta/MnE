@@ -233,6 +233,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       $http.get('api/'+ tableName +'/'+ id).success(function (data, status, headers, config) {
         // appropriate type conversion
         // timestamps and numbers get converted
+        delete data['$$hashKey'];
         data[that.webdb.keys[tableName].timestamp] = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
         for (index in that.webdb.keys[tableName].number) {
           if (isNaN(data[that.webdb.keys[tableName].number[index]]) === true) {
@@ -256,6 +257,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
             if (SQLResultSet.rows.length === 0) {
               console.log('adding to WebSQL...');
+              delete data['$$hashKey'];
 
               var sql = {
                 wild: [],
@@ -264,10 +266,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
               };
 
               for (key in sql.key) {
-                if (key !== '$$hashKey') {
-                  sql.wild.push('?');
-                  sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
-                }
+                sql.wild.push('?');
+                sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
               }
 
               sql.wild = sql.wild.join(', ');
@@ -284,6 +284,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
               var diff = moment(data[that.webdb.keys[tableName].timestamp]).diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp]));
               if (diff > 0) {
                 console.log('server has the latest `version`');
+                delete data['$$hashKey'];
 
                 var sql = {
                   set: [],
@@ -356,6 +357,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       $http.get('api/'+ tableName).success(function (data, status, headers, config) {
         for(row in data) {
+          delete data[row]['$$hashKey'];
           data[row][that.webdb.keys[tableName].timestamp] = moment(data[row][that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss')._i;
 
           for (index in that.webdb.keys[tableName].number) {
@@ -377,6 +379,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                 var diff = moment(data[that.webdb.keys[tableName].timestamp]).diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp]));
                 if (diff > 0) {
                   console.log('server has the latest `version`');
+                  delete data['$$hashKey'];
 
                   var sql = {
                     set: [],
@@ -386,10 +389,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                   for (key in data) {
                     // i don't know where this $$hashKey is coming from
                     // but it's very meeeebad --- meeeekay
-                    if (key !== '$$hashKey') {
-                      sql.set.push(key +' = ?');
-                      sql.value.push(data[key] === null ? '' : data[key]);
-                    }
+                    sql.set.push(key +' = ?');
+                    sql.value.push(data[key] === null ? '' : data[key]);
                   }
 
                   sql.set = sql.set.join(', ');
@@ -410,6 +411,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                 }
               } else if (SQLResultSet.rows.length === 0) {
                 console.log('adding to WebSQL...');
+                delete data['$$hashKey'];
 
                 var sql = {
                   wild: [],
@@ -532,6 +534,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         console.log('adding to WebSQL...');
 
         delete data.message;
+        delete data['$$hashKey'];
         data.operation = '';
 
         var sql = {
@@ -541,10 +544,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         };
 
         for (key in sql.key) {
-          if (key !== '$$hashKey') {
-            sql.wild.push('?');
-            sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
-          }
+          sql.wild.push('?');
+          sql.value.push(data[sql.key[key]] === null ? '' : data[sql.key[key]]);
         }
 
         sql.wild = sql.wild.join(', ');
@@ -563,6 +564,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       console.log('adding to WebSQL...');
 
       instance.operation = 'SAVE';
+      delete instance['$$hashKey'];
 
       // depending on the table name
       // we're going to be setting some values
@@ -599,10 +601,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       };
 
       for (key in sql.key) {
-        if (key !== '$$hashKey') {
-          sql.wild.push('?');
-          sql.value.push(instance[sql.key[key]] === null ? '' : instance[sql.key[key]]);
-        }
+        sql.wild.push('?');
+        sql.value.push(instance[sql.key[key]] === null ? '' : instance[sql.key[key]]);
       }
 
       sql.wild = sql.wild.join(', ');
@@ -651,6 +651,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         if (data.hasOwnProperty('merge') === true) {
           console.log('merging..');
           delete data.merge;
+          delete data['$$hashKey'];
           data.operation = 'MERGE';
 
           that.webdb.db.transaction(function (SQLTransaction) {
@@ -660,10 +661,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             };
 
             for (key in data) {
-              if (key !== '$$hashKey') {
-                sql.set.push(key +' = ?');
-                sql.value.push(data[key] === null ? '' : data[key]);
-              }
+              sql.set.push(key +' = ?');
+              sql.value.push(data[key] === null ? '' : data[key]);
             }
 
             sql.set = sql.set.join(', ');
@@ -680,6 +679,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           notify({message: 'updated'});
           callback(data, status, headers, config);
           delete data.message;
+          delete data['$$hashKey'];
           // this clears out whatever operation was left, if any
           data.operation = '';
 
@@ -691,10 +691,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             };
 
             for (key in data) {
-              if (key !== '$$hashKey') {
-                sql.set.push(key +' = ?');
-                sql.value.push(data[key] === null ? '' : data[key]);
-              }
+              sql.set.push(key +' = ?');
+              sql.value.push(data[key] === null ? '' : data[key]);
             }
 
             sql.set = sql.set.join(', ');
@@ -715,6 +713,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       // is a `situation` where this logic would fail, let the system have
       // a hole :)
       instance.operation = 'UPDATE';
+      delete instance['$$hashKey'];
 
       switch (tableName) {
         case 'accounts':
@@ -748,10 +747,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
       };
 
       for (key in instance) {
-        if (key !== '$$hashKey') {
-          sql.set.push(key +' = ?');
-          sql.value.push(instance[key] === null ? '' : instance[key]);
-        }
+        sql.set.push(key +' = ?');
+        sql.value.push(instance[key] === null ? '' : instance[key]);
       }
 
       sql.set = sql.set.join(', ');
@@ -791,6 +788,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         if (data.hasOwnProperty('merge') === true) {
           console.log('merging..');
           delete data.merge;
+          delete data['$$hashKey'];
           data.operation = 'MERGE';
 
           that.webdb.db.transaction(function (SQLTransaction) {
@@ -800,10 +798,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             };
 
             for (key in data) {
-              if (key !== '$$hashKey') {
-                sql.set.push(key +' = ?');
-                sql.value.push(data[key] === null ? '' : data[key]);
-              }
+              sql.set.push(key +' = ?');
+              sql.value.push(data[key] === null ? '' : data[key]);
             }
 
             sql.set = sql.set.join(', ');

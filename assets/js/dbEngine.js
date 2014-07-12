@@ -396,7 +396,6 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                   sql.set += ' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?';
                   sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
 
-                  console.log(sql);
                   SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
                     console.log('GET synced');
                   }, SQLErrorHandeler);

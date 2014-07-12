@@ -213,7 +213,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             // transactions
             that.webdb.initiateTable('transactions').then(function (message) {
               console.log(message);
-              deferred.resolve('hurray, ALL table\'s SQL executed with out a glitch');
+              deferred.resolve('hurray, ALL table\'s SQL executed without a glitch');
             }, promiseBroken);
           }, promiseBroken);
         }, promiseBroken);
@@ -527,7 +527,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         callback(data, status, headers, config);
 
         // since new data is returned we save it to WebSQL
-        // with out any preconditions --- BUT there might be an offline
+        // without any preconditions --- BUT there might be an offline
         // data lurking somewhere, we just hope that isn't the case
         console.log('adding to WebSQL...');
 
@@ -672,6 +672,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
             SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
               notify({message: 'merge sync'});
+              console.log('DON merging!');
               callback(data, status, headers, config);
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
@@ -679,6 +680,8 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           notify({message: 'updated'});
           callback(data, status, headers, config);
           delete data.message;
+          // this clears out whatever operation was left, if any
+          data.operation = '';
 
           // my god this fixes a HUGE ass bug
           that.webdb.db.transaction(function (SQLTransaction) {
@@ -699,7 +702,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             sql.value.push(data[that.webdb.keys[tableName].primaryKey]);
 
             SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
-              console.log('silent update on ['+ tableName +'] went with out a glitch')
+              console.log('silent update on ['+ tableName +'] went without a glitch')
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         }

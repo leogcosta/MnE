@@ -31,8 +31,8 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
         $('a[href="#/items"]').addClass('active');
       break;
 
-      case 'accountCtrl':
       case 'accountsCtrl':
+      case 'accountEditCtrl':
       case 'accountNewCtrl':
         $('a[href="#/accounts"]').addClass('active');
       break;
@@ -150,13 +150,13 @@ app.config(function ($routeProvider) {
   }).
 
   when('/accounts/new', {
-    templateUrl: 'templates/accountNew.html',
+    templateUrl: 'templates/accounts/new.html',
     controller: 'accountNewCtrl'
   }).when('/accounts/info/:id', {
-    templateUrl: 'templates/account.html',
-    controller: 'accountCtrl'
+    templateUrl: 'templates/accounts/edit.html',
+    controller: 'accountEditCtrl'
   }).when('/accounts', {
-    templateUrl: 'templates/accounts.html',
+    templateUrl: 'templates/accounts/list.html',
     controller: 'accountsCtrl'
   }).
 

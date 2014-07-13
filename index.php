@@ -75,6 +75,7 @@
 
     <script src="assets/js/controllers/customers.js"></script>
     <script src="assets/js/controllers/items.js"></script>
+    <script src="assets/js/controllers/accounts.js"></script>
     <script src="assets/js/controllers/more.js"></script>
 
     <script src="assets/js/script.js"></script>

@@ -415,6 +415,16 @@ nav.menu > a.active {
   font-size: 24px;
 }
 
+.moe-list .operation-list {
+  font-size: 20px;
+  color: #7c7c7c;
+  line-height: 20px;
+  text-transform: capitalize;
+  margin: 0;
+  margin-bottom: 6px;
+  margin-top: 6px;
+}
+
 .moe-list .action {
   position: absolute;
   top: 0;
@@ -450,18 +460,16 @@ nav.menu > a.active {
 
 
 
-.newForm input,
-.editForm input {
+input.form-control.input-lg {
   font-size: 16px;
   padding: 0;
   border: 0;
   border-bottom: 1px solid rgba(51, 51, 51, 0.125);
 }
 
-.newForm input:focus,
-.editForm input:focus,
-.newForm input:active,
-.editForm input:active {
+input.form-control.input-lg:focus,
+input.form-control.input-lg:active,
+input.form-control.input-lg:hover {
   box-shadow: none;
   border-bottom: 1px solid rgba(51, 51, 51, 0.25);
 }

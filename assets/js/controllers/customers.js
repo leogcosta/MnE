@@ -1,4 +1,6 @@
-var customersCtrl = app.controller('customersCtrl', ['$rootScope', '$scope', '$q', 'dbEngine2', 'syncEngine2', function ($rootScope, $scope, $q, dbEngine2, syncEngine2) {
+var customersCtrl = app.controller('customersCtrl',
+                                   ['$rootScope', '$scope', '$q', 'dbEngine2', 'syncEngine2',
+                                   function ($rootScope, $scope, $q, dbEngine2, syncEngine2) {
   dbEngine2.query('customers', function (data) {
     $scope.customers = data;
 
@@ -10,7 +12,9 @@ var customersCtrl = app.controller('customersCtrl', ['$rootScope', '$scope', '$q
 
 
 
-var customerNewCtrl = app.controller('customerNewCtrl', ['$rootScope', '$scope', '$location', 'dbEngine2', function ($rootScope, $scope, $location, dbEngine2) {
+var customerNewCtrl = app.controller('customerNewCtrl',
+                                     ['$rootScope', '$scope', '$location', 'dbEngine2',
+                                     function ($rootScope, $scope, $location, dbEngine2) {
   $scope.instance = {
     customer_full_name: '',
     customer_phone_number: '',
@@ -33,7 +37,9 @@ var customerNewCtrl = app.controller('customerNewCtrl', ['$rootScope', '$scope',
 
 
 
-var customerEditCtrl = app.controller('customerEditCtrl', ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2', function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
+var customerEditCtrl = app.controller('customerEditCtrl',
+                                      ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
+                                      function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
   $scope.edit = {};
 
   dbEngine2.get('customers', $routeParams.id, function (data) {

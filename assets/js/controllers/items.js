@@ -1,4 +1,6 @@
-var itemsCtrl = app.controller('itemsCtrl', ['$rootScope', '$scope', 'dbEngine2', function ($rootScope, $scope, dbEngine2) {
+var itemsCtrl = app.controller('itemsCtrl',
+                               ['$rootScope', '$scope', 'dbEngine2',
+                               function ($rootScope, $scope, dbEngine2) {
   dbEngine2.query('items', function (data) {
     $scope.items = data;
 
@@ -10,7 +12,9 @@ var itemsCtrl = app.controller('itemsCtrl', ['$rootScope', '$scope', 'dbEngine2'
 
 
 
-var itemNewCtrl = app.controller('itemNewCtrl', ['$rootScope', '$scope', '$location', 'dbEngine2', function ($rootScope, $scope, $location, dbEngine2) {
+var itemNewCtrl = app.controller('itemNewCtrl',
+                                 ['$rootScope', '$scope', '$location', 'dbEngine2',
+                                 function ($rootScope, $scope, $location, dbEngine2) {
   $scope.instance = {
     item_item_id: '',
     item_name: '',
@@ -33,7 +37,9 @@ var itemNewCtrl = app.controller('itemNewCtrl', ['$rootScope', '$scope', '$locat
 
 
 
-var itemEditCtrl = app.controller('itemEditCtrl', ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2', function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
+var itemEditCtrl = app.controller('itemEditCtrl',
+                                  ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
+                                  function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
   $scope.edit = {};
 
   dbEngine2.get('items', $routeParams.id, function (data) {

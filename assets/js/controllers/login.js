@@ -1,4 +1,6 @@
-var loginCtrl = app.controller('loginCtrl', ['$rootScope', '$scope', '$location', '$http', '$q', 'dbEngine2', 'syncEngine2', function ($rootScope, $scope, $location, $http, $q, dbEngine2, syncEngine2) {
+var loginCtrl = app.controller('loginCtrl',
+                               ['$rootScope', '$scope', '$location', '$http', '$q', 'dbEngine2', 'syncEngine2',
+                               function ($rootScope, $scope, $location, $http, $q, dbEngine2, syncEngine2) {
   $scope.credentials = {
     username: '',
     password: ''

@@ -182,7 +182,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
     that.webdb.db.transaction(function (SQLTransaction) {
       SQLTransaction.executeSql(that.webdb.sql[tableName], [], function (SQLTransaction, SQLResultSet) {
-        deferred.resolve('"'+ tableName + '"" sql executed without a glitch');
+        deferred.resolve('"'+ tableName + '" sql executed without a glitch');
       }, function (SQLTransaction, error) {
         deferred.reject(error);
       });
@@ -281,7 +281,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
               // we're assuming the latest operation timestamp is the shit
 
               // sever has the latest `version` of this data
-              var diff = moment(data[that.webdb.keys[tableName].timestamp]).diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp]));
+              var diff = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss').diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss'));
               if (diff > 0) {
                 console.log('server has the latest `version`');
                 delete data['$$hashKey'];
@@ -376,7 +376,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           that.webdb.db.transaction(function (SQLTransaction) {
             SQLTransaction.executeSql('SELECT '+ that.webdb.keys[tableName].selectKey +' FROM '+ tableName +' WHERE '+ that.webdb.keys[tableName].primaryKey +' = ?', [data[that.webdb.keys[tableName].primaryKey]], function (SQLTransaction, SQLResultSet) {
               if (SQLResultSet.rows.length === 1) {
-                var diff = moment(data[that.webdb.keys[tableName].timestamp]).diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp]));
+                var diff = moment(data[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss').diff(moment(SQLResultSet.rows.item(0)[that.webdb.keys[tableName].timestamp], 'YYYY-MM-DD HH:mm:ss'));
                 if (diff > 0) {
                   console.log('server has the latest `version`');
                   delete data['$$hashKey'];

@@ -455,21 +455,13 @@ nav.menu > a.active {
 
 .moe-list .sale-total {
   margin: 0;
-  margin-top: -8px;
+  margin-top: -6px;
   font-size: 24px;
   color: #16a085;
 }
 
 .moe-list .sale-timestamp {
   margin: 0;
-  margin-top: -6px;
-  font-size: 10px;
-  color: #7f8c8d;
-}
-
-.moe-list .sale-age {
-  margin: 0;
-  margin-top: -2px;
   font-size: 10px;
   color: #7f8c8d;
 }

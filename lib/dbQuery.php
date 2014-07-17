@@ -61,11 +61,6 @@
         $row['merge'] = TRUE;
         Flight::json($row, 202);
       } else {
-        // everything looks good, continuing with the update...
-        if (date_create_from_format('Y-m-d H:i:s', $request[$GLOBALS['TABLES'][$defName]['timestamp']]) === FALSE) {
-          $request[$GLOBALS['TABLES'][$defName]['timestamp']] = date('Y-m-d H:i:s');
-        }
-
         $result = getDB() -> update($GLOBALS['TABLES'][$defName]['tableName'],
                                     $request,
                                     [$GLOBALS['TABLES'][$defName]['tableId'] => $id]);

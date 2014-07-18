@@ -1,0 +1,80 @@
+<nav class="search-nav row">
+  <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+    <input
+      type="text"
+      class="search form-control input-sm"
+      placeholder="Search Deposits"
+      ng-model="search.$"
+    >
+
+    <i class="search-icon ion-ios7-search"></i>
+  </div>
+
+  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+    <a
+      href="#/customers/deposits/{{ customerId }}/new"
+      class="btn btn-block btn-xs btn-default new-entity"
+    >
+      <i class="ion-ios7-plus-outline"></i>
+    </a>
+  </div>
+</nav>
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
+  <div
+    class="row ngRepeat moe-list"
+    ng-repeat="transaction in transactions | filter:search:strict | orderBy:'transaction_id':true"
+    ng-swipe-left="transaction.showAction = true"
+    ng-swipe-right="transaction.showAction = false"
+  >
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+      <div class="moment-container">
+        <p
+          class="moment-time"
+          ng-bind="transaction.moment.time"
+        ></p>
+        <p
+          class="moment-month"
+          ng-bind="transaction.moment.month"
+        ></p>
+        <p
+          class="moment-year"
+          ng-bind="transaction.moment.year"
+        ></p>
+      </div>
+    </div>
+
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+      <p
+        class="ClearSans-Thin transaction-deposit"
+        ng-bind="transaction.transaction_amount | number:2"
+      ></p>
+
+      <p
+        class="transaction-age"
+        ng-bind="transaction.moment.age"
+      ></p>
+
+      <div
+        class="row ngShowHide action"
+        ng-show="transaction.showAction"
+      >
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+          <!--
+            using this div to push the lonely info link to the right --- i know
+            i could have used offset but --- i want xs to have an offset too
+            which (to my knowledge) isn't available in xs
+          -->
+        </div>
+
+        <a
+          class="col-lg-4 col-md-4 col-sm-4 col-xs-4"
+          href="#/customers/deposits/{{ customerId }}/edit/{{ transaction.transaction_id }}"
+        >
+          <i class="ion-ios7-information-outline"></i>
+          <small class="ClearSans-Thin">Info</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,6 +22,12 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
       case 'customersCtrl':
       case 'customerEditCtrl':
       case 'customerNewCtrl':
+      case 'depositsCtrl':
+      case 'depositsNewCtrl':
+      case 'depositsEditCtrl':
+      case 'saleViaCustomerListCtrl':
+      case 'saleViaCustomerNewCtrl':
+      case 'saleViaCustomerEditCtrl':
         $('a[href="#/customers"]').addClass('active');
       break;
 
@@ -158,6 +164,31 @@ app.config(function ($routeProvider) {
   }).when('/accounts', {
     templateUrl: 'templates/accounts/list.html',
     controller: 'accountsCtrl'
+  }).
+
+
+  // sales + deposit
+  when('/customers/sales/:id', {
+    templateUrl: 'templates/sales/viaCustomer/list.html',
+    controller: 'saleViaCustomerListCtrl'
+  }).when('/customers/sales/:id/new', {
+    templateUrl: 'templates/sales/viaCustomer/new.html',
+    controller: 'saleViaCustomerNewCtrl'
+  }).when('/customers/sales/:customerId/edit/:saleId', {
+    templateUrl: 'templates/sales/viaCustomer/edit.html',
+    controller: 'saleViaCustomerEditCtrl'
+  }).
+
+  // deposits
+  when('/customers/deposits/:customerId', {
+    templateUrl: 'templates/deposits/list.html',
+    controller: 'depositsCtrl'
+  }).when('/customers/deposits/:customerId/new', {
+    templateUrl: 'templates/deposits/new.html',
+    controller: 'depositsNewCtrl'
+  }).when('/customers/deposits/:customerId/edit/:depositId', {
+    templateUrl: 'templates/deposits/edit.html',
+    controller: 'depositsEditCtrl'
   }).
 
   when('/more', {

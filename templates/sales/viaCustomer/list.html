@@ -1,0 +1,94 @@
+<nav class="search-nav row">
+  <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+    <input
+      type="text"
+      class="search form-control input-sm"
+      placeholder="Search Sales"
+      ng-model="search.$"
+    >
+
+    <i class="search-icon ion-ios7-search"></i>
+  </div>
+
+  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+    <a
+      href="#/customers/sales/{{ customer_id }}/new"
+      class="btn btn-block btn-xs btn-default new-entity"
+    >
+      <i class="ion-ios7-plus-outline"></i>
+    </a>
+  </div>
+</nav>
+
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
+  <div
+    class="row ngRepeat moe-list"
+    ng-repeat="sale in sales | filter:search:strict | orderBy:'sale_id':true"
+    ng-swipe-left="sale.showAction = true"
+    ng-swipe-right="sale.showAction = false"
+  >
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 item-inital-container">
+      <p
+        class="ClearSans-Regular sale-item-name"
+        ng-bind="sale.sale_item_item_id.item_name"
+      ></p>
+
+      <p
+        class="ClearSans-Regular sale-item-code"
+        ng-bind="sale.sale_item_item_id.item_item_id"
+      ></p>
+
+      <p
+        class="ClearSans-Regular sale-item-current-price"
+        ng-bind="sale.sale_item_item_id.item_unit_price"
+      ></p>
+    </div>
+
+    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+      <p
+        class="ClearSans-Light sale-item-quantity-price"
+      >
+        <span ng-bind="sale.sale_item_quantity"></span>
+        <i class="ion-ios7-close-empty"></i>
+        <span ng-bind="sale.sale_item_unit_price"></span>
+      </p>
+
+      <p
+        class="ClearSans-Light sale-total"
+        ng-bind="(sale.sale_item_quantity * sale.sale_item_unit_price) | number:2"
+      >
+
+      <p
+        class="ClearSans-Regular sale-timestamp"
+        ng-bind="sale.sale_timestamp"
+      ></p>
+
+      <p
+        class="ClearSans-Regular sale-age"
+        ng-bind="sale.sale_timestamp_age"
+      ></p>
+
+      <div
+        class="row ngShowHide action"
+        ng-show="sale.showAction"
+      >
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+          <!--
+            using this div to push the lonely info link to the right --- i know
+            i could have used offset but --- i want xs to have an offset too
+            which (to my knowledge) isn't available in xs
+          -->
+        </div>
+
+        <a
+          class="col-lg-4 col-md-4 col-sm-4 col-xs-4"
+          href="#/customers/sales/{{ customer_id }}/edit/{{ sale.sale_id }}"
+        >
+          <i class="ion-ios7-information-outline"></i>
+          <small class="ClearSans-Thin">Info</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

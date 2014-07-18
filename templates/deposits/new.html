@@ -1,0 +1,59 @@
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+  <div class="row nav-tip">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <i class="ion-ios7-cloud-upload-outline"></i>
+    </div>
+  </div>
+
+  <div class="row nav-tip">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <h1 class="ClearSans-Thin">New Deposit</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <form
+        name="newForm"
+        class="form-horizontal"
+        role="form"
+        novalidate
+        ng-submit="depositsNewCtrl.save()"
+      >
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <input
+              type="number"
+              class="form-control input-lg"
+              placeholder="Amount *"
+              ng-model="instance.transaction_amount"
+              ng-pattern="/^[1-9]([0-9]+)?(\.[0-9]+)?$/"
+              ng-change="computeTotalRemainder()"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center ClearSans-Thin deposit-total-owe"
+            ng-bind="totalOwe | number:2"
+          >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <button
+              ng-disabled="newForm.$invalid"
+              class="btn btn-lg btn-success btn-block"
+            >
+            Deposit
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

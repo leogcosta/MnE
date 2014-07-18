@@ -1,0 +1,92 @@
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+  <div class="row nav-tip">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <i class="ion-ios7-cart-outline"></i>
+    </div>
+  </div>
+
+  <div class="row nav-tip">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <h1 class="ClearSans-Thin">New Sale</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <form
+        name="newForm"
+        class="form-horizontal"
+        role="form"
+        novalidate
+        ng-submit="saleViaCustomerNewCtrl.save()"
+      >
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <select
+              class="form-control input-lg"
+              ng-model="instance.sale_item_item_id"
+              ng-change="fillForm()"
+              required
+            >
+              <option value="">* Select an Item *</option>
+              <option
+                ng-repeat="item in items | orderBy:'item_name':false"
+                value="{{ item.item_id }}"
+              >
+                {{ item.item_name }} [{{ item.item_item_id }}]
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <input
+              type="number"
+              class="form-control input-lg"
+              placeholder="Unit Price *"
+              ng-model="instance.sale_item_unit_price"
+              ng-pattern="/^[1-9]([0-9]+)?(\.[0-9]+)?$/"
+              ng-change="computeTotal()"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <input
+              type="number"
+              class="form-control input-lg"
+              placeholder="Quantity *"
+              ng-model="instance.sale_item_quantity"
+              ng-pattern="/^[1-9]([0-9]+)?$/"
+              ng-change="computeTotal()"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+            <h1
+              class="ClearSans-Light new-sale-total"
+              ng-bind="total"
+            ></h1>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <button
+              ng-disabled="newForm.$invalid"
+              class="btn btn-lg btn-success btn-block"
+            >
+            Sale
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

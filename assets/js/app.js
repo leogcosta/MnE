@@ -112,6 +112,9 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
   //$rootScope.online = false;
 
   $rootScope.syncMode = false;
+  // promises that need to leave data on promise
+  // need to do it here
+  $rootScope.promiseData = {};
 
   console.log('Booting WebSQL...');
   dbEngine2.webdb.open().then(function (message) {
@@ -141,7 +144,11 @@ app.config(function ($routeProvider) {
     controller: 'customerEditCtrl'
   }).when('/customers', {
     templateUrl: 'templates/customers/list.html',
-    controller: 'customersCtrl'
+    controller: 'customersCtrl',
+    resolve: {
+      loadSales: customersCtrl.loadSales,
+      loadTransactions: customersCtrl.loadTransactions
+    }
   }).
 
   when('/items/new', {

@@ -17,6 +17,9 @@
   function item_PUT ($id) {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+    if (validate_date($request['item_timestamp']) === FALSE) {
+      $request['item_timestamp'] = date('Y-m-d H:i:s');
+    }
     PUT(ITEMS, $id, $request);
   }
 

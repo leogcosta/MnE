@@ -18,6 +18,9 @@
   function customer_PUT ($id) {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+    if (validate_date($request['customer_timestamp']) === FALSE) {
+      $request['customer_timestamp'] = date('Y-m-d H:i:s');
+    }
     PUT(CUSTOMERS, $id, $request);
   }
 

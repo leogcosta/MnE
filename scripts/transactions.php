@@ -18,6 +18,9 @@
   function transaction_PUT ($id) {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+    if (validate_date($request['transaction_timestamp']) === FALSE) {
+      $request['transaction_timestamp'] = date('Y-m-d H:i:s');
+    }
     PUT(TRANSACTIONS, $id, $request);
   }
 

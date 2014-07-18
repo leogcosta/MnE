@@ -18,6 +18,9 @@
   function account_PUT ($id) {
     user_login('', '', TRUE);
     $request = json_decode(Flight::request() -> body, TRUE);
+    if (validate_date($request['account_timestamp']) === FALSE) {
+      $request['account_timestamp'] = date('Y-m-d H:i:s');
+    }
     PUT(ACCOUNTS, $id, $request);
   }
 

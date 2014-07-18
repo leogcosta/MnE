@@ -43,6 +43,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                         'sale_item_quantity INTEGER,'+
                         'sale_item_unit_price DECIMAL(10,3),'+
                         'sale_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')),'+
+                        'sale_owe DECIMAL(10,3),'+
                         'sale_hold DECIMAL(10,3),'+
                         'sale_customer_customer_id INTEGER,'+
                         'sale_user_user_id INTEGER,'+
@@ -52,9 +53,12 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                         'transaction_id INTEGER PRIMARY KEY ASC,'+
                         'transaction_type VARCHAR,'+
                         'transaction_amount DECIMAL(10,3),'+
+                        'transaction_hold DECIMAL(10,3),'+
+                        'transaction_transfer DECIMAL(10,3),'+
                         'transaction_description TEXT,'+
                         'transaction_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')),'+
                         'transaction_account_account_id INTEGER,'+
+                        'trasaction_customer_customer_id INTEGER,'+
                         'transaction_user_user_id INTEGER,'+
                         'trasaction_sale_sale_id INTEGER,'+
                         'transaction_account_from_account_id INTEGER,'+
@@ -85,16 +89,16 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
         sales: {
           primaryKey: 'sale_id',
-          selectKey: 'sale_id, sale_item_item_id, sale_item_quantity, sale_item_unit_price, sale_timestamp, sale_hold, sale_customer_customer_id, sale_user_user_id, operation',
+          selectKey: 'sale_id, sale_item_item_id, sale_item_quantity, sale_item_unit_price, sale_timestamp, sale_owe, sale_hold, sale_customer_customer_id, sale_user_user_id, operation',
           timestamp: 'sale_timestamp',
-          number: ['sale_id', 'sale_item_item_id', 'sale_item_quantity', 'sale_item_unit_price', 'sale_hold', 'sale_customer_customer_id', 'sale_user_user_id']
+          number: ['sale_id', 'sale_item_item_id', 'sale_item_quantity', 'sale_item_unit_price', 'sale_owe', 'sale_hold', 'sale_customer_customer_id', 'sale_user_user_id']
         },
 
         transactions: {
           primaryKey: 'transaction_id',
-          selectKey: 'transaction_id, transaction_type, transaction_amount, transaction_description, transaction_timestamp, transaction_account_account_id, transaction_user_user_id, trasaction_sale_sale_id, transaction_account_from_account_id, operation',
+          selectKey: 'transaction_id, transaction_type, transaction_amount, transaction_hold, transaction_transfer, transaction_description, transaction_timestamp, transaction_account_account_id, trasaction_customer_customer_id, transaction_user_user_id, trasaction_sale_sale_id, transaction_account_from_account_id, operation',
           timestamp: 'transaction_timestamp',
-          number: ['transaction_id', 'transaction_amount', 'transaction_account_account_id', 'transaction_user_user_id', 'trasaction_sale_sale_id', 'transaction_account_from_account_id']
+          number: ['transaction_id', 'transaction_amount', 'transaction_hold', 'transaction_transfer', 'transaction_account_account_id', 'trasaction_customer_customer_id', 'transaction_user_user_id', 'trasaction_sale_sale_id', 'transaction_account_from_account_id']
         }
       }
     }

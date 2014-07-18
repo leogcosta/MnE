@@ -45,7 +45,7 @@
       ></p>
 
       <h1
-        class="ClearSans-Light item-owes"
+        class="ClearSans-Thin item-owes"
         ng-bind="6893656.99|currency:''"
       ></h1>
 
@@ -54,27 +54,35 @@
         ng-show="customer.showAction"
       >
         <a
-          class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sale"
+          class="col-lg-3 col-md-3 col-sm-3 col-xs-3"
           href="#/customers/sales/{{ customer.customer_id }}"
         >
-          <i class="ion-ios7-pricetag-outline"></i>
-          <small class="ClearSans-Regular">Sales</small>
+          <i class="ion-ios7-cart-outline"></i>
+          <small class="ClearSans-Light">Sales</small>
         </a>
 
         <a
-          class="col-lg-4 col-md-4 col-sm-4 col-xs-4 phone"
+          class="col-lg-3 col-md-3 col-sm-3 col-xs-3"
+          href="#/customers/deposits/{{ customer.customer_id }}"
+        >
+          <i class="ion-ios7-cloud-upload-outline"></i>
+          <small class="ClearSans-Light">Deposit</small>
+        </a>
+
+        <a
+          class="col-lg-3 col-md-3 col-sm-3 col-xs-3"
           href="tel:{{ customer.customer_phone_number }}"
         >
           <i class="ion-ios7-telephone-outline"></i>
-          <small class="ClearSans-Regular">Call</small>
+          <small class="ClearSans-Light">Call</small>
         </a>
 
         <a
-          class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info"
+          class="col-lg-3 col-md-3 col-sm-3 col-xs-3"
           href="#/customers/info/{{ customer.customer_id }}"
         >
           <i class="ion-ios7-information-outline"></i>
-          <small class="ClearSans-Regular">Info</small>
+          <small class="ClearSans-Light">Info</small>
         </a>
       </div>
     </div>

@@ -2,7 +2,7 @@ var customersCtrl = app.controller('customersCtrl',
                                    ['$rootScope', '$scope', '$q', 'dbEngine2', 'syncEngine2',
                                    function ($rootScope, $scope, $q, dbEngine2, syncEngine2) {
   dbEngine2.query('customers', function (data) {
-    $scope.customers = data;
+    $scope.customers = angular.copy(data);
 
     if ($rootScope.$$phase === null) {
       $rootScope.$apply();

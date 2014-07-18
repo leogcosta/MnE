@@ -28,8 +28,6 @@ var customersCtrl = app.controller('customersCtrl',
       $scope.customers[customer].totalOwe = totalOwe;
     }
 
-    console.log($scope.customers);
-
     if ($rootScope.$$phase === null) {
       $rootScope.$apply();
     }

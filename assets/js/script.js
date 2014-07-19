@@ -22,13 +22,6 @@ $(document).ready(function () {
       'height': '0'
     }, 300);
   });
-
-  $(function() {
-    // FastClick is a MUST
-    // the web app feels like a native one - or even a faster one :)
-    // thank you http://labs.ft.com
-    FastClick.attach(document.body);
-  });
 });
 
 

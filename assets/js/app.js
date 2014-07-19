@@ -13,6 +13,12 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
   });
 
   $rootScope.$on('$routeChangeSuccess', function (event, target) {
+    // http://labs.ft.com
+    // this sucker is running on ERY success people --- it fixes the `lag`
+    // am you notice from time to time
+    // i hope this doesn't create any overhead
+    FastClick.attach(document.body);
+
     // we're going to be using controllers names as reference of where we are
     // and according to `that` we're going to do stuff...
     target.controller === 'loginCtrl' ? $('.menu').addClass('hide') : $('.menu').removeClass('hide');

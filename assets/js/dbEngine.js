@@ -247,7 +247,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           }
         }
 
-        callback(data, status, headers, config);
+        callback(angular.copy(data), status, headers, config);
 
         // `AFTER` returning we see to check the `fetched` data
         // exits in the local database --- if it doesn't we add it
@@ -373,7 +373,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
           }
         }
 
-        callback(data, status, headers, config);
+        callback(angular.copy(data), status, headers, config);
 
         // what this `check` is basically does what get does
         this.check = function (data) {
@@ -531,7 +531,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
         }
 
         notify({message: 'saved'});
-        callback(data, status, headers, config);
+        callback(angular.copy(data), status, headers, config);
 
         // since new data is returned we save it to WebSQL
         // without any preconditions --- BUT there might be an offline
@@ -677,12 +677,12 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
               notify({message: 'merge sync'});
               console.log('DON merging!');
-              callback(data, status, headers, config);
+              callback(angular.copy(data), status, headers, config);
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         } else {
           notify({message: 'updated'});
-          callback(data, status, headers, config);
+          callback(angular.copy(data), status, headers, config);
           delete data.message;
           delete data['$$hashKey'];
           // this clears out whatever operation was left, if any
@@ -813,12 +813,12 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
             SQLTransaction.executeSql('UPDATE '+ tableName +' SET '+ sql.set, sql.value, function (SQLTransaction, SQLResultSet) {
               notify({message: 'merge sync'});
-              callback(data, status, headers, config);
+              callback(angular.copy(data), status, headers, config);
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         } else {
           notify(data);
-          callback(data, status, headers, config);
+          callback(angular.copy(data), status, headers, config);
 
           console.log('deleting from local db too...');
           that.webdb.db.transaction(function (SQLTransaction) {

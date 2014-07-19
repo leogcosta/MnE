@@ -67,6 +67,7 @@ var saleViaItemNewCtrl = app.controller('saleViaItemNewCtrl', [
     sale_item_unit_price: '',
     sale_owe: '',
     sale_hold: 0,
+    sale_auto_transfer: 0,
     sale_timestamp: '',
     sale_customer_customer_id: '',
   };
@@ -96,6 +97,8 @@ var saleViaItemNewCtrl = app.controller('saleViaItemNewCtrl', [
 
   this.save = function () {
     $scope.instance.sale_owe = $scope.instance.sale_item_unit_price * $scope.instance.sale_item_quantity;
+    // automatically pushing sale cash to current user `hold account`
+    $scope.instance.sale_hold = $scope.instance.sale_owe;
     dbEngine2.save('sales', $scope.instance, function (data) {
       $location.path('/items');
 
@@ -133,6 +136,7 @@ var saleViaCustomerNewCtrl = app.controller('saleViaCustomerNewCtrl',
     sale_item_unit_price: '',
     sale_owe: '',
     sale_hold: 0,
+    sale_auto_transfer: 0,
     sale_timestamp: '',
     sale_customer_customer_id: $scope.customer_id,
   };
@@ -176,7 +180,9 @@ var saleViaCustomerNewCtrl = app.controller('saleViaCustomerNewCtrl',
   this.save = function () {
     // we're sure the outcome would be a number because
     // save wouldn't be *active* if the whole form wasn't cool
+    // we're also automatically pushing sale cash to current user `hold account`
     $scope.instance.sale_owe = $scope.instance.sale_item_unit_price * $scope.instance.sale_item_quantity;
+    $scope.instance.sale_hold = $scope.instance.sale_owe;
     dbEngine2.save('sales', $scope.instance, function (data) {
       $location.path('/customers/sales/'+ $scope.customer_id);
 

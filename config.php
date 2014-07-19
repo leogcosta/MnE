@@ -92,6 +92,7 @@
                         'sale_timestamp',
                         'sale_owe',
                         'sale_hold',
+                        'sale_auto_transfer',
                         'sale_customer_customer_id',
                         'sale_user_user_id'],
       'tableId' => 'sale_id',

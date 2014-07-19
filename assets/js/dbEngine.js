@@ -45,6 +45,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
                         'sale_timestamp TIMESTAMP DEFAULT (datetime(\'now\',\'unixepoch\')),'+
                         'sale_owe DECIMAL(10,3),'+
                         'sale_hold DECIMAL(10,3),'+
+                        'sale_auto_transfer DECIMAL(10,3),'+
                         'sale_customer_customer_id INTEGER,'+
                         'sale_user_user_id INTEGER,'+
                         'operation VARCHAR);',
@@ -89,9 +90,9 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
 
         sales: {
           primaryKey: 'sale_id',
-          selectKey: 'sale_id, sale_item_item_id, sale_item_quantity, sale_item_unit_price, sale_timestamp, sale_owe, sale_hold, sale_customer_customer_id, sale_user_user_id, operation',
+          selectKey: 'sale_id, sale_item_item_id, sale_item_quantity, sale_item_unit_price, sale_timestamp, sale_owe, sale_hold, sale_auto_transfer, sale_customer_customer_id, sale_user_user_id, operation',
           timestamp: 'sale_timestamp',
-          number: ['sale_id', 'sale_item_item_id', 'sale_item_quantity', 'sale_item_unit_price', 'sale_owe', 'sale_hold', 'sale_customer_customer_id', 'sale_user_user_id']
+          number: ['sale_id', 'sale_item_item_id', 'sale_item_quantity', 'sale_item_unit_price', 'sale_owe', 'sale_hold', 'sale_auto_transfer', 'sale_customer_customer_id', 'sale_user_user_id']
         },
 
         transactions: {

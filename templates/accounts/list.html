@@ -55,7 +55,15 @@
         ng-show="account.showAction"
       >
         <a
-          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 phone"
+          class="col-lg-4 col-md-4 col-sm-4 col-xs-4"
+          href="#/accounts/deposit/{{ account.account_id }}"
+        >
+          <i class="ion-ios7-cloud-upload-outline"></i>
+          <small class="ClearSans-Regular">Deposit</small>
+        </a>
+
+        <a
+          class="col-lg-4 col-md-4 col-sm-4 col-xs-4"
           href="#/accounts/log/{{ account.account_id }}"
         >
           <i class="ion-social-buffer-outline"></i>
@@ -63,7 +71,7 @@
         </a>
 
         <a
-          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 info"
+          class="col-lg-4 col-md-4 col-sm-4 col-xs-4"
           href="#/accounts/info/{{ account.account_id }}"
         >
           <i class="ion-ios7-information-outline"></i>

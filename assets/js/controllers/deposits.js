@@ -100,8 +100,8 @@ var depositsNewCtrl = app.controller('depositsNewCtrl',
 
 
 var depositsEditCtrl = app.controller('depositsEditCtrl',
-                                  ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
-                                  function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
+                                      ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
+                                      function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
 
   $scope.customerId = Number($routeParams.customerId);
   $scope.transactionId = Number($routeParams.depositId);
@@ -164,4 +164,55 @@ var depositsEditCtrl = app.controller('depositsEditCtrl',
   };
 
   $scope.depositsEditCtrl = this;
+}]);
+
+
+
+var depositViaAccountCtrl = app.controller('depositViaAccountCtrl',
+                                           ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
+                                           function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
+
+  $scope.accountId = Number($routeParams.accountId);
+  dbEngine2.query('transactions', function (data) {
+    console.log(data);
+  });
+
+  $scope.depositViaAccountCtrl = this;
+}]);
+
+
+
+var depositViaAccountNewCtrl = app.controller('depositViaAccountNewCtrl',
+                                              ['$rootScope', '$scope', '$routeParams', '$location', '$filter', 'dbEngine2',
+                                              function ($rootScope, $scope, $routeParams, $location, $filter, dbEngine2) {
+  var promiseData = $rootScope.promiseData;
+  $scope.accountId = Number($routeParams.accountId);
+  $scope.userId = Number(localStorage.user_id);
+  $scope.totalHold = 0;
+  $scope.instance = {
+    transaction_type: 'ACCOUNT-DEPOSIT',
+    transaction_amount: '',
+    transaction_hold: '',
+    transaction_transfer: '',
+    transaction_description: '',
+    transaction_timestamp: '',
+    transaction_account_account_id: $scope.accountId,
+    trasaction_customer_customer_id: '',
+    transaction_user_user_id: $scope.userId,
+    trasaction_sale_sale_id: '',
+    transaction_account_from_account_id: ''
+  };
+
+  // building current user hold account
+  // precedence: oldest to newest sale, when cleaning out the hold account i.e.
+  // here we're going to be using `sale_auto_transfer`
+  for (sale in promiseData.sales) {
+    if (promiseData.sales[sale].sale_user_user_id === $scope.userId) {
+      $scope.totalHold += (promiseData.sales[sale].sale_hold - promiseData.sales[sale].sale_auto_transfer);
+    }
+  }
+
+  var totalHoldCopy = $scope.totalHold;
+
+  $scope.depositViaAccountNewCtrl = this;
 }]);

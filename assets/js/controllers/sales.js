@@ -201,11 +201,6 @@ var saleViaCustomerEditCtrl = app.controller('saleViaCustomerEditCtrl',
                                   function ($rootScope, $scope, $routeParams, $location, $filter, dbEngine2) {
   $scope.edit = {};
   $scope.items = [];
-  // pseudo code
-  // 1: query items
-  // 2: get sale
-  // 3: associate n' stuff
-
 
   $scope.computeTotal = function () {
     $scope.total = $scope.edit.sale_item_quantity * $scope.edit.sale_item_unit_price;

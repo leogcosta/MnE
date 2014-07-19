@@ -152,6 +152,8 @@ app.config(function ($routeProvider) {
     }
   }).
 
+
+
   when('/items/new', {
     templateUrl: 'templates/items/new.html',
     controller: 'itemNewCtrl'
@@ -163,6 +165,8 @@ app.config(function ($routeProvider) {
     controller: 'itemsCtrl'
   }).
 
+
+
   when('/accounts/new', {
     templateUrl: 'templates/accounts/new.html',
     controller: 'accountNewCtrl'
@@ -172,7 +176,18 @@ app.config(function ($routeProvider) {
   }).when('/accounts', {
     templateUrl: 'templates/accounts/list.html',
     controller: 'accountsCtrl'
+  }).when('/accounts/deposit/:accountId', {
+    templateUrl: 'templates/accounts/deposits/list.html',
+    controller: 'depositViaAccountCtrl'
+  }).when('/accounts/deposit/:accountId/new', {
+    templateUrl: 'templates/accounts/deposits/new.html',
+    controller: 'depositViaAccountNewCtrl',
+    resolve: {
+      loadSales: customersCtrl.loadSales,
+      loadTransactions: customersCtrl.loadTransactions
+    }
   }).
+
 
 
   // sales

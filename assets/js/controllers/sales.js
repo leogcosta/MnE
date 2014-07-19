@@ -54,6 +54,73 @@ var saleViaCustomerListCtrl = app.controller('saleViaCustomerListCtrl',
 
 
 
+var saleViaItemNewCtrl = app.controller('saleViaItemNewCtrl', [
+                                        '$rootScope', '$scope', '$routeParams', '$filter', '$location', 'dbEngine2',
+                                        function ($rootScope, $scope, $routeParams, $filter, $location, dbEngine2) {
+
+  var promiseData = angular.copy($rootScope.promiseData);
+  $scope.customers = promiseData.customers;
+  $scope.item = {};
+  $scope.instance = {
+    sale_item_item_id: '',
+    sale_item_quantity: 1,
+    sale_item_unit_price: '',
+    sale_owe: '',
+    sale_hold: 0,
+    sale_timestamp: '',
+    sale_customer_customer_id: '',
+  };
+
+  dbEngine2.get('items', $routeParams.itemId, function (data) {
+    $scope.item = angular.copy(data);
+    $scope.instance.sale_item_item_id = $scope.item.item_id;
+    $scope.instance.sale_item_unit_price = $scope.item.item_unit_price;
+    $scope.total = $scope.item.item_unit_price;
+
+    if ($rootScope.$$phase === null) {
+      $rootScope.$apply();
+    }
+  });
+
+  // we're using the filter *here* via JavaScript so we can have the nice
+  // `?` when the form is invalid
+  $scope.computeTotal = function () {
+    $scope.total = $scope.instance.sale_item_quantity * $scope.instance.sale_item_unit_price;
+
+    if (isNaN($scope.total) === true) {
+      $scope.total = '?';
+    } else {
+      $scope.total = $filter('number')($scope.total, 2);
+    }
+  };
+
+  this.save = function () {
+    $scope.instance.sale_owe = $scope.instance.sale_item_unit_price * $scope.instance.sale_item_quantity;
+    dbEngine2.save('sales', $scope.instance, function (data) {
+      $location.path('/items');
+
+      if ($rootScope.$$phase === null) {
+        $rootScope.$apply();
+      }
+    });
+  };
+
+  $scope.saleViaItemNewCtrl = this;
+}]);
+
+saleViaItemNewCtrl.loadCustomers = function ($rootScope, $q, dbEngine2) {
+  var deferred = $q.defer();
+
+  dbEngine2.query('customers', function(data) {
+    $rootScope.promiseData.customers = angular.copy(data);
+    deferred.resolve();
+  });
+
+  return deferred.promise;
+};
+
+
+
 var saleViaCustomerNewCtrl = app.controller('saleViaCustomerNewCtrl',
                                  ['$rootScope', '$scope', '$routeParams', '$filter', '$location', 'dbEngine2',
                                  function ($rootScope, $scope, $routeParams, $filter, $location, dbEngine2) {
@@ -190,3 +257,5 @@ var saleViaCustomerEditCtrl = app.controller('saleViaCustomerEditCtrl',
 
   $scope.saleViaCustomerEditCtrl = this;
 }]);
+
+

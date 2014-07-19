@@ -34,6 +34,7 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
       case 'itemsCtrl':
       case 'itemEditCtrl':
       case 'itemNewCtrl':
+      case 'saleViaItemNewCtrl':
         $('a[href="#/items"]').addClass('active');
       break;
 
@@ -174,7 +175,8 @@ app.config(function ($routeProvider) {
   }).
 
 
-  // sales + deposit
+  // sales
+  // via customers
   when('/customers/sales/:id', {
     templateUrl: 'templates/sales/viaCustomer/list.html',
     controller: 'saleViaCustomerListCtrl'
@@ -184,6 +186,15 @@ app.config(function ($routeProvider) {
   }).when('/customers/sales/:customerId/edit/:saleId', {
     templateUrl: 'templates/sales/viaCustomer/edit.html',
     controller: 'saleViaCustomerEditCtrl'
+  }).
+
+  // via items
+  when('/items/sales/:itemId', {
+    templateUrl: 'templates/sales/viaItem/new.html',
+    controller: 'saleViaItemNewCtrl',
+    resolve: {
+      loadCustomers: saleViaItemNewCtrl.loadCustomers
+    }
   }).
 
   // deposits

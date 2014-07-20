@@ -237,7 +237,18 @@ var saleViaCustomerEditCtrl = app.controller('saleViaCustomerEditCtrl',
   });
 
   this.update = function () {
+    // couple of things need to be checked here
+    // if auto transfer is involved we need to make sure we don't override
+    // stuff --- or KABOOM!
+    $scope.edit.sale_owe = $scope.edit.sale_item_unit_price * $scope.edit.sale_item_quantity;
+    if ($scope.edit.sale_auto_transfer > 0) {
+      $scope.edit.sale_hold = $scope.edit.sale_owe - $scope.edit.sale_auto_transfer;
+    } else {
+      $scope.edit.sale_hold = $scope.edit.sale_owe;
+    }
+
     dbEngine2.update('sales', $scope.edit, function (data) {
+      delete data.message;
       $scope.edit = data;
 
       if ($rootScope.$$phase === null) {

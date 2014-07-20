@@ -639,7 +639,7 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
   // on update - PK stays the same, there's no updating that son
   // also some keys of an object will not change through
   // the lifetime of the instance
-  that.update = function (tableName, instance, callback) {
+  that.update = function (tableName, instance, callback, silentMode) {
     if ($rootScope.online === true && $rootScope.syncMode === false) {
       // we're going to do something fancy here --- watch-out shufer! watch-out
       $http.put('api/'+ tableName +'/'+ instance[that.webdb.keys[tableName].primaryKey], instance).success(function (data, status, headers, config) {
@@ -682,7 +682,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             }, SQLErrorHandeler);
           }, SQLErrorHandeler);
         } else {
-          notify({message: 'updated'});
+          if (silentMode === undefined) {
+            notify({message: 'updated'});
+          }
+
           callback(angular.copy(data), status, headers, config);
           delete data.message;
           delete data['$$hashKey'];
@@ -773,7 +776,10 @@ dbEngine.factory('dbEngine2', ['$rootScope', '$q', '$http', function ($rootScope
             }
           }
 
-          notify({message: 'updated'});
+          // huge hold transfers can be a bit confusing
+          if (silentMode === undefined) {
+            notify({message: 'updated'});
+          }
           callback(instance, null, null, null);
         }, SQLErrorHandeler);
       }, SQLErrorHandeler);

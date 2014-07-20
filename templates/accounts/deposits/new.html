@@ -28,7 +28,7 @@
               placeholder="Deposit *"
               ng-model="instance.transaction_amount"
               ng-pattern="/^[1-9]([0-9]+)?(\.[0-9]+)?$/"
-              ng-change="computeTotal()"
+              ng-change="computeTotalHold()"
               required
             >
           </div>
@@ -42,12 +42,11 @@
           </div>
         </div>
 
-        <pre>{{ instance | json }}</pre>
-
         <div class="form-group">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <button
-              ng-disabled="newForm.$invalid"
+              type="submit"
+              ng-disabled="newForm.$invalid || totalHold < 0"
               class="btn btn-lg btn-success btn-block"
             >
             Save

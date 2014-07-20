@@ -173,8 +173,22 @@ var depositViaAccountCtrl = app.controller('depositViaAccountCtrl',
                                            function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
 
   $scope.accountId = Number($routeParams.accountId);
+  $scope.accountDeposits = [];
   dbEngine2.query('transactions', function (data) {
-    console.log(data);
+    for (transaction in data) {
+      // transaction must be associated with an account AND
+      // if so, must be associated with *this* accountId
+      if (data[transaction].transaction_type === 'ACCOUNT-DEPOSIT' && data[transaction].transaction_account_account_id === $scope.accountId) {
+        data[transaction].moment = {
+          age: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow(),
+          time: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A'),
+          month: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('MMMM'),
+          year: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('YYYY')
+        };
+
+        $scope.accountDeposits.push(data[transaction]);
+      }
+    }
   });
 
   $scope.depositViaAccountCtrl = this;
@@ -182,9 +196,24 @@ var depositViaAccountCtrl = app.controller('depositViaAccountCtrl',
 
 
 
+var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
+                                           ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
+                                           function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
+
+  console.log($routeParams);
+  // here we have to be careful --- once a transaction is auto transfered
+  // things can get really messy, so a lot of validations will be here
+  dbEngine2.get('transactions', $routeParams.transactionId, function (data) {
+    console.log(data);
+  });
+  $scope.depositViaAccountEditCtrl = this;
+}]);
+
+
+
 var depositViaAccountNewCtrl = app.controller('depositViaAccountNewCtrl',
-                                              ['$rootScope', '$scope', '$routeParams', '$location', '$filter', 'dbEngine2',
-                                              function ($rootScope, $scope, $routeParams, $location, $filter, dbEngine2) {
+                                              ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
+                                              function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
   var promiseData = $rootScope.promiseData;
   $scope.accountId = Number($routeParams.accountId);
   $scope.userId = Number(localStorage.user_id);
@@ -208,11 +237,72 @@ var depositViaAccountNewCtrl = app.controller('depositViaAccountNewCtrl',
   // here we're going to be using `sale_auto_transfer`
   for (sale in promiseData.sales) {
     if (promiseData.sales[sale].sale_user_user_id === $scope.userId) {
-      $scope.totalHold += (promiseData.sales[sale].sale_hold - promiseData.sales[sale].sale_auto_transfer);
+      $scope.totalHold += promiseData.sales[sale].sale_hold;
     }
   }
 
   var totalHoldCopy = $scope.totalHold;
+
+  $scope.computeTotalHold = function () {
+    $scope.totalHold = totalHoldCopy - $scope.instance.transaction_amount;
+
+    if (isNaN($scope.totalHold) === true) {
+      $scope.totalHold = totalHoldCopy;
+    }
+  };
+
+  this.save = function () {
+    dbEngine2.save('transactions', $scope.instance, function (data) {
+      // if the transaction goes through --- we'll go through the sales of
+      // *this* customer and deduct form his/her hold until everything balances
+
+      // until we reach to total amount of deposit we'll go through deducting
+      // and transferring to `sale_auto_transfer`
+      var depositAmount = $scope.instance.transaction_amount;
+      var userId = $scope.userId;
+      var transferedSales = []; // this will hold sales that are `affected` by this
+      for (sale in promiseData.sales) {
+        if (promiseData.sales[sale].sale_user_user_id === userId) {
+          // there is money in the `hold-account` to be auto-transfered
+          if (promiseData.sales[sale].sale_hold > 0) {
+            // checking if we need to drain the hold account or take what's enough
+            // drain it
+            if (depositAmount > promiseData.sales[sale].sale_hold) {
+              depositAmount -= promiseData.sales[sale].sale_hold;
+              promiseData.sales[sale].sale_auto_transfer += promiseData.sales[sale].sale_hold;
+              promiseData.sales[sale].sale_hold = 0;
+            } else {
+              // we just need to take off a tiny bit
+              promiseData.sales[sale].sale_auto_transfer += depositAmount;
+              promiseData.sales[sale].sale_hold -= depositAmount;
+              depositAmount = 0;
+            }
+
+            transferedSales.push(promiseData.sales[sale]);
+          }
+        }
+
+        if (depositAmount === 0) {
+          console.log('ENOUGH! --- am washing my hands!');
+          break;
+        }
+      }
+
+      var ENOUGH = 0, transferedSalesLength = transferedSales.length;
+      for (transfer in transferedSales) {
+        dbEngine2.update('sales', transferedSales[transfer], function (data) {
+          if (++ENOUGH === transferedSalesLength) {
+            console.log('washed my hands!');
+            $location.path('accounts/deposit/'+ $scope.accountId);
+          }
+
+          if ($rootScope.$$phase === null) {
+            $rootScope.$apply();
+          }
+        });
+      }
+    });
+  };
 
   $scope.depositViaAccountNewCtrl = this;
 }]);

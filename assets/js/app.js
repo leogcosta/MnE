@@ -15,7 +15,8 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
   $rootScope.$on('$routeChangeSuccess', function (event, target) {
     // http://labs.ft.com
     // this sucker is running on ERY success people --- it fixes the `lag`
-    // am you notice from time to time
+    // running the sucker once on load doesn't seem to be enough
+    // sometimes it works like a charm and sometimes it doesn't
     // i hope this doesn't create any overhead
     FastClick.attach(document.body);
 
@@ -47,6 +48,9 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
       case 'accountsCtrl':
       case 'accountEditCtrl':
       case 'accountNewCtrl':
+      case 'depositViaAccountCtrl':
+      case 'depositViaAccountNewCtrl':
+      case 'depositViaAccountEditCtrl':
         $('a[href="#/accounts"]').addClass('active');
       break;
 
@@ -192,6 +196,9 @@ app.config(function ($routeProvider) {
       loadSales: customersCtrl.loadSales,
       loadTransactions: customersCtrl.loadTransactions
     }
+  }).when('/accounts/deposit/:accountId/edit/:transactionId', {
+    templateUrl: 'templates/accounts/deposits/edit.html',
+    controller: 'depositViaAccountEditCtrl'
   }).
 
 

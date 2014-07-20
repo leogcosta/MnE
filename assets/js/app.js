@@ -198,7 +198,10 @@ app.config(function ($routeProvider) {
     }
   }).when('/accounts/deposit/:accountId/edit/:transactionId', {
     templateUrl: 'templates/accounts/deposits/edit.html',
-    controller: 'depositViaAccountEditCtrl'
+    controller: 'depositViaAccountEditCtrl',
+    resolve: {
+      loadSales: customersCtrl.loadSales
+    }
   }).
 
 

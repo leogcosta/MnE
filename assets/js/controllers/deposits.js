@@ -36,7 +36,7 @@ var depositsNewCtrl = app.controller('depositsNewCtrl',
   $scope.customerId = Number($routeParams.customerId);
   $scope.totalOwe = 0;
   var totalOweCopy = 0;
-  // amount deposited will be automatically deposited to the current users
+  // amount deposited will be automatically deposited to the current user's
   // `hold-account`
   $scope.instance = {
     transaction_type: 'CUSTOMER-DEPOSIT',
@@ -192,6 +192,10 @@ var depositViaAccountCtrl = app.controller('depositViaAccountCtrl',
 
         $scope.accountDeposits.push(data[transaction]);
       }
+    }
+
+    if ($rootScope.$$phase === null) {
+      $rootScope.$apply();
     }
   });
 

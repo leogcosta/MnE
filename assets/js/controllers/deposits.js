@@ -252,7 +252,7 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
             dbEngine2.update('sales', transferedSales[transfer], function (data) {
               if (++ENOUGH === transferedSalesLength) {
                 console.log('washed my hands!');
-                $location.path('accounts/deposit/'+ $scope.accountId);
+                //$location.path('accounts/deposit/'+ $scope.accountId);
               }
 
               if ($rootScope.$$phase === null) {
@@ -293,7 +293,7 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
             dbEngine2.update('sales', transferedSales[transfer], function (data) {
               if (++ENOUGH === transferedSalesLength) {
                 console.log('washed my hands!');
-                $location.path('accounts/deposit/'+ $scope.accountId);
+                //$location.path('accounts/deposit/'+ $scope.accountId);
               }
 
               if ($rootScope.$$phase === null) {
@@ -334,6 +334,8 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
 
   this.update = function () {
     dbEngine2.update('transactions', $scope.edit, function (data) {
+      delete data.message;
+      $scope.edit = data;
       // here it's going to be a little `tricky`
       // this ain't going to be a normal update
       if (originalTransactionAmount > $scope.edit.transaction_amount) {
@@ -342,10 +344,14 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
         update('MORE', ($scope.edit.transaction_amount - originalTransactionAmount));
       } else {
         console.log('pretend nothing happened...');
-        $location.path('accounts/deposit/'+ $scope.accountId);
-        if ($rootScope.$$phase === null) {
-          $rootScope.$apply();
-        }
+        // $location.path('accounts/deposit/'+ $scope.accountId);
+        // if ($rootScope.$$phase === null) {
+        //   $rootScope.$apply();
+        // }
+      }
+
+      if ($rootScope.$$phase === null) {
+        $rootScope.$apply();
       }
     });
   };
@@ -358,6 +364,11 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
       // rest assured, there's going to be no conflict between the two async
       // functions --- since both deal with two different tables
       console.log('deletion completed `after` REVERT');
+
+      $location.path('accounts/deposit/'+ $scope.accountId);
+      if ($rootScope.$$phase === null) {
+        $rootScope.$apply();
+      }
     });
   };
 

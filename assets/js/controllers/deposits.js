@@ -444,18 +444,21 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
 
 
 
-  for (sale in promiseData.sales) {
-    if (promiseData.sales[sale].sale_user_user_id === $scope.userId) {
-      $scope.totalHold += promiseData.sales[sale].sale_hold;
-    }
-  }
-  totalHoldCopy = $scope.totalHold;
-
   // here we have to be careful --- once a transaction is auto transfered
   // things can get really messy, so a lot of validations will be here
   dbEngine2.get('transactions', $routeParams.transactionId, function (data) {
     $scope.edit = data;
     originalTransactionAmount = data.transaction_amount;
+
+    for (sale in promiseData.sales) {
+      if (promiseData.sales[sale].sale_user_user_id === $scope.userId) {
+        $scope.totalHold += promiseData.sales[sale].sale_hold;
+      }
+    }
+
+    $scope.totalHold += originalTransactionAmount;
+    totalHoldCopy = $scope.totalHold;
+
 
     if ($rootScope.$$phase === null) {
       $rootScope.$apply();

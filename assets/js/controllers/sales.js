@@ -97,8 +97,6 @@ var saleViaItemNewCtrl = app.controller('saleViaItemNewCtrl', [
 
   this.save = function () {
     $scope.instance.sale_owe = $scope.instance.sale_item_unit_price * $scope.instance.sale_item_quantity;
-    // automatically pushing sale cash to current user `hold account`
-    $scope.instance.sale_hold = $scope.instance.sale_owe;
     dbEngine2.save('sales', $scope.instance, function (data) {
       $location.path('/items');
 
@@ -182,7 +180,6 @@ var saleViaCustomerNewCtrl = app.controller('saleViaCustomerNewCtrl',
     // save wouldn't be *active* if the whole form wasn't cool
     // we're also automatically pushing sale cash to current user `hold account`
     $scope.instance.sale_owe = $scope.instance.sale_item_unit_price * $scope.instance.sale_item_quantity;
-    $scope.instance.sale_hold = $scope.instance.sale_owe;
     dbEngine2.save('sales', $scope.instance, function (data) {
       $location.path('/customers/sales/'+ $scope.customer_id);
 
@@ -241,11 +238,11 @@ var saleViaCustomerEditCtrl = app.controller('saleViaCustomerEditCtrl',
     // if auto transfer is involved we need to make sure we don't override
     // stuff --- or KABOOM!
     $scope.edit.sale_owe = $scope.edit.sale_item_unit_price * $scope.edit.sale_item_quantity;
-    if ($scope.edit.sale_auto_transfer > 0) {
-      $scope.edit.sale_hold = $scope.edit.sale_owe - $scope.edit.sale_auto_transfer;
-    } else {
-      $scope.edit.sale_hold = $scope.edit.sale_owe;
-    }
+    // if ($scope.edit.sale_auto_transfer > 0) {
+    //   $scope.edit.sale_hold = $scope.edit.sale_owe - $scope.edit.sale_auto_transfer;
+    // } else {
+    //   $scope.edit.sale_hold = $scope.edit.sale_owe;
+    // }
 
     dbEngine2.update('sales', $scope.edit, function (data) {
       delete data.message;

@@ -39,7 +39,15 @@ customersCtrl.loadSales = function ($rootScope, $q, dbEngine2) {
   var deferred = $q.defer();
 
   dbEngine2.query('sales', function(data) {
-    $rootScope.promiseData.sales = angular.copy(data);
+    // it's hard to explain this `bug` fix
+    //
+    // pushing the timestamps 30 minutes ahead
+    // this will cause an `unwanted` merge sync for other people
+    for (index in data) {
+      data[index].sale_timestamp = moment(data[index].sale_timestamp, 'YYYY-MM-DD HH:mm:ss').add('minutes', 30).format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    $rootScope.promiseData.sales = data;
     deferred.resolve();
   });
 

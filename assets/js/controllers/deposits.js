@@ -6,8 +6,6 @@ var depositsCtrl = app.controller('depositsCtrl',
   $scope.transactions = [];
 
   dbEngine2.query('transactions', function (data) {
-    data = angular.copy(data);
-
     for (index in data) {
       if (data[index].transaction_type === 'CUSTOMER-DEPOSIT' && data[index].trasaction_customer_customer_id === $scope.customerId) {
         data[index].moment = {
@@ -29,19 +27,19 @@ var depositsCtrl = app.controller('depositsCtrl',
 
 
 
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 var depositsNewCtrl = app.controller('depositsNewCtrl',
                                  ['$rootScope', '$scope', '$location', '$routeParams', 'dbEngine2',
                                  function ($rootScope, $scope, $location, $routeParams, dbEngine2) {
 
+  var promiseData = $rootScope.promiseData;
   $scope.customerId = Number($routeParams.customerId);
   $scope.totalOwe = 0;
   var totalOweCopy = 0;
-  // amount deposited will be automatically deposited to the current user's
-  // `hold-account`
   $scope.instance = {
     transaction_type: 'CUSTOMER-DEPOSIT',
     transaction_amount: '',
-    transaction_hold: '',
+    transaction_hold: 0,
     transaction_transfer: '',
     transaction_description: '',
     transaction_timestamp: '',
@@ -60,33 +58,73 @@ var depositsNewCtrl = app.controller('depositsNewCtrl',
     }
   };
 
-  dbEngine2.query('sales', function (data) {
-    for (index in data) {
-      if (data[index].sale_customer_customer_id === $scope.customerId) {
-        $scope.totalOwe += (data[index].sale_item_unit_price * data[index].sale_item_quantity);
-      }
-    }
 
-    // and then we look through transactions the customer made
-    dbEngine2.query('transactions', function (data) {
-      for (index in data) {
-        if (data[index].trasaction_customer_customer_id === $scope.customerId) {
-          $scope.totalOwe -= data[index].transaction_amount;
+  for (sale in promiseData.sales) {
+    if (promiseData.sales[sale].sale_customer_customer_id === $scope.customerId) {
+      $scope.totalOwe += (promiseData.sales[sale].sale_item_unit_price * promiseData.sales[sale].sale_item_quantity);
+    }
+  }
+
+  for (transaction in promiseData.transactions) {
+    if (promiseData.transactions[transaction].trasaction_customer_customer_id === $scope.customerId &&
+        promiseData.transactions[transaction].transaction_type === 'CUSTOMER-DEPOSIT') {
+      $scope.totalOwe -= promiseData.transactions[transaction].transaction_amount;
+    }
+  }
+
+  totalOweCopy = angular.copy($scope.totalOwe);
+  if ($rootScope.$$phase === null) {
+    $rootScope.$apply();
+  }
+
+  this.save = function () {
+    dbEngine2.save('transactions', $scope.instance, function (data) {
+      $location.path('customers/deposits/'+ $scope.customerId);
+
+
+
+      // if the transaction goes through, we'll go through sales to auto-transfer
+      var depositAmount = data.transaction_amount;
+      var userId = Number(localStorage.user_id);
+      var transferedSales = [];
+      for (sale in promiseData.sales) {
+        if (promiseData.sales[sale].sale_user_user_id === userId) {
+          iDiff = promiseData.sales[sale].sale_owe - promiseData.sales[sale].sale_hold;
+          if (iDiff > 0) {
+            if (depositAmount > iDiff) {
+              depositAmount -= iDiff;
+              promiseData.sales[sale].sale_auto_transfer += iDiff;
+              promiseData.sales[sale].sale_hold = iDiff;
+            } else {
+              promiseData.sales[sale].sale_auto_transfer += depositAmount;
+              promiseData.sales[sale].sale_hold += depositAmount;
+              depositAmount = 0;
+            }
+
+            transferedSales.push(promiseData.sales[sale]);
+          }
+        }
+
+        if (depositAmount === 0) {
+          console.log('ENOUGH! --- am washing my hands!');
+          break;
         }
       }
 
-      totalOweCopy = angular.copy($scope.totalOwe);
-      if ($rootScope.$$phase === null) {
-        $rootScope.$apply();
-      }
-    });
-  });
+      var ENOUGH = 0, transferedSalesLength = transferedSales.length;
+      for (transfer in transferedSales) {
+        dbEngine2.update('sales', transferedSales[transfer], function (data) {
+          if (++ENOUGH === transferedSalesLength) {
+            console.log('washed my hands!');
+          }
 
-  this.save = function () {
-    // we're automatically pushing the whole thing to user's hold `account`
-    $scope.instance.transaction_hold = $scope.instance.transaction_amount;
-    dbEngine2.save('transactions', $scope.instance, function (data) {
-      $location.path('customers/deposits/'+ $scope.customerId);
+          if ($rootScope.$$phase === null) {
+            $rootScope.$apply();
+          }
+        }, true);
+      }
+
+
 
       if ($rootScope.$$phase === null) {
         $rootScope.$apply();
@@ -99,14 +137,103 @@ var depositsNewCtrl = app.controller('depositsNewCtrl',
 
 
 
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 var depositsEditCtrl = app.controller('depositsEditCtrl',
                                       ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
                                       function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
 
+  var promiseData = $rootScope.promiseData,
+      totalOweCopy = 0,
+      originalTransactionAmount = 0,
+      update = function (mode, diff) {
+        if (mode === 'MORE') {
+          var depositAmount = diff;
+          var userId = Number(localStorage.user_id);
+          var transferedSales = [];
+          for (sale in promiseData.sales) {
+            if (promiseData.sales[sale].sale_user_user_id === userId) {
+              iDiff = promiseData.sales[sale].sale_owe - promiseData.sales[sale].sale_hold;
+              if (iDiff > 0) {
+                if (depositAmount > iDiff) {
+                  depositAmount -= iDiff;
+                  promiseData.sales[sale].sale_auto_transfer += iDiff;
+                  promiseData.sales[sale].sale_hold = iDiff;
+                } else {
+                  promiseData.sales[sale].sale_auto_transfer += depositAmount;
+                  promiseData.sales[sale].sale_hold += depositAmount;
+                  depositAmount = 0;
+                }
+
+                transferedSales.push(promiseData.sales[sale]);
+              }
+            }
+
+            if (depositAmount === 0) {
+              console.log('ENOUGH! --- am washing my hands!');
+              break;
+            }
+          }
+
+          var ENOUGH = 0, transferedSalesLength = transferedSales.length;
+          for (transfer in transferedSales) {
+            dbEngine2.update('sales', transferedSales[transfer], function (data) {
+              if (++ENOUGH === transferedSalesLength) {
+                console.log('washed my hands!');
+              }
+
+              if ($rootScope.$$phase === null) {
+                $rootScope.$apply();
+              }
+            }, true);
+          }
+        } else if (mode === 'REVERT') {
+          // we're going to be doing the REVRESE of what we did up there
+          var depositAmount = 0;
+          var userId = Number(localStorage.user_id);
+          var transferedSales = [];
+          for (sale in promiseData.sales) {
+            if (promiseData.sales[sale].sale_user_user_id === userId) {
+              if (promiseData.sales[sale].sale_auto_transfer > 0) {
+                if (promiseData.sales[sale].sale_auto_transfer > diff) {
+                  promiseData.sales[sale].sale_auto_transfer -= diff;
+                  promiseData.sales[sale].sale_hold -= diff;
+                  depositAmount = diff;
+                } else {
+                  promiseData.sales[sale].sale_hold -= promiseData.sales[sale].sale_auto_transfer;
+                  depositAmount += promiseData.sales[sale].sale_auto_transfer;
+                  promiseData.sales[sale].sale_auto_transfer = 0;
+                }
+
+                transferedSales.push(promiseData.sales[sale]);
+              }
+            }
+
+            if (depositAmount === diff) {
+              console.log('ENOUGH! --- am washing my hands!');
+              break;
+            }
+          }
+
+          var ENOUGH = 0, transferedSalesLength = transferedSales.length;
+          for (transfer in transferedSales) {
+            dbEngine2.update('sales', transferedSales[transfer], function (data) {
+              if (++ENOUGH === transferedSalesLength) {
+                console.log('washed my hands!');
+              }
+
+              if ($rootScope.$$phase === null) {
+                $rootScope.$apply();
+              }
+            }, true);
+          }
+        }
+      };
+
+
+
   $scope.customerId = Number($routeParams.customerId);
   $scope.transactionId = Number($routeParams.depositId);
   $scope.totalOwe = 0;
-  var totalOweCopy = 0;
   $scope.edit = {};
 
   $scope.computeTotalRemainder = function () {
@@ -117,35 +244,40 @@ var depositsEditCtrl = app.controller('depositsEditCtrl',
     }
   };
 
-  dbEngine2.query('sales', function (data) {
-    for (index in data) {
-      if (data[index].sale_customer_customer_id === $scope.customerId) {
-        $scope.totalOwe += (data[index].sale_item_unit_price * data[index].sale_item_quantity);
-      }
+  for (sale in promiseData.sales) {
+    if (promiseData.sales[sale].sale_customer_customer_id === $scope.customerId) {
+      $scope.totalOwe += (promiseData.sales[sale].sale_item_unit_price * promiseData.sales[sale].sale_item_quantity);
+    }
+  }
+
+  for (transaction in promiseData.transactions) {
+    if (promiseData.transactions[transaction].transaction_id === $scope.transactionId) {
+      $scope.edit = angular.copy(promiseData.transactions[transaction]);
+      originalTransactionAmount = promiseData.transactions[transaction].transaction_amount;
     }
 
-    // and then we look through transactions the customer made
-    dbEngine2.query('transactions', function (data) {
-      for (index in data) {
-        if (data[index].transaction_id === $scope.transactionId) {
-          $scope.edit = angular.copy(data[index]);
-        }
+    if (promiseData.transactions[transaction].trasaction_customer_customer_id === $scope.customerId &&
+        promiseData.transactions[transaction].transaction_type === 'CUSTOMER-DEPOSIT') {
+      $scope.totalOwe -= promiseData.transactions[transaction].transaction_amount;
+    }
+  }
 
-        if (data[index].trasaction_customer_customer_id === $scope.customerId) {
-          $scope.totalOwe -= data[index].transaction_amount;
-        }
-      }
-
-      totalOweCopy = angular.copy($scope.totalOwe);
-      if ($rootScope.$$phase === null) {
-        $rootScope.$apply();
-      }
-    });
-  });
+  $scope.totalOwe += $scope.edit.transaction_amount;
+  totalOweCopy = $scope.totalOwe;
 
   this.update = function () {
     dbEngine2.update('transactions', $scope.edit, function (data) {
+      if (originalTransactionAmount > $scope.edit.transaction_amount) {
+        update('REVERT', (originalTransactionAmount - $scope.edit.transaction_amount));
+      } else if (originalTransactionAmount < $scope.edit.transaction_amount) {
+        update('MORE', ($scope.edit.transaction_amount - originalTransactionAmount));
+      } else {
+        console.log('pretend nothing happened...');
+      }
+
+      delete data.message;
       $scope.edit = data;
+      originalTransactionAmount = data.transaction_amount;
 
       if ($rootScope.$$phase === null) {
         $rootScope.$apply();
@@ -155,6 +287,7 @@ var depositsEditCtrl = app.controller('depositsEditCtrl',
 
   this.delete = function () {
     dbEngine2.delete('transactions', $scope.edit, function (data) {
+      update('REVERT', originalTransactionAmount);
       $location.path('customers/deposits/'+ $scope.customerId);
 
       if ($rootScope.$$phase === null) {
@@ -168,42 +301,47 @@ var depositsEditCtrl = app.controller('depositsEditCtrl',
 
 
 
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 var depositViaAccountCtrl = app.controller('depositViaAccountCtrl',
                                            ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
                                            function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
 
+  var promiseData = $rootScope.promiseData;
   $scope.accountId = Number($routeParams.accountId);
   $scope.userId = Number(localStorage.user_id);
   $scope.accountDeposits = [];
-  dbEngine2.query('transactions', function (data) {
-    for (transaction in data) {
-      // transaction must be associated with an account AND
-      // if so, must be associated with *this* accountId AND
-      // must be `owned` by the current user
-      if (data[transaction].transaction_type === 'ACCOUNT-DEPOSIT' &&
-          data[transaction].transaction_account_account_id === $scope.accountId &&
-          data[transaction].transaction_user_user_id === $scope.userId) {
-        data[transaction].moment = {
-          age: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow(),
-          time: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A'),
-          month: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('MMMM'),
-          year: moment(data[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('YYYY')
+
+  for (transaction in promiseData.transactions) {
+    // transaction must be associated with an account AND
+    // if so, must be associated with *this* accountId AND
+    // must be `owned` by the current user
+    if (promiseData.transactions[transaction].transaction_type === 'ACCOUNT-DEPOSIT' &&
+        promiseData.transactions[transaction].transaction_account_account_id === $scope.accountId &&
+        promiseData.transactions[transaction].transaction_user_user_id === $scope.userId) {
+        promiseData.transactions[transaction].moment = {
+          age: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow(),
+          time: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A'),
+          month: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('MMMM'),
+          year: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('YYYY')
         };
 
-        $scope.accountDeposits.push(data[transaction]);
-      }
+      $scope.accountDeposits.push(promiseData.transactions[transaction]);
     }
+  }
 
-    if ($rootScope.$$phase === null) {
-      $rootScope.$apply();
-    }
-  });
+  if ($rootScope.$$phase === null) {
+    $rootScope.$apply();
+  }
 
   $scope.depositViaAccountCtrl = this;
 }]);
 
 
 
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// NOTE:
+// when depositing via an account it's the user that's making the deposit
+// NOT the customer
 var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
                                            ['$rootScope', '$scope', '$routeParams', '$location', 'dbEngine2',
                                            function ($rootScope, $scope, $routeParams, $location, dbEngine2) {
@@ -226,13 +364,14 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
           var transferedSales = [];
           for (sale in promiseData.sales) {
             if (promiseData.sales[sale].sale_user_user_id === userId) {
-              if (promiseData.sales[sale].sale_hold > 0) {
-                if (depositAmount > promiseData.sales[sale].sale_hold) {
-                  depositAmount -= promiseData.sales[sale].sale_hold;
-                  promiseData.sales[sale].sale_auto_transfer += promiseData.sales[sale].sale_hold;
-                  promiseData.sales[sale].sale_hold = 0;
+              iDiff = promiseData.sales[sale].sale_owe - promiseData.sales[sale].sale_hold;
+              if (iDiff > 0) {
+                if (depositAmount > iDiff) {
+                  depositAmount -= iDiff;
+                  promiseData.sales[sale].sale_auto_transfer -= iDiff;
+                  promiseData.sales[sale].sale_hold = iDiff;
                 } else {
-                  promiseData.sales[sale].sale_auto_transfer += depositAmount;
+                  promiseData.sales[sale].sale_auto_transfer -= depositAmount;
                   promiseData.sales[sale].sale_hold -= depositAmount;
                   depositAmount = 0;
                 }
@@ -252,7 +391,6 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
             dbEngine2.update('sales', transferedSales[transfer], function (data) {
               if (++ENOUGH === transferedSalesLength) {
                 console.log('washed my hands!');
-                //$location.path('accounts/deposit/'+ $scope.accountId);
               }
 
               if ($rootScope.$$phase === null) {
@@ -262,20 +400,21 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
           }
         } else if (mode === 'REVERT') {
           // we're going to be doing the REVRESE of what we did up there
+          // TODO(besides Megan Fox):
+          // am not a 100% on the logic flow *here*
+          // so be sure to throughly look through this bunch of CRAP!
           var depositAmount = 0;
           var userId = Number(localStorage.user_id);
           var transferedSales = [];
           for (sale in promiseData.sales) {
             if (promiseData.sales[sale].sale_user_user_id === userId) {
-              if (promiseData.sales[sale].sale_auto_transfer > 0) {
-                if (promiseData.sales[sale].sale_auto_transfer > diff) {
-                  promiseData.sales[sale].sale_auto_transfer -= diff;
+              if (promiseData.sales[sale].sale_hold < promiseData.sales[sale].sale_owe) {
+                if ((promiseData.sales[sale].sale_hold + diff) < promiseData.sales[sale].sale_owe) {
                   promiseData.sales[sale].sale_hold += diff;
                   depositAmount = diff;
                 } else {
-                  promiseData.sales[sale].sale_hold += promiseData.sales[sale].sale_auto_transfer;
-                  depositAmount += promiseData.sales[sale].sale_auto_transfer;
-                  promiseData.sales[sale].sale_auto_transfer = 0;
+                  promiseData.sales[sale].sale_hold += (promiseData.sales[sale].sale_owe - diff);
+                  depositAmount += (promiseData.sales[sale].sale_owe - diff);
                 }
 
                 transferedSales.push(promiseData.sales[sale]);
@@ -293,7 +432,6 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
             dbEngine2.update('sales', transferedSales[transfer], function (data) {
               if (++ENOUGH === transferedSalesLength) {
                 console.log('washed my hands!');
-                //$location.path('accounts/deposit/'+ $scope.accountId);
               }
 
               if ($rootScope.$$phase === null) {
@@ -334,8 +472,6 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
 
   this.update = function () {
     dbEngine2.update('transactions', $scope.edit, function (data) {
-      delete data.message;
-      $scope.edit = data;
       // here it's going to be a little `tricky`
       // this ain't going to be a normal update
       if (originalTransactionAmount > $scope.edit.transaction_amount) {
@@ -344,11 +480,11 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
         update('MORE', ($scope.edit.transaction_amount - originalTransactionAmount));
       } else {
         console.log('pretend nothing happened...');
-        // $location.path('accounts/deposit/'+ $scope.accountId);
-        // if ($rootScope.$$phase === null) {
-        //   $rootScope.$apply();
-        // }
       }
+
+      delete data.message;
+      $scope.edit = data;
+      originalTransactionAmount = data.transaction_amount;
 
       if ($rootScope.$$phase === null) {
         $rootScope.$apply();
@@ -359,13 +495,12 @@ var depositViaAccountEditCtrl = app.controller('depositViaAccountEditCtrl',
   this.delete = function () {
     // same deal on deletion too --- if transfer is involved we need
     // to give it back before we X it
-    update('REVERT', $scope.edit.transaction_amount);
     dbEngine2.delete('transactions', $scope.edit, function (data) {
       // rest assured, there's going to be no conflict between the two async
       // functions --- since both deal with two different tables
-      console.log('deletion completed `after` REVERT');
-
+      update('REVERT', originalTransactionAmount);
       $location.path('accounts/deposit/'+ $scope.accountId);
+
       if ($rootScope.$$phase === null) {
         $rootScope.$apply();
       }
@@ -435,11 +570,11 @@ var depositViaAccountNewCtrl = app.controller('depositViaAccountNewCtrl',
             // drain it
             if (depositAmount > promiseData.sales[sale].sale_hold) {
               depositAmount -= promiseData.sales[sale].sale_hold;
-              promiseData.sales[sale].sale_auto_transfer += promiseData.sales[sale].sale_hold;
+              //promiseData.sales[sale].sale_auto_transfer += promiseData.sales[sale].sale_hold;
               promiseData.sales[sale].sale_hold = 0;
             } else {
               // we just need to take off a tiny bit
-              promiseData.sales[sale].sale_auto_transfer += depositAmount;
+              //promiseData.sales[sale].sale_auto_transfer += depositAmount;
               promiseData.sales[sale].sale_hold -= depositAmount;
               depositAmount = 0;
             }

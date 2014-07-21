@@ -188,7 +188,10 @@ app.config(function ($routeProvider) {
     controller: 'accountsCtrl'
   }).when('/accounts/deposit/:accountId', {
     templateUrl: 'templates/accounts/deposits/list.html',
-    controller: 'depositViaAccountCtrl'
+    controller: 'depositViaAccountCtrl',
+    resolve: {
+      loadTransactions: customersCtrl.loadTransactions
+    }
   }).when('/accounts/deposit/:accountId/new', {
     templateUrl: 'templates/accounts/deposits/new.html',
     controller: 'depositViaAccountNewCtrl',
@@ -234,10 +237,18 @@ app.config(function ($routeProvider) {
     controller: 'depositsCtrl'
   }).when('/customers/deposits/:customerId/new', {
     templateUrl: 'templates/deposits/new.html',
-    controller: 'depositsNewCtrl'
+    controller: 'depositsNewCtrl',
+    resolve: {
+      loadSales: customersCtrl.loadSales,
+      loadTransactions: customersCtrl.loadTransactions
+    }
   }).when('/customers/deposits/:customerId/edit/:depositId', {
     templateUrl: 'templates/deposits/edit.html',
-    controller: 'depositsEditCtrl'
+    controller: 'depositsEditCtrl',
+    resolve: {
+      loadSales: customersCtrl.loadSales,
+      loadTransactions: customersCtrl.loadTransactions
+    }
   }).
 
   when('/more', {

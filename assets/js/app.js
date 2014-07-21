@@ -51,6 +51,7 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
       case 'depositViaAccountCtrl':
       case 'depositViaAccountNewCtrl':
       case 'depositViaAccountEditCtrl':
+      case 'accountLogCtrl':
         $('a[href="#/accounts"]').addClass('active');
       break;
 
@@ -185,7 +186,10 @@ app.config(function ($routeProvider) {
     controller: 'accountEditCtrl'
   }).when('/accounts', {
     templateUrl: 'templates/accounts/list.html',
-    controller: 'accountsCtrl'
+    controller: 'accountsCtrl',
+    resolve: {
+      loadTransactions: customersCtrl.loadTransactions
+    }
   }).when('/accounts/deposit/:accountId', {
     templateUrl: 'templates/accounts/deposits/list.html',
     controller: 'depositViaAccountCtrl',
@@ -204,6 +208,12 @@ app.config(function ($routeProvider) {
     controller: 'depositViaAccountEditCtrl',
     resolve: {
       loadSales: customersCtrl.loadSales
+    }
+  }).when('/accounts/log/:accountId', {
+    templateUrl: 'templates/accounts/log.html',
+    controller: 'accountLogCtrl',
+    resolve: {
+      loadTransactions: customersCtrl.loadTransactions
     }
   }).
 

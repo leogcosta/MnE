@@ -1,0 +1,55 @@
+<nav class="search-nav row">
+  <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+    <input
+      type="text"
+      class="search form-control input-sm"
+      placeholder="Search Log"
+      ng-model="search.$"
+    >
+
+    <i class="search-icon ion-ios7-search"></i>
+  </div>
+</nav>
+
+
+
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 bottom-of-search-nav">
+  <div
+    ng-repeat="transaction in transactions | filter:search:strict | orderBy:'transaction_id':true"
+    class="row ngRepeat moe-list"
+  >
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+      <div class="moment-container">
+        <p
+          class="moment-time"
+          ng-bind="transaction.moment.time"
+        ></p>
+        <p
+          class="moment-month"
+          ng-bind="transaction.moment.month"
+        ></p>
+        <p
+          class="moment-year"
+          ng-bind="transaction.moment.year"
+        ></p>
+      </div>
+    </div>
+
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+      <p
+        class="ClearSans-Thin transaction-deposit"
+        ng-bind="transaction.transaction_amount | number:2"
+      ></p>
+
+      <p
+        class="transaction-age"
+        ng-bind="transaction.moment.age"
+      ></p>
+
+      <div
+        class="type-indicator"
+        ng-class="{deposit: transaction.transaction_type === 'ACCOUNT-DEPOSIT', transfer: transaction.transaction_type === 'ACCOUNT-TRANSFER', withdraw: transaction.transaction_type === 'ACCOUNT-WITHDRAW'}"
+      ></div>
+    </div>
+  </div>
+</div>

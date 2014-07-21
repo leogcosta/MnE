@@ -565,6 +565,26 @@ nav.menu > a.active {
 .moe-list .action a {
   color: rgba(51, 51, 51, 0.5);
 }
+
+.moe-list .type-indicator {
+  position: absolute;
+  top: -14px;
+  right: -8px;
+  bottom: 0;
+  height: 80px;
+}
+
+.moe-list .type-indicator.deposit {
+  border-right: 8px solid rgba(46, 204, 113, 0.75);
+}
+
+.moe-list .type-indicator.transfer {
+  border-right: 8px solid rgba(142, 68, 173, 0.75);
+}
+
+.moe-list .type-indicator.withdraw {
+  border-right: 8px solid rgba(231, 76, 60, 0.75);
+}
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 
 

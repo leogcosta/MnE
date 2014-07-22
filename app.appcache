@@ -1,13 +1,36 @@
 CACHE MANIFEST
 # Rev 0.0.1
 
-CACHE:
-app.appcache
 
-assets/bootstrap/css/bootstrap.min.css
-assets/pace/themes/pace-theme-minimal.css
-assets/ionicons/css/ionicons.min.css
-assets/css/style.css
+
+CACHE:
+# Templates
+templates/login.html
+templates/more.html
+templates/sales/viaItem/new.html
+templates/sales/viaCustomer/edit.html
+templates/sales/viaCustomer/list.html
+templates/sales/viaCustomer/new.html
+templates/misc/popularItems.html
+templates/misc/todaySales.html
+templates/items/edit.html
+templates/items/list.html
+templates/items/new.html
+templates/deposits/edit.html
+templates/deposits/list.html
+templates/deposits/new.html
+templates/customers/edit.html
+templates/customers/list.html
+templates/customers/new.html
+templates/accounts/new.html
+templates/accounts/log.html
+templates/accounts/list.html
+templates/accounts/edit.html
+templates/accounts/deposits/new.html
+templates/accounts/deposits/list.html
+templates/accounts/deposits/edit.html
+
+# JavaScript
 assets/jquery/jquery-1.11.0.min.js
 assets/jquery/jquery.ui.effect.min.js
 assets/fastclick/fastclick.js
@@ -19,30 +42,44 @@ assets/angular/angular-animate.min.js
 assets/angular/angular-route.min.js
 assets/angular/angular-resource.min.js
 assets/angular/angular-touch.min.js
-assets/pace/pace.min.js
 assets/js/dbEngine.js
 assets/js/syncEngine.js
 assets/js/app.js
 assets/js/controllers/login.js
-assets/js/controllers/customer.js
-assets/js/controllers/customerNew.js
 assets/js/controllers/customers.js
 assets/js/controllers/items.js
+assets/js/controllers/accounts.js
+assets/js/controllers/sales.js
+assets/js/controllers/deposits.js
+assets/js/controllers/more.js
+assets/js/controllers/misc/todaySales.js
+assets/js/controllers/misc/popularItems.js
 assets/js/script.js
+assets/pace/pace.min.js
+
+# CSS
+assets/bootstrap/css/bootstrap.min.css
+assets/pace/themes/pace-theme-minimal.css
+assets/ionicons/css/ionicons.min.css
+assets/css/style.css
+
+# Fonts
+assets/font/clearsans/WOFF/ClearSans-Light.woff
 assets/font/clearsans/WOFF/ClearSans-Medium.woff
 assets/font/clearsans/WOFF/ClearSans-Regular.woff
-assets/font/clearsans/WOFF/ClearSans-Light.woff
 assets/font/clearsans/WOFF/ClearSans-Thin.woff
+assets/font/DroidSansEthiopic/DroidSansEthiopic-Regular.ttf
 assets/font/lato/Lato-Hai.ttf
-assets/ionicons/fonts/ionicons.woff
-assets/ionicons/fonts/ionicons.ttf
+assets/bootstrap/fonts/glyphicons-halflings-regular.eot
+assets/bootstrap/fonts/glyphicons-halflings-regular.svg
+assets/bootstrap/fonts/glyphicons-halflings-regular.ttf
+assets/bootstrap/fonts/glyphicons-halflings-regular.woff
 assets/ionicons/fonts/ionicons.eot
 assets/ionicons/fonts/ionicons.svg
-templates/customer.html
-templates/customerNew.html
-templates/customers.html
-templates/items.html
-templates/login.html
+assets/ionicons/fonts/ionicons.ttf
+assets/ionicons/fonts/ionicons.woff
+
+
 
 NETWORK:
 *

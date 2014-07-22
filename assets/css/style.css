@@ -31,10 +31,9 @@
 
 @font-face {
   font-family: 'Droid Sans Ethiopic';
-  src: url(../font/clearsans/WOFF/ClearSans-Medium.woff);
+  src: url(../font/DroidSansEthiopic/DroidSansEthiopic-Regular.ttf) format('truetype');
   font-style: normal;
   font-weight: 400;
-  src: url(../font/DroidSansEthiopic/DroidSansEthiopic-Regular.ttf) format('truetype');
 }
 
 @font-face {

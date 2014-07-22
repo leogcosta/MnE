@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Jul 22, 2014 at 05:32 AM
+-- Generation Time: Jul 22, 2014 at 05:39 AM
 -- Server version: 5.5.36
 -- PHP Version: 5.4.29
 
@@ -33,15 +33,6 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `account_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
---
--- Dumping data for table `accounts`
---
-
-INSERT INTO `accounts` (`account_id`, `account_name`, `account_user_user_id`, `account_timestamp`) VALUES
-(3, 'Zemen', 1, '2014-07-13 08:35:00'),
-(7, 'Barclay''s', 1, '2014-07-20 12:03:30'),
-(8, 'Zenith', 1, '2014-07-20 07:35:07');
-
 -- --------------------------------------------------------
 
 --
@@ -57,23 +48,6 @@ CREATE TABLE IF NOT EXISTS `customers` (
   `customer_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=259 ;
 
---
--- Dumping data for table `customers`
---
-
-INSERT INTO `customers` (`customer_id`, `customer_full_name`, `customer_phone_number`, `customer_email`, `customer_user_user_id`, `customer_timestamp`) VALUES
-(34, 'moe Szyslak', '0912442676', '', 1, '2014-07-04 06:00:00'),
-(39, 'lanescape', '0913050427', '', 1, '2014-07-23 04:00:00'),
-(44, 'fast click', '0912442676', '', 1, '0000-00-00 00:00:00'),
-(65, 'Fresh Prince', '+251912442676', 'fresh@fresh.org', 1, '2014-07-15 14:00:28'),
-(68, 'save', '0912442676', '', 1, '0000-00-00 00:00:00'),
-(83, 'update', '0912442676', '', 1, '2014-07-20 14:56:05'),
-(152, 'face off', '+251913050427', '', 1, '2014-07-21 08:11:00'),
-(163, 'i new', '0912442676', '', 1, '0000-00-00 00:00:00'),
-(165, 'i new x', '0912442676', '', 1, '2014-07-05 06:06:04'),
-(180, 'MaMoe NEW notify', '0912442676', '', 1, '2014-07-05 07:26:02'),
-(258, 'phased', '0912442676', '', 1, '2014-07-10 07:53:05');
-
 -- --------------------------------------------------------
 
 --
@@ -87,17 +61,6 @@ CREATE TABLE IF NOT EXISTS `items` (
   `item_unit_price` decimal(10,3) NOT NULL,
   `item_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
-
---
--- Dumping data for table `items`
---
-
-INSERT INTO `items` (`item_id`, `item_item_id`, `item_name`, `item_unit_price`, `item_timestamp`) VALUES
-(1, 'XD-346', 'Cloth update', '45.990', '0000-00-00 00:00:00'),
-(3, 'XC-89', 'Roll Grade A', '99.780', '2014-07-19 02:30:26'),
-(8, 'HDKDH-68', 'ios new', '68.800', '2014-07-15 13:51:25'),
-(15, 'Ios', 'iOS 7.1.2', '78.990', '2014-07-12 08:57:44'),
-(16, 'PTN', 'platinum', '50000.990', '2014-07-20 13:45:39');
 
 -- --------------------------------------------------------
 
@@ -117,19 +80,6 @@ CREATE TABLE IF NOT EXISTS `sales` (
   `sale_customer_customer_id` int(11) NOT NULL,
   `sale_user_user_id` int(11) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=30 ;
-
---
--- Dumping data for table `sales`
---
-
-INSERT INTO `sales` (`sale_id`, `sale_item_item_id`, `sale_item_quantity`, `sale_item_unit_price`, `sale_timestamp`, `sale_owe`, `sale_hold`, `sale_auto_transfer`, `sale_customer_customer_id`, `sale_user_user_id`) VALUES
-(22, 16, 1, '50000.990', '2014-07-22 03:44:32', '50000.990', '2000.990', '95001.980', 152, 1),
-(23, 16, 10, '50000.990', '2014-07-21 08:09:17', '500009.900', '354999.010', '374998.020', 152, 1),
-(24, 8, 10, '68.800', '2014-07-21 08:08:50', '688.000', '0.000', '0.000', 152, 1),
-(25, 8, 10, '68.800', '2014-07-22 03:41:17', '688.000', '0.000', '0.000', 152, 1),
-(27, 3, 1, '99.780', '2014-07-22 03:32:20', '99.780', '0.000', '0.000', 44, 1),
-(28, 3, 1, '99.780', '2014-07-22 03:35:04', '99.780', '0.000', '0.000', 44, 1),
-(29, 3, 50, '99.780', '2014-07-22 03:46:33', '4989.000', '0.000', '0.000', 65, 1);
 
 -- --------------------------------------------------------
 
@@ -152,18 +102,6 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `transaction_account_from_account_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
 
---
--- Dumping data for table `transactions`
---
-
-INSERT INTO `transactions` (`transaction_id`, `transaction_type`, `transaction_amount`, `transaction_hold`, `transaction_transfer`, `transaction_description`, `transaction_timestamp`, `transaction_account_account_id`, `trasaction_customer_customer_id`, `transaction_user_user_id`, `trasaction_sale_sale_id`, `transaction_account_from_account_id`) VALUES
-(11, 'CUSTOMER-DEPOSIT', '75000.000', '0.000', '0.000', '', '2014-07-21 07:22:15', 0, 152, 1, 0, 0),
-(12, 'ACCOUNT-DEPOSIT', '6000.000', '0.000', '0.000', '', '2014-07-22 03:44:33', 8, 0, 1, 0, 0),
-(13, 'ACCOUNT-DEPOSIT', '50000.000', '0.000', '0.000', '', '2014-07-22 03:42:18', 3, 0, 1, 0, 0),
-(14, 'ACCOUNT-DEPOSIT', '15000.000', '0.000', '0.000', '', '2014-07-21 08:04:45', 7, 0, 1, 0, 0),
-(15, 'CUSTOMER-DEPOSIT', '400000.000', '0.000', '0.000', '', '2014-07-21 08:09:17', 0, 152, 1, 0, 0),
-(16, 'ACCOUNT-DEPOSIT', '50000.000', '0.000', '0.000', '', '2014-07-22 03:43:31', 8, 0, 1, 0, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -177,13 +115,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `user_password` varchar(128) NOT NULL,
   `user_type` varchar(64) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`user_id`, `user_full_name`, `user_username`, `user_password`, `user_type`) VALUES
-(1, 'Moe Szyslak', 'moe', '46c011cb85acf685992a5cfa2c48a8fd898b431df02666f673a210ef0e99f541eef6a645244602ecc5ea018a222e9a04e54e25f9dcaf009a6d2be1ed99f32f11', 'CSO');
 
 --
 -- Indexes for dumped tables

@@ -231,6 +231,10 @@ var saleViaCustomerEditCtrl = app.controller('saleViaCustomerEditCtrl',
         $rootScope.$apply();
       }
     });
+
+    if ($rootScope.$$phase === null) {
+      $rootScope.$apply();
+    }
   });
 
   this.update = function () {

@@ -4,8 +4,6 @@ var accountsCtrl = app.controller('accountsCtrl',
   var transactions = $rootScope.promiseData.transactions;
 
   dbEngine2.query('accounts', function (data) {
-
-
     for (account in data) {
       data[account].balance = 0;
 

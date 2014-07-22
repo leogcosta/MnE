@@ -224,6 +224,7 @@ body {
 
 nav.menu {
   position: fixed;
+  z-index: 3;
   bottom: 0;
   left: 0;
   right: 0;
@@ -534,16 +535,22 @@ nav.menu > a.active {
   color: #7f8c8d;
 }
 
-.new-sale-total {
-  margin: 0;
-  font-size: 22px;
-  color: rgba(44, 62, 80, 0.5);
+.moe-list .count-badge {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 12px;
+  bottom: 0;
+  padding-top: 16px;
 }
 
-.deposit-total-owe {
-  margin: 0;
-  font-size: 28px;
-  color: rgba(44, 62, 80, 0.5);
+.moe-list .count-badge span {
+  font-size: 18px;
+  padding: 0px 8px;
+  border: 1px solid rgba(51, 51, 51, 0.125);
+  background-color: rgba(127, 140, 141, 0.125);
+  border-radius: 2px;
+  color: #636363;
 }
 
 .moe-list .action {
@@ -552,6 +559,7 @@ nav.menu > a.active {
   left: 15px;
   right: 15px;
   height: 64px;
+  z-index: 2;
   background-color: rgba(255, 255, 255, 1.0);
   text-align: center;
 }
@@ -628,6 +636,18 @@ nav.menu > a.active {
   margin: 0px;
   margin-top: -5px;
   color: #999999;
+}
+
+.new-sale-total {
+  margin: 0;
+  font-size: 22px;
+  color: rgba(44, 62, 80, 0.5);
+}
+
+.deposit-total-owe {
+  margin: 0;
+  font-size: 28px;
+  color: rgba(44, 62, 80, 0.5);
 }
 
 .today-sale-total {

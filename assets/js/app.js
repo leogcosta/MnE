@@ -56,6 +56,7 @@ app.controller('appCtrl', ['$rootScope', '$q', 'dbEngine2', 'syncEngine2', funct
       break;
 
       case 'moreCtrl':
+      case 'todaySalesCtrl':
         $('a[href="#/more"]').addClass('active');
       break;
     }
@@ -261,10 +262,22 @@ app.config(function ($routeProvider) {
     }
   }).
 
+
+
   when('/more', {
     templateUrl: 'templates/more.html',
     controller: 'moreCtrl'
+  }).when('/todaySale', {
+    templateUrl: 'templates/misc/todaySale.html',
+    controller: 'todaySalesCtrl',
+    resolve: {
+      loadSales: customersCtrl.loadSales,
+      loadCustomers: saleViaItemNewCtrl.loadCustomers,
+      loadItems: todaySalesCtrl.loadItems
+    }
   }).
+
+
 
   otherwise({
     redirectTo: '/login'

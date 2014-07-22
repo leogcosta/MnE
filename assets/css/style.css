@@ -447,7 +447,7 @@ nav.menu > a.active {
 }
 
 .moe-list .sale-item-code {
-  color: #001f3f;
+  color: rgba(0, 31, 63, 0.75);
   margin: 0;
   text-transform: uppercase;
 }
@@ -594,6 +594,46 @@ nav.menu > a.active {
 
 .moe-list .type-indicator.withdraw {
   border-right: 8px solid rgba(231, 76, 60, 0.75);
+}
+
+.moe-list .today-sale-full-name {
+  margin: 0;
+  margin-top: -4px;
+  text-transform: capitalize;
+  color: #696969;
+}
+
+.moe-list .today-sale-quantity-total {
+  margin: 0px;
+  margin-top: -3px;
+  color: #696969;
+}
+
+.moe-list .today-sale-total {
+  font-size: 24px;
+  margin: 0;
+  margin-top: -7px;
+  color: #16a085;
+}
+
+.moe-list .today-sale-time {
+  font-size: 12px;
+  margin: 0px;
+  margin-top: -4px;
+  color: #696969;
+}
+
+.moe-list .today-sale-age {
+  font-size: 10px;
+  margin: 0px;
+  margin-top: -5px;
+  color: #999999;
+}
+
+.today-sale-total {
+  font-size: 36px;
+  color: rgba(231, 76, 60, 0.75);
+  margin: 0;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 

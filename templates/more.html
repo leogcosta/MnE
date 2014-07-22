@@ -1,6 +1,10 @@
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
   <!-- today's sale -->
-  <div class="row moe-list" style="margin-top: 16px;">
+  <div
+    class="row moe-list"
+    style="margin-top: 16px;"
+    ng-swipe-left="moreCtrl.path('/todaySale')"
+  >
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container">
       <h1 class="Lato-Hai item-inital">
         <i class="ion-ios7-cart-outline text-muted"></i>
@@ -15,7 +19,10 @@
 
 
   <!-- popular items -->
-  <div class="row moe-list">
+  <div
+    class="row moe-list"
+    ng-swipe-left="moreCtrl.path('/popularItems')"
+  >
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container">
       <h1 class="Lato-Hai item-inital">
         <i class="ion-ios7-star-outline text-muted"></i>
@@ -30,7 +37,10 @@
 
 
   <!-- from hold account to an `actual` account -->
-  <div class="row moe-list">
+  <div
+    class="row moe-list"
+    ng-swipe-left="moreCtrl.path('/transfer')"
+  >
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container">
       <h1 class="Lato-Hai item-inital">
         <i class="ion-ios7-bolt-outline text-muted"></i>
@@ -45,7 +55,10 @@
 
 
   <!-- from `external` income to an account -->
-  <div class="row moe-list">
+  <div
+    class="row moe-list"
+    ng-swipe-left="moreCtrl.path('/deposit')"
+  >
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container">
       <h1 class="Lato-Hai item-inital">
         <i class="ion-ios7-cloud-upload-outline text-muted"></i>
@@ -60,7 +73,10 @@
 
 
   <!-- from `external` income to an account -->
-  <div class="row moe-list">
+  <div
+    class="row moe-list"
+    ng-swipe-left="moreCtrl.path('/withdraw')"
+  >
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container">
       <h1 class="Lato-Hai item-inital">
         <i class="ion-ios7-cloud-download-outline text-muted"></i>
@@ -75,7 +91,11 @@
 
 
   <!-- logout -->
-  <div class="row moe-list" ng-show="online === true">
+  <div
+    class="row moe-list"
+    ng-show="online === true"
+    ng-swipe-left="moreCtrl.path('/logout')"
+  >
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 item-inital-container">
       <h1 class="Lato-Hai item-inital">
         <i class="ion-ios7-close-empty text-muted"></i>

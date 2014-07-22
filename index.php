@@ -79,6 +79,7 @@
     <script src="assets/js/controllers/sales.js"></script>
     <script src="assets/js/controllers/deposits.js"></script>
     <script src="assets/js/controllers/more.js"></script>
+    <script src="assets/js/controllers/misc/todaySale.js"></script>
 
     <script src="assets/js/script.js"></script>
 

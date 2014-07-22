@@ -17,7 +17,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-    <link href="assets/image/ico/apple-touch-icon-144-precomposed.png" sizes="144x144" rel="apple-touch-icon-precomposed">
+    <!-- home screen -->
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/image/ico/apple-touch-icon-114.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/image/ico/apple-touch-icon-114.png">
+    <!-- bookmark -->
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/image/ico/apple-touch-icon-144.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/image/ico/apple-touch-icon-144.png">
+
+    <title>MnE</title>
+
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/pace/themes/pace-theme-minimal.css">
     <link rel="stylesheet" href="assets/ionicons/css/ionicons.min.css">

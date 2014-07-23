@@ -33,6 +33,10 @@ var loginCtrl = app.controller('loginCtrl',
     if (localStorage.user_username !== undefined) {
       notify({message: 'welcome back ('+ localStorage.user_username +')'});
       $location.path('/customers');
+
+      if ($rootScope.$$phase === null) {
+        $rootScope.$apply();
+      }
     } else {
       console.error('am confused!');
     }

@@ -10,7 +10,7 @@ var depositsCtrl = app.controller('depositsCtrl',
       if (data[index].transaction_type === 'CUSTOMER-DEPOSIT' && data[index].trasaction_customer_customer_id === $scope.customerId) {
         data[index].moment = {
           age: moment(data[index].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow(),
-          time: moment(data[index].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A'),
+          date: moment(data[index].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('DD'),
           month: moment(data[index].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('MMMM'),
           year: moment(data[index].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('YYYY')
         };
@@ -320,7 +320,7 @@ var depositViaAccountCtrl = app.controller('depositViaAccountCtrl',
         promiseData.transactions[transaction].transaction_user_user_id === $scope.userId) {
         promiseData.transactions[transaction].moment = {
           age: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow(),
-          time: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A'),
+          date: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('DD'),
           month: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('MMMM'),
           year: moment(promiseData.transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('YYYY')
         };

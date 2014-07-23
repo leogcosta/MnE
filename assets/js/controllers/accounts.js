@@ -105,7 +105,7 @@ var accountLogCtrl = app.controller('accountLogCtrl',
     if (transactions[transaction].transaction_account_account_id === accountId) {
       transactions[transaction].moment = {
         age: moment(transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow(),
-        time: moment(transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A'),
+        date: moment(transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('DD'),
         month: moment(transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('MMMM'),
         year: moment(transactions[transaction].transaction_timestamp, 'YYYY-MM-DD HH:mm:ss').format('YYYY')
       };

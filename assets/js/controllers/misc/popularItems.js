@@ -9,9 +9,9 @@ var popularItemsCtrl = app.controller('popularItemsCtrl',
     for (sale in promiseData.sales) {
       if (promiseData.sales[sale].sale_item_item_id === promiseData.items[item].item_id) {
         if (promiseData.items[item].hasOwnProperty('saleCount')) {
-          promiseData.items[item].saleCount++;
+          promiseData.items[item].saleCount += promiseData.sales[sale].sale_item_quantity;
         } else {
-          promiseData.items[item].saleCount = 1;
+          promiseData.items[item].saleCount = promiseData.sales[sale].sale_item_quantity;
         }
       }
     }

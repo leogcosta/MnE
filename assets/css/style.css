@@ -544,7 +544,7 @@ nav.menu > a.active {
 }
 
 .moe-list .count-badge span {
-  font-size: 18px;
+  font-size: 12px;
   padding: 0px 8px;
   border: 1px solid rgba(51, 51, 51, 0.125);
   background-color: rgba(127, 140, 141, 0.125);

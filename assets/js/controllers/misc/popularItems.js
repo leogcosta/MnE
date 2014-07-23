@@ -8,14 +8,18 @@ var popularItemsCtrl = app.controller('popularItemsCtrl',
   for (item in promiseData.items) {
     for (sale in promiseData.sales) {
       if (promiseData.sales[sale].sale_item_item_id === promiseData.items[item].item_id) {
-        if (promiseData.items[item].hasOwnProperty('saleCount') === true) {
-          promiseData.items[item].saleCount += promiseData.sales[sale].sale_item_quantity;
+        if (promiseData.items[item].hasOwnProperty('saleCount')) {
+          promiseData.items[item].saleCount++;
         } else {
-          promiseData.items[item].saleCount = 0;
+          promiseData.items[item].saleCount = 1;
         }
-      } else {
-        promiseData.items[item].saleCount = 0;
       }
+    }
+  }
+
+  for (item in promiseData.items) {
+    if (promiseData.items[item].hasOwnProperty('saleCount') === false) {
+      promiseData.items[item].saleCount = 0;
     }
   }
 

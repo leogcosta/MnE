@@ -1,6 +1,6 @@
 var loginCtrl = app.controller('loginCtrl',
-                               ['$rootScope', '$scope', '$location', '$http', '$q', 'dbEngine2', 'syncEngine2',
-                               function ($rootScope, $scope, $location, $http, $q, dbEngine2, syncEngine2) {
+                               ['$rootScope', '$scope', '$location', '$http', '$q', '$timeout', 'dbEngine2', 'syncEngine2',
+                               function ($rootScope, $scope, $location, $http, $q, $timeout, dbEngine2, syncEngine2) {
   $scope.credentials = {
     username: '',
     password: ''
@@ -41,6 +41,17 @@ var loginCtrl = app.controller('loginCtrl',
       console.error('am confused!');
     }
   }
+
+  // temporary issue fix on app launch
+  $timeout(function () {
+    if ($rootScope.online === false) {
+      $location.path('/customers');
+
+      if ($rootScope.$$phase === null) {
+        $rootScope.$apply();
+      }
+    }
+  }, 3000);
 
   // this action REQUIRES connection with the server
   this.submit = function () {

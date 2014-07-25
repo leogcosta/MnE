@@ -1,6 +1,6 @@
 var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngTouch', 'dbEngine', 'syncEngine']);
 
-app.controller('appCtrl', ['$rootScope', '$q', '$timeout', 'dbEngine2', 'syncEngine2', function ($rootScope, $q, $timeout, dbEngine2, syncEngine2) {
+app.controller('appCtrl', ['$rootScope', '$q', '$timeout', '$location', 'dbEngine2', 'syncEngine2', function ($rootScope, $q, $timeout, $location, dbEngine2, syncEngine2) {
   var promiseBroken = function (error) {
     console.error(error);
   };
@@ -146,7 +146,11 @@ app.controller('appCtrl', ['$rootScope', '$q', '$timeout', 'dbEngine2', 'syncEng
   // temporary issue fix on app launch
   $timeout(function () {
     if ($rootScope.online === false) {
-      $location.path('/login');
+      if ($location.path() === '/login') {
+        $location.path('/customers');
+      } else {
+        $location.path('/login');
+      }
 
       if ($rootScope.$$phase === null) {
         $rootScope.$apply();

@@ -88,7 +88,7 @@ var depositsNewCtrl = app.controller('depositsNewCtrl',
       var userId = Number(localStorage.user_id);
       var transferedSales = [];
       for (sale in promiseData.sales) {
-        if (promiseData.sales[sale].sale_user_user_id === userId) {
+        if ((promiseData.sales[sale].sale_user_user_id === userId) && (promiseData.sales[sale].sale_customer_customer_id === data.trasaction_customer_customer_id)) {
           iDiff = promiseData.sales[sale].sale_owe - promiseData.sales[sale].sale_hold;
           if (iDiff > 0) {
             if (depositAmount > iDiff) {

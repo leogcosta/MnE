@@ -14,7 +14,7 @@
 
   require_once('../scripts/sync.php');
   start_session();
-  verify_xsrf();
+  //verify_xsrf();
 
   // Error, and it's a big one
   // and lets be honest, & am repeating myself here, which i usually don't do ;)

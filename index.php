@@ -3,7 +3,6 @@
   require_once('lib/medoo.php');
   require_once('lib/utils.php');
   start_session();
-  generate_xsrf_token();
 ?>
 
 <!DOCTYPE html>
